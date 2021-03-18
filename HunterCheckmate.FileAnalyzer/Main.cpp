@@ -1150,7 +1150,7 @@ int main()
 	}
 
 	// console output group infos
-	if (false)
+	if (success)
 	{
 		for (int i = 0; i < 8; i++)
 		{
@@ -1190,15 +1190,28 @@ int main()
 			for (int j = 0; j < static_cast<int>(number_of_groups); j++)
 			{
 				total_number_of_animals += adf->GetGroupSize(LaytonAnimal(i), j);
-				std::cout << "     " << "Group " << j << " has size of " << static_cast<int>(adf->GetGroupSize(LaytonAnimal(i), j)) << std::endl;
+				std::cout << "     " << "Group " << j << " has size of " << static_cast<int>(adf->GetGroupSize(LaytonAnimal(i), j))
+				<< " and SpawnAreaId " << static_cast<int>(adf->GetSpawnAreaId(LaytonAnimal(i), j)) << std::endl;
 			}
 			std::cout << "Total number of animals: " << static_cast<int>(total_number_of_animals) << std::endl << std::endl;
 		}
 	}
 	
 	auto *animal_data = new AnimalData();
-	adf->ReplaceAnimal(animal_data->whitetail_great_one_1, LaytonAnimal::WhitetailDeer, 0x3A, 0x4);
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_0, LaytonAnimal::WhitetailDeer, 0x0, 0x0);
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_1, LaytonAnimal::WhitetailDeer, 0x1, 0x0);
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_2, LaytonAnimal::WhitetailDeer, 0x2, 0x0);
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_3, LaytonAnimal::WhitetailDeer, 0x3, 0x0);
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_4, LaytonAnimal::WhitetailDeer, 0x4, 0x0);
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_5, LaytonAnimal::WhitetailDeer, 0x5, 0x0);
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_6, LaytonAnimal::WhitetailDeer, 0x6, 0x0);
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_7, LaytonAnimal::WhitetailDeer, 0x7, 0x0);
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_8, LaytonAnimal::WhitetailDeer, 0x8, 0x0);
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_9, LaytonAnimal::WhitetailDeer, 0x9, 0x0);
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_10, LaytonAnimal::WhitetailDeer, 0xA, 0x0);
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_10, LaytonAnimal::WhitetailDeer, 0xB, 0x0);
 
+	
 	delete animal_data;
 	delete adf;
 	

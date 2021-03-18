@@ -20,7 +20,18 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		std::vector<char> *whitetail_great_one_0;
 		std::vector<char> *whitetail_great_one_1;
-		std::vector<char> *whitetail_max_weight_diamond;
+		std::vector<char> *whitetail_max_weight_diamond_0;
+		std::vector<char> *whitetail_max_weight_diamond_1;
+		std::vector<char> *whitetail_max_weight_diamond_2;
+		std::vector<char> *whitetail_max_weight_diamond_3;
+		std::vector<char> *whitetail_max_weight_diamond_4;
+		std::vector<char> *whitetail_max_weight_diamond_5;
+		std::vector<char> *whitetail_max_weight_diamond_6;
+		std::vector<char> *whitetail_max_weight_diamond_7;
+		std::vector<char> *whitetail_max_weight_diamond_8;
+		std::vector<char> *whitetail_max_weight_diamond_9;
+		std::vector<char> *whitetail_max_weight_diamond_10;
+		std::vector<char> *whitetail_max_weight_diamond_11;
 
 		AnimalData()
 		{
@@ -46,12 +57,122 @@ namespace HunterCheckmate_FileAnalyzer
 					'\x00','\x00','\x00','\x00'
 				});
 
-			whitetail_max_weight_diamond = new std::vector<char>({
+			whitetail_max_weight_diamond_0 = new std::vector<char>({
 					'\x01','\x00','\x00','\x00',
 					'\x00','\x00','\xC8','\x42',
 					'\x7E','\xC4','\x89','\x43',
 					'\x00','\x00','\x00','\x00',
-					'\x16','\x37','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00'
+				});
+			whitetail_max_weight_diamond_1 = new std::vector<char>({
+					'\x01','\x00','\x00','\x00',
+					'\x00','\x00','\xC8','\x42',
+					'\x7E','\xC4','\x89','\x43',
+					'\x00','\x00','\x00','\x00',
+					'\x01','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00'
+				});
+			whitetail_max_weight_diamond_2 = new std::vector<char>({
+					'\x01','\x00','\x00','\x00',
+					'\x00','\x00','\xC8','\x42',
+					'\x7E','\xC4','\x89','\x43',
+					'\x00','\x00','\x00','\x00',
+					'\x02','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00'
+				});
+			whitetail_max_weight_diamond_3 = new std::vector<char>({
+					'\x01','\x00','\x00','\x00',
+					'\x00','\x00','\xC8','\x42',
+					'\x7E','\xC4','\x89','\x43',
+					'\x00','\x00','\x00','\x00',
+					'\x03','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00'
+				});
+			whitetail_max_weight_diamond_4 = new std::vector<char>({
+					'\x01','\x00','\x00','\x00',
+					'\x00','\x00','\xC8','\x42',
+					'\x7E','\xC4','\x89','\x43',
+					'\x00','\x00','\x00','\x00',
+					'\x04','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00'
+				});
+			whitetail_max_weight_diamond_5 = new std::vector<char>({
+					'\x01','\x00','\x00','\x00',
+					'\x00','\x00','\xC8','\x42',
+					'\x7E','\xC4','\x89','\x43',
+					'\x00','\x00','\x00','\x00',
+					'\x05','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00'
+				});
+			whitetail_max_weight_diamond_6 = new std::vector<char>({
+					'\x01','\x00','\x00','\x00',
+					'\x00','\x00','\xC8','\x42',
+					'\x7E','\xC4','\x89','\x43',
+					'\x00','\x00','\x00','\x00',
+					'\x07','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00'
+				});
+			whitetail_max_weight_diamond_7 = new std::vector<char>({
+					'\x01','\x00','\x00','\x00',
+					'\x00','\x00','\xC8','\x42',
+					'\x7E','\xC4','\x89','\x43',
+					'\x00','\x00','\x00','\x00',
+					'\x08','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00'
+				});
+			whitetail_max_weight_diamond_8 = new std::vector<char>({
+					'\x01','\x00','\x00','\x00',
+					'\x00','\x00','\xC8','\x42',
+					'\x7E','\xC4','\x89','\x43',
+					'\x00','\x00','\x00','\x00',
+					'\x09','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00'
+				});
+			whitetail_max_weight_diamond_9 = new std::vector<char>({
+					'\x01','\x00','\x00','\x00',
+					'\x00','\x00','\xC8','\x42',
+					'\x7E','\xC4','\x89','\x43',
+					'\x00','\x00','\x00','\x00',
+					'\x10','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00'
+				});
+			whitetail_max_weight_diamond_10 = new std::vector<char>({
+					'\x01','\x00','\x00','\x00',
+					'\x00','\x00','\xC8','\x42',
+					'\x7E','\xC4','\x89','\x43',
+					'\x00','\x00','\x00','\x00',
+					'\x11','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00',
+					'\x00','\x00','\x00','\x00'
+				});
+			whitetail_max_weight_diamond_11 = new std::vector<char>({
+					'\x01','\x00','\x00','\x00',
+					'\x00','\x00','\xC8','\x42',
+					'\x7E','\xC4','\x89','\x43',
+					'\x00','\x00','\x00','\x00',
+					'\x12','\x00','\x00','\x00',
 					'\x00','\x00','\x00','\x00',
 					'\x00','\x00','\x00','\x00',
 					'\x00','\x00','\x00','\x00'
@@ -62,7 +183,18 @@ namespace HunterCheckmate_FileAnalyzer
 		{
 			delete whitetail_great_one_0;
 			delete whitetail_great_one_1;
-			delete whitetail_max_weight_diamond;
+			delete whitetail_max_weight_diamond_0;
+			delete whitetail_max_weight_diamond_1;
+			delete whitetail_max_weight_diamond_2;
+			delete whitetail_max_weight_diamond_3;
+			delete whitetail_max_weight_diamond_4;
+			delete whitetail_max_weight_diamond_5;
+			delete whitetail_max_weight_diamond_6;
+			delete whitetail_max_weight_diamond_7;
+			delete whitetail_max_weight_diamond_8;
+			delete whitetail_max_weight_diamond_9;
+			delete whitetail_max_weight_diamond_10;
+			delete whitetail_max_weight_diamond_11;
 		}
 	};
 	
@@ -207,7 +339,7 @@ namespace HunterCheckmate_FileAnalyzer
 		Primitive primitive = Primitive::NONE;
 		uint32_t offset = 0;
 		uint32_t size = 0;
-		char* data;
+		char *data;
 		std::vector<Member> *sub_members;
 
 		Member();
@@ -252,6 +384,7 @@ namespace HunterCheckmate_FileAnalyzer
 		AdfFile(Utility *utility);
 		~AdfFile();
 		bool Deserialize();
+		int32_t GetSpawnAreaId(LaytonAnimal population_idx, uint32_t group_idx) const;
 		uint32_t GetNumberOfGroups(LaytonAnimal population_idx) const;
 		uint32_t GetGroupSize(LaytonAnimal population_idx, uint32_t group_idx) const;
 		bool ReplaceAnimal(std::vector<char> *animal_info, LaytonAnimal population_idx, uint32_t group_idx, uint32_t animal_idx) const;

@@ -80,8 +80,10 @@ namespace HunterCheckmate_FileAnalyzer
 			break;
 		}
 
-		char* data = new char[member->size * 2];
-		utility->Read(data, offset, member->size * 2);
+		char* data = new char[member->size];
+		utility->Read(data, offset, member->size);
+		// TODO: fix the fucking read function you god damn moron
+		std::reverse(&data[0], &data[member->size]);
 		member->data = data;
 	}
 
@@ -401,6 +403,15 @@ namespace HunterCheckmate_FileAnalyzer
 
 		this->initialized = true;
 		return true;
+	}
+
+	int32_t AdfFile::GetSpawnAreaId(LaytonAnimal population_idx, uint32_t group_idx) const
+	{
+		if (!initialized) return 0;
+
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(static_cast<uint32_t>(population_idx))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(0).data;
+		return reinterpret_cast<int32_t>(data);
 	}
 
 	uint32_t AdfFile::GetNumberOfGroups(LaytonAnimal population_idx) const
