@@ -16,7 +16,7 @@ namespace HunterCheckmate_FileAnalyzer
 	};
 	
 	// in little endian
-	struct AnimalData
+	struct AnimalData2
 	{
 		std::vector<char> *whitetail_great_one_0;
 		std::vector<char> *whitetail_great_one_1;
@@ -33,7 +33,7 @@ namespace HunterCheckmate_FileAnalyzer
 		std::vector<char> *whitetail_max_weight_diamond_10;
 		std::vector<char> *whitetail_max_weight_diamond_11;
 
-		AnimalData()
+		AnimalData2()
 		{
 			whitetail_great_one_0 = new std::vector<char>({
 					'\x01','\x00','\x00','\x00',
@@ -179,7 +179,7 @@ namespace HunterCheckmate_FileAnalyzer
 				});
 		}
 
-		~AnimalData()
+		~AnimalData2()
 		{
 			delete whitetail_great_one_0;
 			delete whitetail_great_one_1;
@@ -196,6 +196,23 @@ namespace HunterCheckmate_FileAnalyzer
 			delete whitetail_max_weight_diamond_10;
 			delete whitetail_max_weight_diamond_11;
 		}
+	};
+
+	class AnimalData
+	{
+	public:
+		uint32_t id;
+		uint8_t gender;
+		float weight;
+		float score;
+		uint8_t is_great_one;
+		uint32_t visual_variation_seed;
+
+		AnimalData(uint32_t id, uint8_t gender, float weight, float score, uint8_t is_great_one, uint32_t visual_variation_seed);
+		~AnimalData() = default;
+
+		static uint32_t ResolveId(uint32_t reserve_id, const std::string &name);
+		static uint8_t ResolveGender(const std::string &name);
 	};
 	
 	enum class Type : uint32_t
@@ -395,5 +412,6 @@ namespace HunterCheckmate_FileAnalyzer
 		uint32_t GetGroupSize(LaytonAnimal population_idx, uint32_t group_idx) const;
 		bool ReplaceAnimal(std::vector<char> *animal_info, LaytonAnimal population_idx, uint32_t group_idx, uint32_t animal_idx) const;
 		bool ReplaceAnimal(std::vector<char> *animal_info, uint32_t offset) const;
+		bool ReplaceAnimal(AnimalData *animal_data) const;
 	};
 }

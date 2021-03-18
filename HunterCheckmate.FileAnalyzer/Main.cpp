@@ -1,21 +1,28 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <algorithm>
+#include <string>
 #include "AdfFile.h"
 
-// TODO: - find visual variation seed algorithm in IDA Pro
-// TODO: - refactor, faster runtime
-
+// TODO: - add -rep -preset presets
+// TODO: - add preset cli (print available presets upon asking user which animal presets to print)
+// TODO: - add -rep -custom type converter to std::vector<char>*
+// TODO: - implement ReplaceAnimal overload for AnimalData objects (=> add std::vector<char>* into AnimalData)
+// 
 // TODO: - make exception class for e.g. if (!initialized) return 0 in AdfFile.cpp;
 // TODO: - change Utility class to accept input file destination and handle setting up if's and of's on its own
-// TODO: - add more AnimalData and LaytonAnimal enumerations (combine both???)
+// TODO: - refactor, faster runtime
 
 void PrintUsage()
 {
-	std::cout << "Usage: HunterCheckmate.FileAnalyzer.exe <population_file_path> [-oc | -of | -ocg]" << std::endl
-		<< "-oc: Output whole file contents on console" << std::endl
-		<< "-of: Output whole file contents into .txt file" << std::endl
-		<< "-ocg: Output animal group informations on console" << std::endl;
+	std::cout << "Usage: HunterCheckmate.FileAnalyzer.exe <population_file_path> [-oc | -of | -ocg | -rep <[-custom | -preset]>" << std::endl
+		<< std::setw(6) << "-oc: " << std::setw(0) << "Output whole file contents on console" << std::endl
+		<< std::setw(6) << "-of: " << std::setw(0) << "Output whole file contents into .txt file" << std::endl
+		<< std::setw(6) << "-ocg: " << std::setw(0) << "Output animal group informations on console" << std::endl
+		<< std::setw(6) << "-rep: " << std::setw(0) << "Replaces an animal with a new one" << std::endl
+		<< "     " << std::setw(9) << "-custom: " << std::setw(0) << "Specify animal data yourself" << std::endl
+		<< "     " << std::setw(9) << "-preset: " << std::setw(0) << "Choose from some of the presets" << std::endl;
 }
 
 bool ContainsElement(char *arr[], const std::string &element)
@@ -41,43 +48,52 @@ uint8_t GetPosition(char *arr[], const std::string &element)
 	return pos;
 }
 
-void SetMask(char *arr[], std::vector<bool>* mask, uint8_t pos)
+void SetMask(char *arr[], std::vector<bool> *mask, uint8_t pos, std::vector<std::string> *values)
 {
 	uint32_t idx = pos;
 	while (arr[idx] != nullptr)
 	{
 		idx++;
 		if (arr[idx] == nullptr) break;
-		if (std::string(arr[idx]) == "-moose")		{ mask->at(0) = true; continue; }
-		if (std::string(arr[idx]) == "-jackrabbit") { mask->at(1) = true; continue; }
-		if (std::string(arr[idx]) == "-mallard")	{ mask->at(2) = true; continue; }
-		if (std::string(arr[idx]) == "-blackbear")	{ mask->at(3) = true; continue; }
-		if (std::string(arr[idx]) == "-elk")		{ mask->at(4) = true; continue; }
-		if (std::string(arr[idx]) == "-coyote")		{ mask->at(5) = true; continue; }
-		if (std::string(arr[idx]) == "-blacktail")	{ mask->at(6) = true; continue; }
-		if (std::string(arr[idx]) == "-whitetail")	{ mask->at(7) = true; }
+		
+		auto it = std::find(values->begin(), values->end(), std::string(arr[idx]));
+		if (it == values->end()) break;
+		
+		const uint32_t it_pos = it - values->begin();
+		mask->at(it_pos) = true;
 	}
 
-	bool no_hit = true;
-	for (auto&& i : *mask)
+	// Set everything to true, since user wants to get info of everything
+	auto it = std::find(mask->begin(), mask->end(), true);
+	if (it == mask->end()) std::replace(mask->begin(), mask->end(), false, true);
+}
+
+void SetMask(char *arr[], std::vector<bool> *mask, uint8_t pos)
+{
+	uint32_t idx = pos;
+	while (arr[idx] != nullptr)
 	{
-		if (i == true) no_hit = false;
+		idx++;
+		if (arr[idx] == nullptr) break;
+		if (std::string(arr[idx]) == "-custom") { mask->at(0) = true; break; }
+		if (std::string(arr[idx]) == "-preset") { mask->at(1) = true; break; }
 	}
-
-	if (no_hit) { for (auto&& i : *mask) i = true; }
 }
 
 int main(int argc, char *argv[])
 {
 	using namespace HunterCheckmate_FileAnalyzer;
 
-	bool flag_oc, flag_of, flag_ocg = false;
-	
-	uint8_t mask_pos;
-	// 0 = moose, 1 = jackrabbit, ...
-	std::vector<bool> mask_ocg = std::vector<bool>(8);
 	const char* file_path;
+	bool flag_oc, flag_of, flag_ocg, flag_rep = false;
+	
+	uint8_t mask_ocg_pos;
+	std::vector<bool> mask_ocg = std::vector<bool>(8);
+	auto *mask_ocg_values = new std::vector<std::string>();
 
+	uint8_t mask_rep_pos;
+	std::vector<bool> mask_rep = std::vector<bool>(2);
+	
 	if (argc < 2) {	PrintUsage(); return 1;	}
 	if (argc == 2 && ContainsElement(argv,  "-h")) { PrintUsage(); return 1; }
 	if (argc >= 2) { file_path = argv[1]; }
@@ -89,8 +105,16 @@ int main(int argc, char *argv[])
 		flag_ocg = ContainsElement(argv, "-ocg");
 		if (flag_ocg)
 		{
-			mask_pos = GetPosition(argv, "-ocg");
-			SetMask(argv, &mask_ocg, mask_pos);
+			mask_ocg_pos = GetPosition(argv, "-ocg");
+			*mask_ocg_values = {"-moose", "-jackrabbit", "-mallard", "-blackbear", "-elk", "-coyote", "-blacktail", "-whitetail"};
+			SetMask(argv, &mask_ocg, mask_ocg_pos, mask_ocg_values);
+		}
+		flag_rep = ContainsElement(argv, "-rep");
+		if (flag_rep)
+		{
+			mask_rep_pos = GetPosition(argv, "-rep");
+			SetMask(argv, &mask_rep, mask_rep_pos);
+			if (std::find(mask_rep.begin(), mask_rep.end(), true) == mask_rep.end()) { PrintUsage(); return 1; }
 		}
 	}
 	
@@ -102,7 +126,7 @@ int main(int argc, char *argv[])
 	auto *utility = new Utility(Endian::Little, ifstream, ofstream);
 	auto* adf = new AdfFile(utility);
 	bool success = adf->Deserialize();
-
+	
 	// console output
 	if (success && flag_oc)
 	{
@@ -1299,10 +1323,39 @@ int main(int argc, char *argv[])
 			std::cout << std::endl << "Total number of animals: " << static_cast<int>(total_number_of_animals) << std::endl << std::endl;
 		}
 	}
-	
-	auto *animal_data = new AnimalData();
-	
-	delete animal_data;
+
+	if (success && flag_rep)
+	{
+		// Custom input
+		if (mask_rep.at(0) == true)
+		{
+			std::string name;
+			std::string gender;
+			float weight;
+			float score;
+			uint8_t is_great_one;
+			uint32_t visual_variation_seed;
+
+			std::cout << std::setw(23) << "Name: "; std::cin >> name;
+			std::cout << std::setw(23) << "Gender: "; std::cin >> gender;
+			std::cout << std::setw(23) << "Weight: "; std::cin >> weight;
+			std::cout << std::setw(23) << "Score: "; std::cin >> score;
+			std::cout << std::setw(23) << "Is Great One: "; std::cin >> is_great_one;
+			std::cout << std::setw(23) << "Visual Variation Seed: "; std::cin >> visual_variation_seed;
+
+			AnimalData *animal_data = new AnimalData(AnimalData::ResolveId(0, name), AnimalData::ResolveGender(gender), weight, score, is_great_one, visual_variation_seed);
+			adf->ReplaceAnimal(animal_data);
+			delete animal_data;
+		}
+
+		// Preset input
+		else if (mask_rep.at(1) == true)
+		{
+			
+		}
+	}
+
+	delete mask_ocg_values;
 	delete adf;
 	
 	return 0;

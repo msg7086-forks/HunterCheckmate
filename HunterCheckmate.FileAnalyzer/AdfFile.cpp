@@ -1,5 +1,7 @@
 #include "AdfFile.h"
 
+#include <utility>
+
 namespace HunterCheckmate_FileAnalyzer
 {
 	static TypedefHeader* HashExists(uint32_t hash, std::vector<TypedefHeader> *header_typedefs)
@@ -9,6 +11,43 @@ namespace HunterCheckmate_FileAnalyzer
 			if (hash == iterator->name_hash) return &*iterator;
 		}
 		return nullptr;
+	}
+
+	AnimalData::AnimalData(uint32_t id, uint8_t gender, float weight, float score, uint8_t is_great_one, uint32_t visual_variation_seed)
+	{
+		this->id = id;
+		this->gender = gender;
+		this->weight = weight;
+		this->score = score;
+		this->is_great_one = is_great_one;
+		this->visual_variation_seed = visual_variation_seed;
+	}
+
+	uint32_t AnimalData::ResolveId(uint32_t reserve_id, const std::string& name)
+	{
+		switch (reserve_id)
+		{
+		case 0:
+		{
+			if (name == "moose") return 0;
+			if (name == "jackrabbit") return 1;
+			if (name == "mallard") return 2;
+			if (name == "blackbear") return 3;
+			if (name == "elk") return 4;
+			if (name == "coyote") return 5;
+			if (name == "blacktail") return 6;
+			if (name == "whitetail") return 7;
+		}
+		default:
+			return 0;
+		}
+	}
+
+	uint8_t AnimalData::ResolveGender(const std::string& name)
+	{
+		if (name == "male") return 1;
+		if (name == "female") return 2;
+		return 0;
 	}
 
 	Member::Member()
@@ -487,5 +526,10 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		this->utility->Write(animal_info, offset, animal_info->size());
 		return true;
+	}
+
+	bool AdfFile::ReplaceAnimal(AnimalData *animal_data) const
+	{
+		return false;
 	}
 }
