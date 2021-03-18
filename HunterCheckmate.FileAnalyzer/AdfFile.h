@@ -384,6 +384,12 @@ namespace HunterCheckmate_FileAnalyzer
 		AdfFile(Utility *utility);
 		~AdfFile();
 		bool Deserialize();
+		
+		uint8_t GetGender(LaytonAnimal population_idx, uint32_t group_idx, uint32_t animal_idx) const;
+		float GetWeight(LaytonAnimal population_idx, uint32_t group_idx, uint32_t animal_idx) const;
+		float GetScore(LaytonAnimal population_idx, uint32_t group_idx, uint32_t animal_idx) const;
+		bool IsGreatOne(LaytonAnimal population_idx, uint32_t group_idx, uint32_t animal_idx) const;
+		uint32_t GetVisualVariationSeed(LaytonAnimal population_idx, uint32_t group_idx, uint32_t animal_idx) const;
 		int32_t GetSpawnAreaId(LaytonAnimal population_idx, uint32_t group_idx) const;
 		uint32_t GetNumberOfGroups(LaytonAnimal population_idx) const;
 		uint32_t GetGroupSize(LaytonAnimal population_idx, uint32_t group_idx) const;

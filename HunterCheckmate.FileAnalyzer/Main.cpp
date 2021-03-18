@@ -3,7 +3,6 @@
 #include <iostream>
 #include "AdfFile.h"
 
-// TODO: - make file selectable via cli
 // TODO: - find visual variation seed algorithm in IDA Pro
 // TODO: - refactor, faster runtime
 
@@ -11,22 +10,101 @@
 // TODO: - change Utility class to accept input file destination and handle setting up if's and of's on its own
 // TODO: - add more AnimalData and LaytonAnimal enumerations (combine both???)
 
-int main()
+void PrintUsage()
+{
+	std::cout << "Usage: HunterCheckmate.FileAnalyzer.exe <population_file_path> [-oc | -of | -ocg]" << std::endl
+		<< "-oc: Output whole file contents on console" << std::endl
+		<< "-of: Output whole file contents into .txt file" << std::endl
+		<< "-ocg: Output animal group informations on console" << std::endl;
+}
+
+bool ContainsElement(char *arr[], const std::string &element)
+{
+	uint8_t idx = 0;
+	while (arr[idx] != nullptr)
+	{
+		if (std::string(arr[idx]) == element) return true;
+		idx++;
+	}
+	return false;
+}
+
+uint8_t GetPosition(char *arr[], const std::string &element)
+{
+	uint8_t idx = 0;
+	uint8_t pos = idx;
+	while (arr[idx] != nullptr)
+	{
+		if (std::string(arr[idx]) == element) pos = idx;
+		idx++;
+	}
+	return pos;
+}
+
+void SetMask(char *arr[], std::vector<bool>* mask, uint8_t pos)
+{
+	uint32_t idx = pos;
+	while (arr[idx] != nullptr)
+	{
+		idx++;
+		if (arr[idx] == nullptr) break;
+		if (std::string(arr[idx]) == "-moose")		{ mask->at(0) = true; continue; }
+		if (std::string(arr[idx]) == "-jackrabbit") { mask->at(1) = true; continue; }
+		if (std::string(arr[idx]) == "-mallard")	{ mask->at(2) = true; continue; }
+		if (std::string(arr[idx]) == "-blackbear")	{ mask->at(3) = true; continue; }
+		if (std::string(arr[idx]) == "-elk")		{ mask->at(4) = true; continue; }
+		if (std::string(arr[idx]) == "-coyote")		{ mask->at(5) = true; continue; }
+		if (std::string(arr[idx]) == "-blacktail")	{ mask->at(6) = true; continue; }
+		if (std::string(arr[idx]) == "-whitetail")	{ mask->at(7) = true; }
+	}
+
+	bool no_hit = true;
+	for (auto&& i : *mask)
+	{
+		if (i == true) no_hit = false;
+	}
+
+	if (no_hit) { for (auto&& i : *mask) i = true; }
+}
+
+int main(int argc, char *argv[])
 {
 	using namespace HunterCheckmate_FileAnalyzer;
-	auto *ifstream = new std::ifstream(R"(C:\Users\oleSQL\Documents\thehunter working\pop\decomp_animal_population_1)",
-		std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
-	auto *ofstream = new std::ofstream(R"(C:\Users\oleSQL\Documents\thehunter working\pop\decomp_animal_population_1)",
-		std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
 
-	if (!(ifstream->is_open() && ofstream->is_open())) return -420;
+	bool flag_oc, flag_of, flag_ocg = false;
+	
+	uint8_t mask_pos;
+	// 0 = moose, 1 = jackrabbit, ...
+	std::vector<bool> mask_ocg = std::vector<bool>(8);
+	const char* file_path;
+
+	if (argc < 2) {	PrintUsage(); return 1;	}
+	if (argc == 2 && ContainsElement(argv,  "-h")) { PrintUsage(); return 1; }
+	if (argc >= 2) { file_path = argv[1]; }
+	else { return 1; }
+	if (argc >= 3)
+	{
+		flag_oc = ContainsElement(argv, "-oc");
+		flag_of = ContainsElement(argv, "-of");
+		flag_ocg = ContainsElement(argv, "-ocg");
+		if (flag_ocg)
+		{
+			mask_pos = GetPosition(argv, "-ocg");
+			SetMask(argv, &mask_ocg, mask_pos);
+		}
+	}
+	
+	auto *ifstream = new std::ifstream(file_path, std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
+	auto *ofstream = new std::ofstream(file_path, std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
+
+	if (!(ifstream->is_open() && ofstream->is_open())) return 1;
 
 	auto *utility = new Utility(Endian::Little, ifstream, ofstream);
 	auto* adf = new AdfFile(utility);
 	bool success = adf->Deserialize();
 
 	// console output
-	if (false)
+	if (success && flag_oc)
 	{
 		std::cout << "====================================================" << std::endl;
 		std::cout << "GENERAL HEADER INFO:" << std::endl;
@@ -583,7 +661,7 @@ int main()
 	}
 
 	// file output
-	if (false)
+	if (success && flag_of)
 	{
 		std::ofstream *output_file = new std::ofstream;
 		output_file->open(R"(C:\Users\oleSQL\Documents\thehunter working\pop\animal_population_1_info.txt)", std::ios::out | std::ios::ate | std::ios::trunc);
@@ -1150,10 +1228,11 @@ int main()
 	}
 
 	// console output group infos
-	if (success)
+	if (success && flag_ocg)
 	{
 		for (int i = 0; i < 8; i++)
 		{
+			if (mask_ocg.at(i) == false) continue;
 			std::string animal;
 			switch (i)
 			{
@@ -1167,38 +1246,60 @@ int main()
 				animal = "Mallard";
 				break;
 			case (3):
-				animal = "BlackBear";
+				animal = "Black Bear";
 				break;
 			case (4):
-				animal = "RooseveltElk";
+				animal = "Roosevelt Elk";
 				break;
 			case (5):
 				animal = "Coyote";
 				break;
 			case (6):
-				animal = "BlacktailDeer";
+				animal = "Blacktail Deer";
 				break;
 			case (7):
-				animal = "WhitetailDeer";
+				animal = "Whitetail Deer";
 				break;
 			default:
 				break;
 			}
 			uint32_t total_number_of_animals = 0;
 			uint32_t number_of_groups = adf->GetNumberOfGroups(LaytonAnimal(i));
-			std::cout << "Number of " << animal.c_str() << " groups: " << static_cast<int>(number_of_groups) << std::endl;
-			for (int j = 0; j < static_cast<int>(number_of_groups); j++)
-			{
-				total_number_of_animals += adf->GetGroupSize(LaytonAnimal(i), j);
-				std::cout << "     " << "Group " << j << " has size of " << static_cast<int>(adf->GetGroupSize(LaytonAnimal(i), j))
-				<< " and SpawnAreaId " << static_cast<int>(adf->GetSpawnAreaId(LaytonAnimal(i), j)) << std::endl;
+			std::cout << animal.c_str() << " Groups [ #" << number_of_groups << " ]" << std::endl;
+
+			for (uint32_t j = 0; j < number_of_groups; j++)
+			{	
+				uint32_t group_size = adf->GetGroupSize(LaytonAnimal(i), j);
+				total_number_of_animals += group_size;
+				
+				std::cout << std::endl << "           " << "[ " << j << " | #" << std::setw(2) << adf->GetGroupSize(LaytonAnimal(i), j)
+					<< " | " << std::setw(0) << adf->GetSpawnAreaId(LaytonAnimal(i), j) << " ]" << std::endl;
+
+				for (uint32_t k = 0; k < group_size; k++)
+				{
+					std::string gender_arr[2] = { "Male", "Female" };
+					uint8_t ui_gender = adf->GetGender(LaytonAnimal(i), j, k);
+					std::string gender = gender_arr[ui_gender - 1];
+					float weight = adf->GetWeight(LaytonAnimal(i), j, k);
+					float score = adf->GetScore(LaytonAnimal(i), j, k);
+					bool is_great_one = adf->IsGreatOne(LaytonAnimal(i), j, k);
+					uint32_t visual_variation_seed = adf->GetVisualVariationSeed(LaytonAnimal(i), j, k);
+
+					std::cout << "[ " << k
+						<< " | " << std::setw(6) << gender.c_str()
+						<< " | " << std::setw(7) << weight
+						<< " | " << std::setw(8) << score
+						<< " | " << std::setw(1) << is_great_one
+						<< " | " << std::setw(5) << visual_variation_seed
+						<< " ]" << std::endl;
+				}
 			}
-			std::cout << "Total number of animals: " << static_cast<int>(total_number_of_animals) << std::endl << std::endl;
+			std::cout << std::endl << "Total number of animals: " << static_cast<int>(total_number_of_animals) << std::endl << std::endl;
 		}
 	}
 	
 	auto *animal_data = new AnimalData();
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_0, LaytonAnimal::WhitetailDeer, 0x0, 0x0);
+	/*adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_0, LaytonAnimal::WhitetailDeer, 0x0, 0x0);
 	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_1, LaytonAnimal::WhitetailDeer, 0x1, 0x0);
 	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_2, LaytonAnimal::WhitetailDeer, 0x2, 0x0);
 	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_3, LaytonAnimal::WhitetailDeer, 0x3, 0x0);
@@ -1209,14 +1310,10 @@ int main()
 	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_8, LaytonAnimal::WhitetailDeer, 0x8, 0x0);
 	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_9, LaytonAnimal::WhitetailDeer, 0x9, 0x0);
 	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_10, LaytonAnimal::WhitetailDeer, 0xA, 0x0);
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_10, LaytonAnimal::WhitetailDeer, 0xB, 0x0);
-
+	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_10, LaytonAnimal::WhitetailDeer, 0xB, 0x0);*/
 	
 	delete animal_data;
 	delete adf;
-	
-	uint32_t end;
-	std::cin >> end;
 	
 	return 0;
 }

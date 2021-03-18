@@ -41,7 +41,7 @@ namespace HunterCheckmate_FileAnalyzer
 		delete[] data;
 	}
 	
-	Instance::Instance(std::vector<TypedefHeader>* header_typedefs, Utility * utility, InstanceHeader * header_instance, TypedefHeader * header_typedef)
+	Instance::Instance(std::vector<TypedefHeader>* header_typedefs, Utility *utility, InstanceHeader *header_instance, TypedefHeader *header_typedef)
 	{
 		this->header_typedefs = header_typedefs;
 		this->utility = utility;
@@ -82,8 +82,6 @@ namespace HunterCheckmate_FileAnalyzer
 
 		char* data = new char[member->size];
 		utility->Read(data, offset, member->size);
-		// TODO: fix the fucking read function you god damn moron
-		std::reverse(&data[0], &data[member->size]);
 		member->data = data;
 	}
 
@@ -405,13 +403,58 @@ namespace HunterCheckmate_FileAnalyzer
 		return true;
 	}
 
+	uint8_t AdfFile::GetGender(LaytonAnimal population_idx, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		if (!initialized) return 0;
+
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(static_cast<uint32_t>(population_idx))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(0).data;
+		return *reinterpret_cast<int8_t*>(data);
+	}
+
+	float AdfFile::GetWeight(LaytonAnimal population_idx, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		if (!initialized) return 0;
+
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(static_cast<uint32_t>(population_idx))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(1).data;
+		return *reinterpret_cast<float*>(data);
+	}
+
+	float AdfFile::GetScore(LaytonAnimal population_idx, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		if (!initialized) return 0;
+
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(static_cast<uint32_t>(population_idx))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(2).data;
+		return *reinterpret_cast<float*>(data);
+	}
+
+	bool AdfFile::IsGreatOne(LaytonAnimal population_idx, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		if (!initialized) return 0;
+
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(static_cast<uint32_t>(population_idx))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(3).data;
+		return *reinterpret_cast<bool*>(data);
+	}
+
+	uint32_t AdfFile::GetVisualVariationSeed(LaytonAnimal population_idx, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		if (!initialized) return 0;
+
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(static_cast<uint32_t>(population_idx))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(4).data;
+		return *reinterpret_cast<uint32_t*>(data);
+	}
+	
 	int32_t AdfFile::GetSpawnAreaId(LaytonAnimal population_idx, uint32_t group_idx) const
 	{
 		if (!initialized) return 0;
 
 		auto* data = this->instances->at(0).members->at(1).sub_members->at(static_cast<uint32_t>(population_idx))
 			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(0).data;
-		return reinterpret_cast<int32_t>(data);
+		return *reinterpret_cast<int32_t*>(data);
 	}
 
 	uint32_t AdfFile::GetNumberOfGroups(LaytonAnimal population_idx) const
