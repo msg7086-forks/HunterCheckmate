@@ -706,7 +706,7 @@ int main(int argc, char *argv[])
 
 			*output_file << "************************************** HEADER INFO TYPEDEF " << std::dec << idx << tmp << std::endl
 			<< "*" << std::setw(100) << std::right << "*" << std::endl << std::right
-			<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable->name->at(it->name_idx).c_str() << std::setw(43) << std::right << "*" << std::endl
+			<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable->name->at(static_cast<const unsigned int>(it->name_idx)).c_str() << std::setw(43) << std::right << "*" << std::endl
 			<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Type: " << std::setw(32) << std::left << std::dec << typeString[static_cast<uint32_t>(it->type)] << std::setw(43) << std::right << "*" << std::endl
 			<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Size: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << it->size << std::setw(43) << std::right << "*" << std::endl
 			<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Alignment: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << it->alignment << std::setw(43) << std::right << "*" << std::endl
@@ -728,7 +728,7 @@ int main(int argc, char *argv[])
 					
 					*output_file << "*" << std::setw(0) << "     " << "********************************* HEADER INFO MEMBER " << std::dec << mem_idx << tmp << "     " << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(89) << std::right << "*     *" << std::endl
-					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable->name->at(mem_it->name_idx).c_str() << std::setw(42) << std::right << "*     *" << std::endl
+					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable->name->at(static_cast<const unsigned int>(mem_it->name_idx)).c_str() << std::setw(42) << std::right << "*     *" << std::endl
 					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Type: " << std::left << std::setw(32) << std::hex << primitiveString(Primitive(mem_it->type_hash)) << std::setw(42) << std::right << "*     *" << std::endl
 					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name_idx: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << mem_it->name_idx << std::setw(42) << std::right << "*     *" << std::endl
 					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Type_hash: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << mem_it->type_hash << std::setw(42) << std::right << "*     *" << std::endl
@@ -1263,6 +1263,7 @@ int main(int argc, char *argv[])
 			default:
 				break;
 			}
+
 			uint32_t total_number_of_animals = 0;
 			uint32_t number_of_groups = adf->GetNumberOfGroups(LaytonAnimal(i));
 			std::cout << animal.c_str() << " Groups [ #" << number_of_groups << " ]" << std::endl;
@@ -1272,7 +1273,7 @@ int main(int argc, char *argv[])
 				uint32_t group_size = adf->GetGroupSize(LaytonAnimal(i), j);
 				total_number_of_animals += group_size;
 				
-				std::cout << std::endl << "           " << "[ " << j << " | #" << std::setw(2) << adf->GetGroupSize(LaytonAnimal(i), j)
+				std::cout << std::endl << "           " << "[ " << j << " | #" << std::setw(2) << group_size
 					<< " | " << std::setw(0) << adf->GetSpawnAreaId(LaytonAnimal(i), j) << " ]" << std::endl;
 
 				for (uint32_t k = 0; k < group_size; k++)
@@ -1294,23 +1295,12 @@ int main(int argc, char *argv[])
 						<< " ]" << std::endl;
 				}
 			}
+
 			std::cout << std::endl << "Total number of animals: " << static_cast<int>(total_number_of_animals) << std::endl << std::endl;
 		}
 	}
 	
 	auto *animal_data = new AnimalData();
-	/*adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_0, LaytonAnimal::WhitetailDeer, 0x0, 0x0);
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_1, LaytonAnimal::WhitetailDeer, 0x1, 0x0);
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_2, LaytonAnimal::WhitetailDeer, 0x2, 0x0);
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_3, LaytonAnimal::WhitetailDeer, 0x3, 0x0);
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_4, LaytonAnimal::WhitetailDeer, 0x4, 0x0);
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_5, LaytonAnimal::WhitetailDeer, 0x5, 0x0);
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_6, LaytonAnimal::WhitetailDeer, 0x6, 0x0);
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_7, LaytonAnimal::WhitetailDeer, 0x7, 0x0);
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_8, LaytonAnimal::WhitetailDeer, 0x8, 0x0);
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_9, LaytonAnimal::WhitetailDeer, 0x9, 0x0);
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_10, LaytonAnimal::WhitetailDeer, 0xA, 0x0);
-	adf->ReplaceAnimal(animal_data->whitetail_max_weight_diamond_10, LaytonAnimal::WhitetailDeer, 0xB, 0x0);*/
 	
 	delete animal_data;
 	delete adf;
