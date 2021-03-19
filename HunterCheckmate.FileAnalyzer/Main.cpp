@@ -8,7 +8,6 @@
 // TODO: - add -rep -preset presets
 // TODO: - add preset cli (print available presets upon asking user which animal presets to print)
 // TODO: - add -rep -custom type converter to std::vector<char>*
-// TODO: - implement ReplaceAnimal overload for AnimalData objects (=> add std::vector<char>* into AnimalData)
 // 
 // TODO: - make exception class for e.g. if (!initialized) return 0 in AdfFile.cpp;
 // TODO: - change Utility class to accept input file destination and handle setting up if's and of's on its own
@@ -84,19 +83,18 @@ int main(int argc, char *argv[])
 {
 	using namespace HunterCheckmate_FileAnalyzer;
 
-	const char* file_path;
+	std::string* file_path = new std::string();
 	bool flag_oc, flag_of, flag_ocg, flag_rep = false;
-	
-	uint8_t mask_ocg_pos;
-	std::vector<bool> mask_ocg = std::vector<bool>(8);
-	auto *mask_ocg_values = new std::vector<std::string>();
+
+	std::string str_ocg;
+	uint8_t str_ocg_pos;
 
 	uint8_t mask_rep_pos;
 	std::vector<bool> mask_rep = std::vector<bool>(2);
 	
 	if (argc < 2) {	PrintUsage(); return 1;	}
-	if (argc == 2 && ContainsElement(argv,  "-h")) { PrintUsage(); return 1; }
-	if (argc >= 2) { file_path = argv[1]; }
+	if (argc >= 2 && ContainsElement(argv,  "-h")) { PrintUsage(); return 1; }
+	if (argc >= 2) { *file_path = std::string(argv[1]); }
 	else { return 1; }
 	if (argc >= 3)
 	{
@@ -105,9 +103,13 @@ int main(int argc, char *argv[])
 		flag_ocg = ContainsElement(argv, "-ocg");
 		if (flag_ocg)
 		{
-			mask_ocg_pos = GetPosition(argv, "-ocg");
-			*mask_ocg_values = {"-moose", "-jackrabbit", "-mallard", "-blackbear", "-elk", "-coyote", "-blacktail", "-whitetail"};
-			SetMask(argv, &mask_ocg, mask_ocg_pos, mask_ocg_values);
+			str_ocg_pos = GetPosition(argv, "-ocg");
+			if (argv[str_ocg_pos+1] != nullptr)
+			{
+				str_ocg = argv[str_ocg_pos+1];
+				if (str_ocg.at(0) != '-') str_ocg = "";
+				else str_ocg.erase(str_ocg.begin());
+			}
 		}
 		flag_rep = ContainsElement(argv, "-rep");
 		if (flag_rep)
@@ -118,13 +120,15 @@ int main(int argc, char *argv[])
 		}
 	}
 	
-	auto *ifstream = new std::ifstream(file_path, std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
-	auto *ofstream = new std::ofstream(file_path, std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
+	auto *ifstream = new std::ifstream(file_path->c_str(), std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
+	auto *ofstream = new std::ofstream(file_path->c_str(), std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
 
 	if (!(ifstream->is_open() && ofstream->is_open())) return 1;
 
 	auto *utility = new Utility(Endian::Little, ifstream, ofstream);
-	auto* adf = new AdfFile(utility);
+	uint8_t reserve_id = static_cast<uint8_t>(file_path->back()) - static_cast<uint8_t>('0');
+	auto *reserve_data = new ReserveData(reserve_id);
+	auto *adf = new AdfFile(utility, reserve_data);
 	bool success = adf->Deserialize();
 	
 	// console output
@@ -1254,63 +1258,51 @@ int main(int argc, char *argv[])
 	// console output group infos
 	if (success && flag_ocg)
 	{
-		for (int i = 0; i < 8; i++)
+		auto it_begin = adf->reserve_data->animal_names.begin();
+		auto it_end = adf->reserve_data->animal_names.end();
+
+		bool loop_all = true;
+
+		if (!str_ocg.empty())
 		{
-			if (mask_ocg.at(i) == false) continue;
-			std::string animal;
-			switch (i)
+			auto tmp_elem = std::find_if(it_begin, it_end, [str_ocg](const std::string &str)
 			{
-			case (0):
-				animal = "Moose";
-				break;
-			case (1):
-				animal = "Jackrabbit";
-				break;
-			case (2):
-				animal = "Mallard";
-				break;
-			case (3):
-				animal = "Black Bear";
-				break;
-			case (4):
-				animal = "Roosevelt Elk";
-				break;
-			case (5):
-				animal = "Coyote";
-				break;
-			case (6):
-				animal = "Blacktail Deer";
-				break;
-			case (7):
-				animal = "Whitetail Deer";
-				break;
-			default:
-				break;
+				return !str_ocg.empty() && str.find(str_ocg) != std::string::npos;
+			});
+			if (tmp_elem != it_end)
+			{
+				it_begin = tmp_elem;
+				loop_all = false;
 			}
+		}
+	
+		for (; it_begin != it_end; ++it_begin)
+		{
+			std::string animal = *it_begin;
 
 			uint32_t total_number_of_animals = 0;
-			uint32_t number_of_groups = adf->GetNumberOfGroups(LaytonAnimal(i));
+			uint32_t number_of_groups = adf->GetNumberOfGroups(*it_begin);
 			std::cout << animal.c_str() << " Groups [ #" << number_of_groups << " ]" << std::endl;
 
 			for (uint32_t j = 0; j < number_of_groups; j++)
 			{	
-				uint32_t group_size = adf->GetGroupSize(LaytonAnimal(i), j);
+				uint32_t group_size = adf->GetGroupSize(*it_begin, j);
 				total_number_of_animals += group_size;
 				
 				std::cout << std::endl << "           " << "[ " << j << " | #" << std::setw(2) << group_size
-					<< " | " << std::setw(0) << adf->GetSpawnAreaId(LaytonAnimal(i), j) << " ]" << std::endl;
+					<< " | " << std::setw(0) << adf->GetSpawnAreaId(*it_begin, j) << " ]" << std::endl;
 
 				for (uint32_t k = 0; k < group_size; k++)
 				{
 					std::string gender_arr[2] = { "Male", "Female" };
-					uint8_t ui_gender = adf->GetGender(LaytonAnimal(i), j, k);
+					uint8_t ui_gender = adf->GetGender(*it_begin, j, k);
 					std::string gender = gender_arr[ui_gender - 1];
-					float weight = adf->GetWeight(LaytonAnimal(i), j, k);
-					float score = adf->GetScore(LaytonAnimal(i), j, k);
-					bool is_great_one = adf->IsGreatOne(LaytonAnimal(i), j, k);
-					uint32_t visual_variation_seed = adf->GetVisualVariationSeed(LaytonAnimal(i), j, k);
+					float weight = adf->GetWeight(*it_begin, j, k);
+					float score = adf->GetScore(*it_begin, j, k);
+					bool is_great_one = adf->IsGreatOne(*it_begin, j, k);
+					uint32_t visual_variation_seed = adf->GetVisualVariationSeed(*it_begin, j, k);
 
-					std::cout << "[ " << k
+					std::cout << "[ " << std::setw(2) << k
 						<< " | " << std::setw(6) << gender.c_str()
 						<< " | " << std::setw(7) << weight
 						<< " | " << std::setw(8) << score
@@ -1321,31 +1313,66 @@ int main(int argc, char *argv[])
 			}
 
 			std::cout << std::endl << "Total number of animals: " << static_cast<int>(total_number_of_animals) << std::endl << std::endl;
+			if (!loop_all) break;
 		}
 	}
 
+	// replace animal
 	if (success && flag_rep)
 	{
 		// Custom input
 		if (mask_rep.at(0) == true)
 		{
 			std::string name;
-			std::string gender;
-			float weight;
-			float score;
-			uint8_t is_great_one;
-			uint32_t visual_variation_seed;
+			std::string str_group_idx;
+			std::string str_animal_idx;
+			uint32_t group_idx;
+			uint32_t animal_idx;
+			
+			std::cout << "Which animal do you want to replace?" << std::endl;
+			std::cout << "Name: "; std::cin >> name;
+			std::cout << "Group Index: "; std::cin >> str_group_idx;
+			std::cout << "Animal Index: "; std::cin >> str_animal_idx;
 
-			std::cout << std::setw(23) << "Name: "; std::cin >> name;
-			std::cout << std::setw(23) << "Gender: "; std::cin >> gender;
-			std::cout << std::setw(23) << "Weight: "; std::cin >> weight;
-			std::cout << std::setw(23) << "Score: "; std::cin >> score;
-			std::cout << std::setw(23) << "Is Great One: "; std::cin >> is_great_one;
-			std::cout << std::setw(23) << "Visual Variation Seed: "; std::cin >> visual_variation_seed;
+			group_idx = std::stoul(str_group_idx);
+			animal_idx = std::stoul(str_animal_idx);
 
-			AnimalData *animal_data = new AnimalData(AnimalData::ResolveId(0, name), AnimalData::ResolveGender(gender), weight, score, is_great_one, visual_variation_seed);
-			adf->ReplaceAnimal(animal_data);
-			delete animal_data;
+			if (!adf->IsValidAnimal(name, group_idx, animal_idx))
+			{
+				std::cout << std::endl << "You have entered an invalid animal name, group index or animal index! "
+					<< "Please use the -ocg flag to check the present indexes and try again." << std::endl << std::endl;
+				PrintUsage();
+			}
+			else
+			{
+				uint32_t name_idx = adf->reserve_data->GetIndexSub(name);
+				name = adf->reserve_data->animal_names.at(name_idx);
+				std::string gender;
+				std::string weight;
+				std::string score;
+				std::string visual_variation_seed;
+
+				std::cout << std::endl << "Animal found! Please enter the data of the " << name << "." << std::endl;
+				std::cout << "Gender: "; std::cin >> gender;
+				std::cout << "Weight: "; std::cin >> weight;
+				std::cout << "Score: "; std::cin >> score;
+				std::cout << "Fur Type: "; std::cin >> visual_variation_seed;
+
+				AnimalData *animal_data = adf->GenerateAnimalData(name, gender, weight, score, visual_variation_seed);
+				if (animal_data != nullptr)
+				{
+					if (adf->ReplaceAnimal(animal_data, name, group_idx, animal_idx))
+					{
+						std::cout << std::endl << "Success! Good luck hunting down your new animal!" << std::endl;
+					}
+					else
+					{
+						std::cout << std::endl << "Something went wrong..." << std::endl;
+					}
+				}
+
+				delete animal_data;
+			}
 		}
 
 		// Preset input
@@ -1355,7 +1382,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	delete mask_ocg_values;
+	delete file_path;
 	delete adf;
 	
 	return 0;
