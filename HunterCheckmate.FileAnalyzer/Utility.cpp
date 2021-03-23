@@ -26,8 +26,8 @@ namespace HunterCheckmate_FileAnalyzer
 
 	Utility::~Utility()
 	{
-		ifstream->close();
-		ofstream->close();
+		if (!(ifstream == nullptr)) ifstream->close();
+		if (!(ofstream == nullptr)) ofstream->close();
 		delete this->ifstream;
 		delete this->ofstream;
 	}
@@ -42,13 +42,6 @@ namespace HunterCheckmate_FileAnalyzer
 			this->ofstream->seekp(offset + idx);
 			this->ofstream->put(*it);
 		}
-	}
-	
-	bool Utility::CheckSig(uint32_t sig)
-	{
-		uint32_t _sig;
-		Read(&_sig, 0x0);
-		return _sig == sig;
 	}
 
 	std::ifstream *Utility::GetIfstream() const

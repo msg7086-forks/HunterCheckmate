@@ -4,18 +4,6 @@
 
 namespace HunterCheckmate_FileAnalyzer
 {
-	enum class LaytonAnimal : uint32_t
-	{
-		Moose = 0,
-		Jackrabbit = 1,
-		Mallard = 2,
-		BlackBear = 3,
-		RooseveltElk = 4,
-		Coyote = 5,
-		BlacktailDeer = 6,
-		WhitetailDeer = 7
-	};
-	
 	// in little endian
 	struct AnimalData2
 	{
@@ -362,20 +350,19 @@ namespace HunterCheckmate_FileAnalyzer
 
 		void PopulatePrimitive(Member *member, MemberHeader *header_member, uint32_t offset, Primitive primitive) const;
 		void PopulateStructure(Member *member, uint32_t offset, TypedefHeader *header_typedef);
-		void PopulateArray(Member *member, TypedefHeader *header_typedef, uint32_t offset, uint32_t size);
+		void PopulateArray(Member *member, TypedefHeader *header_typedef, uint32_t offset, uint32_t size, bool is_inline = false);
 		void PopulateMembers();
 	};
 	
 	class AdfFile
 	{
 	private:
+		bool SigMatch() const;
+	protected:
 		const uint32_t sig = 0x41444620;
 		bool initialized = false;
-		
-		uint32_t GetAnimalOffset(const std::string&name, uint32_t group_idx, uint32_t animal_idx) const;
-	public:
 		Utility *utility;
-		ReserveData *reserve_data;
+	public:
 		AdfHeader *header;
 		std::vector<InstanceHeader> *header_instances;
 		std::vector<TypedefHeader> *header_typedef;
@@ -383,23 +370,8 @@ namespace HunterCheckmate_FileAnalyzer
 		NametableHeader *header_nametable;
 		std::vector<Instance> *instances;
 		
-		AdfFile(Utility *utility, ReserveData *reserve_data);
+		AdfFile(Utility *utility);
 		~AdfFile();
 		bool Deserialize();
-		bool IsValidAnimal(const std::string& name, uint32_t group_idx, uint32_t animal_idx) const;
-		uint8_t GetGender(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const;
-		float GetWeight(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const;
-		float GetScore(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const;
-		bool IsGreatOne(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const;
-		uint32_t GetVisualVariationSeed(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const;
-		int32_t GetSpawnAreaId(const std::string &name, uint32_t group_idx) const;
-		uint32_t GetNumberOfGroups(const std::string &name) const;
-		uint32_t GetGroupSize(const std::string &name, uint32_t group_idx) const;
-		bool ReplaceAnimal(std::vector<char> *animal_info, const std::string &name, uint32_t group_idx, uint32_t animal_idx) const;
-		bool ReplaceAnimal(std::vector<char> *animal_info, uint32_t offset) const;
-		bool ReplaceAnimal(AnimalData *animal_data, const std::string &name, uint32_t group_idx, uint32_t animal_idx) const;
-		bool ReplaceAnimal(AnimalData *animal_data, uint32_t offset) const;
-		AnimalData *GenerateAnimalData(std::string name, std::string gender, float weight, float score, uint8_t is_great_one, uint32_t visual_variation_seed) const;
-		AnimalData* GenerateAnimalData(std::string name, std::string gender, std::string weight, std::string score, std::string visual_variation_seed) const;
 	};
 }

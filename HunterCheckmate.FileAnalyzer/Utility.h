@@ -41,7 +41,6 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 
 		void Write(std::vector<char>* data, uint32_t offset, uint32_t size = 0) const;
-		bool CheckSig(uint32_t sig);	
 		std::ifstream *GetIfstream() const;
 		std::ofstream *GetOfstream() const;
 	};

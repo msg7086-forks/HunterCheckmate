@@ -2,7 +2,7 @@
 
 namespace HunterCheckmate_FileAnalyzer
 {
-	static TypedefHeader* HashExists(uint32_t hash, std::vector<TypedefHeader> *header_typedefs)
+	static TypedefHeader *HashExists(uint32_t hash, std::vector<TypedefHeader> *header_typedefs)
 	{
 		for (auto iterator = header_typedefs->begin(); iterator != header_typedefs->end(); ++iterator)
 		{
@@ -134,7 +134,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	}
 	
-	void Instance::PopulateArray(Member *member, TypedefHeader *header_typedef, uint32_t offset, uint32_t size)
+	void Instance::PopulateArray(Member *member, TypedefHeader *header_typedef, uint32_t offset, uint32_t size, bool is_inline)
 	{
 		member->header_typedef = header_typedef;
 		member->header_member = nullptr;
@@ -142,7 +142,8 @@ namespace HunterCheckmate_FileAnalyzer
 		member->primitive = Primitive::NONE;
 		member->offset = offset;
 		member->size = size;
-		member->sub_members = new std::vector<Member>(size);
+		if (is_inline) member->sub_members = new std::vector<Member>(header_typedef->element_length);
+		else member->sub_members = new std::vector<Member>(size);
 
 		TypedefHeader *sub_typedef = HashExists(header_typedef->element_type_hash, this->header_typedefs);
 
@@ -194,7 +195,7 @@ namespace HunterCheckmate_FileAnalyzer
 			}
 		}
 	}
-
+	
 	void Instance::PopulateMembers()
 	{
 		uint32_t base = this->header_instance->offset;
@@ -234,6 +235,12 @@ namespace HunterCheckmate_FileAnalyzer
 					PopulateStructure(&*it, offset, sub_typedef);
 					break;
 				}
+				case (Type::InlineArray):
+				{
+					uint32_t offset = base + member_header->offset;
+					uint32_t size = sub_typedef->element_length;
+					PopulateArray(&*it, sub_typedef, offset, size, true);
+				}
 				default:
 					break;
 				}
@@ -241,9 +248,8 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	}
 
-	AdfFile::AdfFile(Utility *utility, ReserveData *reserve_data)
+	AdfFile::AdfFile(Utility *utility)
 	{
-		this->reserve_data = reserve_data;
 		this->utility = utility;
 		this->header = new AdfHeader();
 		this->header_instances = new std::vector<InstanceHeader>;
@@ -264,26 +270,20 @@ namespace HunterCheckmate_FileAnalyzer
 		delete instances;
 	}
 
-	uint32_t AdfFile::GetAnimalOffset(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
+	bool AdfFile::SigMatch() const
 	{
-		if (!initialized) return 0;
-
-		// Member *population = &this->instances->at(0).members->at(1).sub_members->at(static_cast<uint32_t>(population_idx));
-		// Member *groups = &population->sub_members->at(1);
-		// Member *group_animals = &groups->sub_members->at(group_idx).sub_members->at(2);
-		// Member *animal = &group_animals->sub_members->at(animal_idx);
-		// const uint32_t offset = animal->offset;
-		return this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
-			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2)
-			.sub_members->at(animal_idx).offset;
+		uint32_t tmp_sig;
+		utility->Read(&tmp_sig, 0x0);
+		return  tmp_sig == this->sig;
 	}
 
+	
 	bool AdfFile::Deserialize()
 	{
 		constexpr uint32_t TYPEDEF_SIZE = 0x28;
 		constexpr uint32_t MEMBER_SIZE = 0x20;
 
-		if (!utility->CheckSig(this->sig)) return false;
+		if (!SigMatch()) return false;
 
 		header->sig = this->sig;
 		utility->Read(&header->version, 0x4);
@@ -356,9 +356,7 @@ namespace HunterCheckmate_FileAnalyzer
 				break;
 			}
 			default:
-			{
 				break;
-			}
 			}
 
 			header_typedef->push_back(*buffer);
@@ -401,147 +399,5 @@ namespace HunterCheckmate_FileAnalyzer
 
 		this->initialized = true;
 		return true;
-	}
-
-	bool AdfFile::IsValidAnimal(const std::string &name, const uint32_t group_idx, const uint32_t animal_idx) const
-	{
-		if (!initialized) return false;
-
-		const uint32_t name_idx = this->reserve_data->GetIndexSub(name);
-		if (name_idx == UINT32_MAX) return false;
-
-		// size of group array
-		if (group_idx >= this->instances->at(0).members->at(1).sub_members->at(name_idx)
-			.sub_members->at(1).sub_members->size()) return false;
-
-		if (animal_idx >= this->instances->at(0).members->at(1).sub_members->at(name_idx)
-			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->size()) return false;
-
-		return true;
-	}
-
-	uint8_t AdfFile::GetGender(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
-	{
-		if (!initialized) return 0;
-
-		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
-			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(0).data;
-		return *reinterpret_cast<int8_t*>(data);
-	}
-
-	float AdfFile::GetWeight(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
-	{
-		if (!initialized) return 0;
-
-		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
-			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(1).data;
-		return *reinterpret_cast<float*>(data);
-	}
-
-	float AdfFile::GetScore(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
-	{
-		if (!initialized) return 0;
-
-		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
-			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(2).data;
-		return *reinterpret_cast<float*>(data);
-	}
-
-	bool AdfFile::IsGreatOne(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
-	{
-		if (!initialized) return 0;
-
-		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
-			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(3).data;
-		return *reinterpret_cast<bool*>(data);
-	}
-
-	uint32_t AdfFile::GetVisualVariationSeed(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
-	{
-		if (!initialized) return 0;
-
-		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
-			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(4).data;
-		return *reinterpret_cast<uint32_t*>(data);
-	}
-	
-	int32_t AdfFile::GetSpawnAreaId(const std::string &name, uint32_t group_idx) const
-	{
-		if (!initialized) return 0;
-
-		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
-			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(0).data;
-		return *reinterpret_cast<int32_t*>(data);
-	}
-
-	uint32_t AdfFile::GetNumberOfGroups(const std::string &name) const
-	{
-		if (!initialized) return 0;
-		return this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
-			.sub_members->at(1).sub_members->size();
-	}
-
-	uint32_t AdfFile::GetGroupSize(const std::string &name, uint32_t group_idx) const
-	{
-		if (!initialized) return 0;
-		return this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
-			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2)
-			.sub_members->size();
-	}
-	
-	bool AdfFile::ReplaceAnimal(std::vector<char>* animal_info, const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
-	{
-		const uint32_t offset = this->GetAnimalOffset(name, group_idx, animal_idx);
-		if (offset != 0)
-		{
-			this->utility->Write(animal_info, offset, animal_info->size());
-			return true;
-		}
-		return false;
-	}
-
-	bool AdfFile::ReplaceAnimal(std::vector<char> *animal_info, uint32_t offset) const
-	{
-		this->utility->Write(animal_info, offset, animal_info->size());
-		return true;
-	}
-
-	bool AdfFile::ReplaceAnimal(AnimalData* animal_data, const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
-	{
-		const uint32_t offset = this->GetAnimalOffset(name, group_idx, animal_idx);
-		std::vector<char> *data = animal_data->GetBytes();
-		this->utility->Write(data, offset, data->size());
-		return true;
-	}
-
-	bool AdfFile::ReplaceAnimal(AnimalData *animal_data, uint32_t offset) const
-	{
-		std::vector<char> *data = animal_data->GetBytes();
-		this->utility->Write(data, offset, data->size());
-		return true;
-	}
-
-	AnimalData *AdfFile::GenerateAnimalData(std::string name, std::string gender, float weight, float score, uint8_t is_great_one, uint32_t visual_variation_seed) const
-	{
-		AnimalData *animal_data = new AnimalData(this->reserve_data);
-		if (animal_data->SetId(name) && animal_data->SetGender(gender) && animal_data->SetWeight(weight) && animal_data->SetScore(score) 
-			&& animal_data->SetIsGreatOne(is_great_one) && animal_data->SetVisualVariationSeed(visual_variation_seed))
-		{
-			return animal_data;
-		}
-		return nullptr;
-	}
-
-	AnimalData* AdfFile::GenerateAnimalData(std::string name, std::string gender, std::string weight, std::string score,
-		std::string visual_variation_seed) const
-	{
-		AnimalData *animal_data = new AnimalData(this->reserve_data);
-		
-		if (animal_data->SetId(name) && animal_data->SetGender(gender) && animal_data->SetWeight(weight)
-			&& animal_data->SetScore(score) && animal_data->SetIsGreatOne(0) && animal_data->SetVisualVariationSeed(visual_variation_seed))
-		{
-			return animal_data;
-		}
-		return nullptr;
 	}
 }

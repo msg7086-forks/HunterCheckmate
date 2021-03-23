@@ -1,0 +1,170 @@
+#include "AnimalPopulation.h"
+
+namespace HunterCheckmate_FileAnalyzer
+{
+	uint32_t AnimalPopulation::GetAnimalOffset(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		if (!initialized) return 0;
+
+		// Member *population = &this->instances->at(0).members->at(1).sub_members->at(static_cast<uint32_t>(population_idx));
+		// Member *groups = &population->sub_members->at(1);
+		// Member *group_animals = &groups->sub_members->at(group_idx).sub_members->at(2);
+		// Member *animal = &group_animals->sub_members->at(animal_idx);
+		// const uint32_t offset = animal->offset;
+		return this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2)
+			.sub_members->at(animal_idx).offset;
+	}
+
+	AnimalPopulation::AnimalPopulation(Utility * utility, ReserveData * reserve_data): AdfFile(utility)
+	{
+		this->reserve_data = reserve_data;
+	}
+
+	AnimalPopulation::~AnimalPopulation()
+	{
+		delete reserve_data;
+	}
+
+	bool AnimalPopulation::IsValidAnimal(const std::string &name, const uint32_t group_idx, const uint32_t animal_idx) const
+	{
+		if (!initialized) return false;
+
+		const uint32_t name_idx = this->reserve_data->GetIndexSub(name);
+		if (name_idx == UINT32_MAX) return false;
+
+		// size of group array
+		if (group_idx >= this->instances->at(0).members->at(1).sub_members->at(name_idx)
+			.sub_members->at(1).sub_members->size()) return false;
+
+		if (animal_idx >= this->instances->at(0).members->at(1).sub_members->at(name_idx)
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->size()) return false;
+
+		return true;
+	}
+
+	uint8_t AnimalPopulation::GetGender(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		if (!initialized) return 0;
+
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(0).data;
+		return *reinterpret_cast<int8_t*>(data);
+	}
+
+	float AnimalPopulation::GetWeight(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		if (!initialized) return 0;
+
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(1).data;
+		return *reinterpret_cast<float*>(data);
+	}
+
+	float AnimalPopulation::GetScore(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		if (!initialized) return 0;
+
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(2).data;
+		return *reinterpret_cast<float*>(data);
+	}
+
+	bool AnimalPopulation::IsGreatOne(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		if (!initialized) return 0;
+
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(3).data;
+		return *reinterpret_cast<bool*>(data);
+	}
+
+	uint32_t AnimalPopulation::GetVisualVariationSeed(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		if (!initialized) return 0;
+
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(4).data;
+		return *reinterpret_cast<uint32_t*>(data);
+	}
+
+	int32_t AnimalPopulation::GetSpawnAreaId(const std::string &name, uint32_t group_idx) const
+	{
+		if (!initialized) return 0;
+
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(0).data;
+		return *reinterpret_cast<int32_t*>(data);
+	}
+
+	uint32_t AnimalPopulation::GetNumberOfGroups(const std::string &name) const
+	{
+		if (!initialized) return 0;
+		return this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+			.sub_members->at(1).sub_members->size();
+	}
+
+	uint32_t AnimalPopulation::GetGroupSize(const std::string &name, uint32_t group_idx) const
+	{
+		if (!initialized) return 0;
+		return this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2)
+			.sub_members->size();
+	}
+
+	bool AnimalPopulation::ReplaceAnimal(std::vector<char>* animal_info, const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		const uint32_t offset = this->GetAnimalOffset(name, group_idx, animal_idx);
+		if (offset != 0)
+		{
+			this->utility->Write(animal_info, offset, animal_info->size());
+			return true;
+		}
+		return false;
+	}
+
+	bool AnimalPopulation::ReplaceAnimal(std::vector<char> *animal_info, uint32_t offset) const
+	{
+		this->utility->Write(animal_info, offset, animal_info->size());
+		return true;
+	}
+
+	bool AnimalPopulation::ReplaceAnimal(AnimalData* animal_data, const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
+	{
+		const uint32_t offset = this->GetAnimalOffset(name, group_idx, animal_idx);
+		std::vector<char> *data = animal_data->GetBytes();
+		this->utility->Write(data, offset, data->size());
+		return true;
+	}
+
+	bool AnimalPopulation::ReplaceAnimal(AnimalData *animal_data, uint32_t offset) const
+	{
+		std::vector<char> *data = animal_data->GetBytes();
+		this->utility->Write(data, offset, data->size());
+		return true;
+	}
+
+	AnimalData *AnimalPopulation::GenerateAnimalData(std::string name, std::string gender, float weight, float score, uint8_t is_great_one, uint32_t visual_variation_seed) const
+	{
+		AnimalData *animal_data = new AnimalData(this->reserve_data);
+		if (animal_data->SetId(name) && animal_data->SetGender(gender) && animal_data->SetWeight(weight) && animal_data->SetScore(score)
+			&& animal_data->SetIsGreatOne(is_great_one) && animal_data->SetVisualVariationSeed(visual_variation_seed))
+		{
+			return animal_data;
+		}
+		return nullptr;
+	}
+
+	AnimalData* AnimalPopulation::GenerateAnimalData(std::string name, std::string gender, std::string weight, std::string score,
+		std::string visual_variation_seed) const
+	{
+		AnimalData *animal_data = new AnimalData(this->reserve_data);
+
+		if (animal_data->SetId(name) && animal_data->SetGender(gender) && animal_data->SetWeight(weight)
+			&& animal_data->SetScore(score) && animal_data->SetIsGreatOne(0) && animal_data->SetVisualVariationSeed(visual_variation_seed))
+		{
+			return animal_data;
+		}
+		return nullptr;
+	}
+}
