@@ -23,12 +23,8 @@ namespace HunterCheckmate_FileAnalyzer
 	bool AnimalData::SetId(const std::string &animal_name)
 	{
 		const uint32_t tmp_id = ResolveId(animal_name);
-		if (tmp_id != 420)
-		{
-			this->id = tmp_id;
-			return true;
-		}
-		return false;
+		this->id = tmp_id;
+		return true;
 	}
 
 	std::vector<char>* AnimalData::GetBytes()
@@ -146,7 +142,6 @@ namespace HunterCheckmate_FileAnalyzer
 	uint32_t AnimalData::ResolveId(const std::string &name) const
 	{
 		const uint32_t id = this->reserve_data->GetIndex(name);
-		if (id >= this->reserve_data->animal_names.size()) return 420;
 		return id;
 	}
 
@@ -237,22 +232,48 @@ namespace HunterCheckmate_FileAnalyzer
 		switch (this->reserve_data->id)
 		{
 		case 0:
+		{
+			switch (this->id)
+			{
+			case 147581770:
+			case 798672823:
+			case 1056739115:
+			case 2052964502:
+			case 2105558160:
+			case 3321523293:
+			case 3635849363:
+			case 442307937:
+			{
+				if (visual_variation_seed == "common1") return 747;
+				if (visual_variation_seed == "common2") return 32671;
+				if (visual_variation_seed == "melanistic") return 31378;
+				if (visual_variation_seed == "albino") return 12076;
+				if (visual_variation_seed == "piebald") return 14009;
+				if (visual_variation_seed == "common3") return 26115;
+				if (visual_variation_seed == "common4") return 17895;
+				if (visual_variation_seed == "common5") return 19242;
+				if (visual_variation_seed == "common6") return 30067;
+			}
+			default:
+				return INT32_MAX;
+			}
+		}
 		case 1:
 		{
 			switch (this->id)
 			{
-			case 0:
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-			case 7:
+			case 155298792:
+			case 1227103483:
+			case 1905502510:
+			case 2434390669:
+			case 2492964089:
+			case 3041812107:
+			case 3616431897:
+			case 3845994887:
 			{
 				if (visual_variation_seed == "common1") return 747;
 				if (visual_variation_seed == "common2") return 32671;
-				if (visual_variation_seed == "melanistic") return 24779;
+				if (visual_variation_seed == "melanistic") return 31378;
 				if (visual_variation_seed == "albino") return 12076;
 				if (visual_variation_seed == "piebald") return 14009;
 				if (visual_variation_seed == "common3") return 26115;

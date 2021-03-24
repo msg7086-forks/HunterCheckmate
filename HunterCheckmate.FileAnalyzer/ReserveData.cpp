@@ -13,112 +13,115 @@ namespace HunterCheckmate_FileAnalyzer
 			// Hirschfelden
 		case 0:
 			{
-			this->animal_names = std::vector<std::string>();
-			animal_names.emplace_back("wild_boar");
-			animal_names.emplace_back("fallow_deer");
-			animal_names.emplace_back("euro_bison");
-			animal_names.emplace_back("roe_deer");
-			animal_names.emplace_back("red_fox");
-			animal_names.emplace_back("canada_goose");
-			animal_names.emplace_back("red_deer");
-			animal_names.emplace_back("euro_rabbit");
+			this->animal_names = std::map<std::string, uint32_t>();
+			animal_names.emplace("wild_boar", 147581770);
+			animal_names.emplace("fallow_deer", 798672823);
+			animal_names.emplace("euro_bison", 1056739115);
+			animal_names.emplace("roe_deer", 2052964502);
+			animal_names.emplace("red_fox", 2105558160);
+			animal_names.emplace("canada_goose", 3321523293);
+			animal_names.emplace("red_deer", 3635849363);
+			animal_names.emplace("euro_rabbit", 442307937);
 			break;
 			}
 			// Layton
 		case 1:
 			{
-			this->animal_names = std::vector<std::string>();
-			animal_names.emplace_back("moose");
-			animal_names.emplace_back("jackrabbit");
-			animal_names.emplace_back("mallard");
-			animal_names.emplace_back("black_bear");
-			animal_names.emplace_back("roosevelt_elk");
-			animal_names.emplace_back("coyote");
-			animal_names.emplace_back("blacktail_deer");
-			animal_names.emplace_back("whitetail_deer");
+			this->animal_names = std::map<std::string, uint32_t >();
+			animal_names.emplace("moose", 155298792);
+			animal_names.emplace("jackrabbit", 1227103483);
+			animal_names.emplace("mallard", 1905502510);
+			animal_names.emplace("black_bear", 2434390669);
+			animal_names.emplace("roosevelt_elk", 2492964089);
+			animal_names.emplace("coyote", 3041812107);
+			animal_names.emplace("blacktail_deer", 3616431897);
+			animal_names.emplace("whitetail_deer", 3845994887);
 			break;
 			}
 			// Medved
-		case 2:
+/*		case 2:
 			{
-			this->animal_names = std::vector<std::string>();
-			animal_names.emplace_back("musk_deer");
-			animal_names.emplace_back("moose");
-			animal_names.emplace_back("wild_boar");
-			animal_names.emplace_back("reindeer");
-			animal_names.emplace_back("eurasian_lynx");
-			animal_names.emplace_back("brown_bear");
+			this->animal_names = std::map<std::string, uint32_t>();
+			animal_names.emplace("musk_deer");
+			animal_names.emplace("moose");
+			animal_names.emplace("wild_boar");
+			animal_names.emplace("reindeer");
+			animal_names.emplace("eurasian_lynx");
+			animal_names.emplace("brown_bear");
 			break;
 			}
 			// Vurhonga
 		case 3:
 			{
-			this->animal_names = std::vector<std::string>();
-			animal_names.emplace_back("blue_wildebeest");
-			animal_names.emplace_back("side_striped_jackal");
-			animal_names.emplace_back("gemsbok");
-			animal_names.emplace_back("lesser_kudu");
-			animal_names.emplace_back("scrub_hare");
-			animal_names.emplace_back("lion");
-			animal_names.emplace_back("warthog");
-			animal_names.emplace_back("cape_buffalo");
-			animal_names.emplace_back("springbok");
+			this->animal_names = std::map<std::string, uint32_t>();
+			animal_names.emplace("blue_wildebeest");
+			animal_names.emplace("side_striped_jackal");
+			animal_names.emplace("gemsbok");
+			animal_names.emplace("lesser_kudu");
+			animal_names.emplace("scrub_hare");
+			animal_names.emplace("lion");
+			animal_names.emplace("warthog");
+			animal_names.emplace("cape_buffalo");
+			animal_names.emplace("springbok");
 			break;
 			}
 			// Parque
 		case 4:
 			{
-			this->animal_names = std::vector<std::string>();
-			animal_names.emplace_back("red_deer");
-			animal_names.emplace_back("water_buffalo");
-			animal_names.emplace_back("puma");
-			animal_names.emplace_back("blackbuck");
-			animal_names.emplace_back("cinnamon_teal");
-			animal_names.emplace_back("mule_deer");
-			animal_names.emplace_back("axis_deer");
+			this->animal_names = std::map<std::string, uint32_t>();
+			animal_names.emplace("red_deer");
+			animal_names.emplace("water_buffalo");
+			animal_names.emplace("puma");
+			animal_names.emplace("blackbuck");
+			animal_names.emplace("cinnamon_teal");
+			animal_names.emplace("mule_deer");
+			animal_names.emplace("axis_deer");
 			break;
 			}
 			// Yukon
 		case 6:
 			{
-			this->animal_names = std::vector<std::string>();
-			animal_names.emplace_back("harlequin_duck");
-			animal_names.emplace_back("moose");
-			animal_names.emplace_back("red_fox");
-			animal_names.emplace_back("caribou");
-			animal_names.emplace_back("grizzly_bear");
-			animal_names.emplace_back("gray_wolf");
-			animal_names.emplace_back("plains_bison");
+			this->animal_names = std::map<std::string, uint32_t>();
+			animal_names.emplace("harlequin_duck");
+			animal_names.emplace("moose");
+			animal_names.emplace("red_fox");
+			animal_names.emplace("caribou");
+			animal_names.emplace("grizzly_bear");
+			animal_names.emplace("gray_wolf");
+			animal_names.emplace("plains_bison");
 			break;
 			}
 			// Cuatro
 		case 8:
 			{
 				// TODO
+			break;
 			}
 			// Silve Ridge
 		case 9:
 			{
-			this->animal_names = std::vector<std::string>();
-			animal_names.emplace_back("pronghorn");
-			animal_names.emplace_back("mountain_lion");
-			animal_names.emplace_back("mountain_goat");
-			animal_names.emplace_back("bighorn_sheep");
-			animal_names.emplace_back("turkey");
-			animal_names.emplace_back("black_bear");
-			animal_names.emplace_back("mule_deer");
-			animal_names.emplace_back("rocky_mountain_elk");
-			animal_names.emplace_back("plains_bison");
+			this->animal_names = std::map<std::string, uint32_t>();
+			animal_names.emplace("pronghorn");
+			animal_names.emplace("mountain_lion");
+			animal_names.emplace("mountain_goat");
+			animal_names.emplace("bighorn_sheep");
+			animal_names.emplace("turkey");
+			animal_names.emplace("black_bear");
+			animal_names.emplace("mule_deer");
+			animal_names.emplace("rocky_mountain_elk");
+			animal_names.emplace("plains_bison");
 			break;
 			}
 			// Te Awora
 		case 10:
 			{
 				// TODO
-			}
+			break;
+			}*/
 		default:
 			{
-			this->animal_names = std::vector<std::string>(0);
+			this->animal_names = std::map<std::string, uint32_t>();
+			break;
 			}
 		}
 	}
@@ -127,25 +130,11 @@ namespace HunterCheckmate_FileAnalyzer
 
 	bool ReserveData::Verify() const
 	{
-		return this->id >= 0 && this->id <= 8 && !this->animal_names.empty();
+		return this->id <= 8 && !this->animal_names.empty();
 	}
 
 	uint32_t ReserveData::GetIndex(const std::string &name) const
 	{
-		const auto it = std::find(this->animal_names.begin(), this->animal_names.end(), name);
-		return it - this->animal_names.begin();
-	}
-
-	uint32_t ReserveData::GetIndexSub(const std::string &name) const
-	{
-		auto tmp_elem = std::find_if(this->animal_names.begin(), this->animal_names.end(), [name](const std::string &str)
-		{
-			return !name.empty() && str.find(name) != std::string::npos;
-		});
-		if (tmp_elem != this->animal_names.end())
-		{
-			return tmp_elem - this->animal_names.begin();
-		}
-		return UINT32_MAX;
+		return this->animal_names.at(name);
 	}
 }

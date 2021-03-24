@@ -2,8 +2,6 @@
 #include "AdfFile.h"
 #include <boost/json.hpp>
 
-#include "LoadoutData.h"
-
 namespace HunterCheckmate_FileAnalyzer
 {
 	struct PPWeaponData
@@ -28,10 +26,19 @@ namespace HunterCheckmate_FileAnalyzer
 	class ThpPlayerProfile : public AdfFile
 	{
 	private:
-		LoadoutData *loadout_data;
-	public:
-		ThpPlayerProfile(Utility *utility, LoadoutData *loadout_data);	
+		std::string *file_path;
+		std::ifstream *ifstream;
+		std::ofstream *ofstream;
 
+		std::vector<uint32_t> equipment_back_pack;
+		std::vector < std::vector<uint32_t>> inventory_slot;
+	public:
+		ThpPlayerProfile(Utility *utility, std::string *file_path, std::ifstream *ifstream);
+		~ThpPlayerProfile();
+		
+		bool SerializeJson();
+		bool DeserializeJson();
+		
 		uint8_t GetIsSaveGameAvailable() const;
 		uint8_t GetGender() const;
 		uint32_t GetSkinToneHash() const;

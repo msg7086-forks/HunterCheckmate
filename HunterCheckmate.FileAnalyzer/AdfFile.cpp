@@ -237,9 +237,10 @@ namespace HunterCheckmate_FileAnalyzer
 				}
 				case (Type::InlineArray):
 				{
-					uint32_t offset = base + member_header->offset;
+					uint32_t inline_offset = base + member_header->offset;
 					uint32_t size = sub_typedef->element_length;
-					PopulateArray(&*it, sub_typedef, offset, size, true);
+					PopulateArray(&*it, sub_typedef, inline_offset, size, true);
+					break;
 				}
 				default:
 					break;

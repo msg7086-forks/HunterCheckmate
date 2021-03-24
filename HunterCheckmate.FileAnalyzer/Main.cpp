@@ -10,6 +10,7 @@
 // TODO: - add -rep -preset presets
 // TODO: - add preset cli (print available presets upon asking user which animal presets to print)
 // TODO: - add -rep -custom type converter to std::vector<char>*
+// TODO: - (!!!) change animal name detection to name hash
 // 
 // TODO: - make exception class for e.g. if (!initialized) return 0 in AdfFile.cpp;
 // TODO: - change Utility class to accept input file destination and handle setting up if's and of's on its own
@@ -1270,42 +1271,35 @@ int main(int argc, char *argv[])
 
 			if (!str_ocg.empty())
 			{
-				auto tmp_elem = std::find_if(it_begin, it_end, [str_ocg](const std::string &str)
-				{
-					return !str_ocg.empty() && str.find(str_ocg) != std::string::npos;
-				});
-				if (tmp_elem != it_end)
-				{
-					it_begin = tmp_elem;
-					loop_all = false;
-				}
+				it_begin = adf->reserve_data->animal_names.find(str_ocg);
+				loop_all = false;
 			}
 
 			for (; it_begin != it_end; ++it_begin)
 			{
-				std::string animal = *it_begin;
+				std::string animal = it_begin->first;
 
 				uint32_t total_number_of_animals = 0;
-				uint32_t number_of_groups = adf->GetNumberOfGroups(*it_begin);
+				uint32_t number_of_groups = adf->GetNumberOfGroups(it_begin->first);
 				std::cout << animal.c_str() << " Groups [ #" << number_of_groups << " ]" << std::endl;
 
 				for (uint32_t j = 0; j < number_of_groups; j++)
 				{
-					uint32_t group_size = adf->GetGroupSize(*it_begin, j);
+					uint32_t group_size = adf->GetGroupSize(it_begin->first, j);
 					total_number_of_animals += group_size;
 
 					std::cout << std::endl << "           " << "[ " << j << " | #" << std::setw(2) << group_size
-						<< " | " << std::setw(0) << adf->GetSpawnAreaId(*it_begin, j) << " ]" << std::endl;
+						<< " | " << std::setw(0) << adf->GetSpawnAreaId(it_begin->first, j) << " ]" << std::endl;
 
 					for (uint32_t k = 0; k < group_size; k++)
 					{
 						std::string gender_arr[2] = { "Male", "Female" };
-						uint8_t ui_gender = adf->GetGender(*it_begin, j, k);
+						uint8_t ui_gender = adf->GetGender(it_begin->first, j, k);
 						std::string gender = gender_arr[ui_gender - 1];
-						float weight = adf->GetWeight(*it_begin, j, k);
-						float score = adf->GetScore(*it_begin, j, k);
-						bool is_great_one = adf->IsGreatOne(*it_begin, j, k);
-						uint32_t visual_variation_seed = adf->GetVisualVariationSeed(*it_begin, j, k);
+						float weight = adf->GetWeight(it_begin->first, j, k);
+						float score = adf->GetScore(it_begin->first, j, k);
+						bool is_great_one = adf->IsGreatOne(it_begin->first, j, k);
+						uint32_t visual_variation_seed = adf->GetVisualVariationSeed(it_begin->first, j, k);
 
 						std::cout << "[ " << std::setw(2) << k
 							<< " | " << std::setw(6) << gender.c_str()
@@ -1350,8 +1344,6 @@ int main(int argc, char *argv[])
 				}
 				else
 				{
-					uint32_t name_idx = adf->reserve_data->GetIndexSub(name);
-					name = adf->reserve_data->animal_names.at(name_idx);
 					std::string gender;
 					std::string weight;
 					std::string score;
@@ -1392,13 +1384,16 @@ int main(int argc, char *argv[])
 	else if (file_path->find("decomp_thp_player_profile") != std::string::npos)
 	{
 		// TODO: remove temporary loadout construction in here
+		// cli user: save current loadout with name xxx
+		// cli user: load loadout with name xxx
+		
 		auto *json_path = new std::string(R"(C:\Users\oleSQL\Documents\thehunter working\pop\inventory.json)");
 		auto *utility = new Utility(Endian::Little, ifstream);
 		auto *ifstream_json = new std::ifstream(json_path->c_str(), std::ios::in | std::ios::out);
-		auto *loadout_data = new LoadoutData(ifstream_json);
-		auto *adf = new ThpPlayerProfile(utility, loadout_data);
+		auto *adf = new ThpPlayerProfile(utility, json_path, ifstream_json);
 
-		delete loadout_data;
+		adf->Deserialize();
+		
 		delete adf;
 	}
 

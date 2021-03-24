@@ -6,6 +6,7 @@ namespace HunterCheckmate_FileAnalyzer
 	class AnimalPopulation : public AdfFile
 	{
 	private:
+		uint32_t ResolveNameHash(uint32_t name_hash) const;
 		uint32_t GetAnimalOffset(const std::string&name, uint32_t group_idx, uint32_t animal_idx) const;
 	public:
 		ReserveData *reserve_data;

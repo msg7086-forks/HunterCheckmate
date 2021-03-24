@@ -2,6 +2,18 @@
 
 namespace HunterCheckmate_FileAnalyzer
 {
+	uint32_t AnimalPopulation::ResolveNameHash(uint32_t name_hash) const
+	{
+		auto it = this->instances->at(0).members->at(1).sub_members->begin();
+		for (; it != this->instances->at(0).members->at(1).sub_members->end(); ++it)
+		{
+			const uint32_t idx = it - this->instances->at(0).members->at(1).sub_members->begin();
+			const auto it_hash = *reinterpret_cast<uint32_t*>(it->sub_members->at(0).data);
+			if (it_hash == name_hash) return idx;
+		}
+		return 0;
+	}
+
 	uint32_t AnimalPopulation::GetAnimalOffset(const std::string &name, uint32_t group_idx, uint32_t animal_idx) const
 	{
 		if (!initialized) return 0;
@@ -11,12 +23,12 @@ namespace HunterCheckmate_FileAnalyzer
 		// Member *group_animals = &groups->sub_members->at(group_idx).sub_members->at(2);
 		// Member *animal = &group_animals->sub_members->at(animal_idx);
 		// const uint32_t offset = animal->offset;
-		return this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+		return this->instances->at(0).members->at(1).sub_members->at(ResolveNameHash(this->reserve_data->GetIndex(name)))
 			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2)
 			.sub_members->at(animal_idx).offset;
 	}
 
-	AnimalPopulation::AnimalPopulation(Utility * utility, ReserveData * reserve_data): AdfFile(utility)
+	AnimalPopulation::AnimalPopulation(Utility *utility, ReserveData *reserve_data): AdfFile(utility)
 	{
 		this->reserve_data = reserve_data;
 	}
@@ -30,7 +42,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!initialized) return false;
 
-		const uint32_t name_idx = this->reserve_data->GetIndexSub(name);
+		const uint32_t name_idx = ResolveNameHash(this->reserve_data->GetIndex(name));
 		if (name_idx == UINT32_MAX) return false;
 
 		// size of group array
@@ -47,7 +59,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!initialized) return 0;
 
-		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(ResolveNameHash(this->reserve_data->GetIndex(name)))
 			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(0).data;
 		return *reinterpret_cast<int8_t*>(data);
 	}
@@ -56,7 +68,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!initialized) return 0;
 
-		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(ResolveNameHash(this->reserve_data->GetIndex(name)))
 			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(1).data;
 		return *reinterpret_cast<float*>(data);
 	}
@@ -65,7 +77,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!initialized) return 0;
 
-		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(ResolveNameHash(this->reserve_data->GetIndex(name)))
 			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(2).data;
 		return *reinterpret_cast<float*>(data);
 	}
@@ -74,7 +86,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!initialized) return 0;
 
-		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(ResolveNameHash(this->reserve_data->GetIndex(name)))
 			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(3).data;
 		return *reinterpret_cast<bool*>(data);
 	}
@@ -83,7 +95,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!initialized) return 0;
 
-		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(ResolveNameHash(this->reserve_data->GetIndex(name)))
 			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2).sub_members->at(animal_idx).sub_members->at(4).data;
 		return *reinterpret_cast<uint32_t*>(data);
 	}
@@ -92,7 +104,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!initialized) return 0;
 
-		auto* data = this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+		auto* data = this->instances->at(0).members->at(1).sub_members->at(ResolveNameHash(this->reserve_data->GetIndex(name)))
 			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(0).data;
 		return *reinterpret_cast<int32_t*>(data);
 	}
@@ -100,14 +112,14 @@ namespace HunterCheckmate_FileAnalyzer
 	uint32_t AnimalPopulation::GetNumberOfGroups(const std::string &name) const
 	{
 		if (!initialized) return 0;
-		return this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+		return this->instances->at(0).members->at(1).sub_members->at(ResolveNameHash(this->reserve_data->GetIndex(name)))
 			.sub_members->at(1).sub_members->size();
 	}
 
 	uint32_t AnimalPopulation::GetGroupSize(const std::string &name, uint32_t group_idx) const
 	{
 		if (!initialized) return 0;
-		return this->instances->at(0).members->at(1).sub_members->at(this->reserve_data->GetIndex(name))
+		return this->instances->at(0).members->at(1).sub_members->at(ResolveNameHash(this->reserve_data->GetIndex(name)))
 			.sub_members->at(1).sub_members->at(group_idx).sub_members->at(2)
 			.sub_members->size();
 	}

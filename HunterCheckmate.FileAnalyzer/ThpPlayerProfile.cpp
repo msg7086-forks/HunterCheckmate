@@ -17,12 +17,35 @@ namespace HunterCheckmate_FileAnalyzer
 		this->furthest_vital_organ_shot = furthest_vital_organ_shot;
 	}
 
-	ThpPlayerProfile::ThpPlayerProfile(Utility* utility, LoadoutData *loadout_data) : AdfFile(utility)
+	ThpPlayerProfile::ThpPlayerProfile(Utility* utility, std::string *file_path, std::ifstream *ifstream) : AdfFile(utility)
 	{
-		this->loadout_data = loadout_data;
+		this->file_path = file_path;
+		this->ifstream = ifstream;
 	}
 
-	
+	ThpPlayerProfile::~ThpPlayerProfile()
+	{
+		delete ifstream;
+		delete ofstream;
+	}
+
+	bool ThpPlayerProfile::SerializeJson()
+	{
+		this->ofstream = new std::ofstream(this->file_path->c_str(), std::ios::in | std::ios::out);
+
+		this->equipment_back_pack = GetEquipmentBackPack();
+		this->inventory_slot = GetInventorySlot();
+
+		
+		return true;
+	}
+
+	bool ThpPlayerProfile::DeserializeJson()
+	{
+
+		return true;
+	}
+
 	uint8_t ThpPlayerProfile::GetIsSaveGameAvailable() const
 	{
 		auto* data = this->instances->at(0).members->at(1).data;
