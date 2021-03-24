@@ -10,6 +10,7 @@
 // TODO: - add -rep -preset presets
 // TODO: - add preset cli (print available presets upon asking user which animal presets to print)
 // TODO: - add -rep -custom type converter to std::vector<char>*
+// TODO: - FIX THE FUCKING INSTANCE MEMORY LEAK! GOD! DAMN! IT!
 // 
 // TODO: - make exception class for e.g. if (!initialized) return 0 in AdfFile.cpp;
 // TODO: - change Utility class to accept input file destination and handle setting up if's and of's on its own
@@ -144,21 +145,21 @@ int main(int argc, char *argv[])
 		{
 			std::cout << "====================================================" << std::endl;
 			std::cout << "GENERAL HEADER INFO:" << std::endl;
-			std::cout << "Version:			" << std::dec << adf->header->version << std::endl;
-			std::cout << "Instance_count:			" << std::dec << adf->header->instance_count << std::endl;
-			std::cout << "Instance_offset:		0x" << std::hex << adf->header->instance_offset << std::endl;
-			std::cout << "Typedef_count:			" << std::dec << adf->header->typedef_count << std::endl;
-			std::cout << "Typedef_offset:			0x" << std::hex << adf->header->typedef_offset << std::endl;
-			std::cout << "Strhash_count:			" << std::dec << adf->header->strhash_count << std::endl;
-			std::cout << "Strhash_offset:			0x" << std::hex << adf->header->strhash_offset << std::endl;
-			std::cout << "Nametable_count:		" << std::dec << adf->header->nametable_count << std::endl;
-			std::cout << "Nametable_offset:		0x" << std::hex << adf->header->nametable_offset << std::endl;
-			std::cout << "Total_size:			" << std::dec << adf->header->total_size << std::endl;
-			std::cout << "Comment:			" << adf->header->comment << std::endl;
+			std::cout << "Version:			" << std::dec << adf->header.version << std::endl;
+			std::cout << "Instance_count:			" << std::dec << adf->header.instance_count << std::endl;
+			std::cout << "Instance_offset:		0x" << std::hex << adf->header.instance_offset << std::endl;
+			std::cout << "Typedef_count:			" << std::dec << adf->header.typedef_count << std::endl;
+			std::cout << "Typedef_offset:			0x" << std::hex << adf->header.typedef_offset << std::endl;
+			std::cout << "Strhash_count:			" << std::dec << adf->header.strhash_count << std::endl;
+			std::cout << "Strhash_offset:			0x" << std::hex << adf->header.strhash_offset << std::endl;
+			std::cout << "Nametable_count:		" << std::dec << adf->header.nametable_count << std::endl;
+			std::cout << "Nametable_offset:		0x" << std::hex << adf->header.nametable_offset << std::endl;
+			std::cout << "Total_size:			" << std::dec << adf->header.total_size << std::endl;
+			// std::cout << "Comment:			" << adf->header.comment.data() << std::endl;
 			std::cout << "====================================================" << std::endl << std::endl;
 
 			uint32_t i = 0;
-			for (auto it = adf->header_instances->begin(); it != adf->header_instances->end(); ++it)
+			for (auto it = adf->header_instances.begin(); it != adf->header_instances.end(); ++it)
 			{
 				std::cout << "====================================================" << std::endl;
 				std::cout << "INSTANCE HEADER NUMBER: " << std::dec << i << std::endl;
@@ -172,7 +173,7 @@ int main(int argc, char *argv[])
 			}
 
 			i = 0;
-			for (auto it = adf->header_typedef->begin(); it != adf->header_typedef->end(); ++it)
+			for (auto it = adf->header_typedef.begin(); it != adf->header_typedef.end(); ++it)
 			{
 				std::cout << "====================================================" << std::endl;
 				std::cout << "TYPEDEF HEADER NUMBER: " << std::dec << i << std::endl;
@@ -206,16 +207,16 @@ int main(int argc, char *argv[])
 			}
 
 			std::cout << "====================================================";
-			for (i = 0; i < adf->header_nametable->size->size(); i++)
+			for (i = 0; i < adf->header_nametable.size.size(); i++)
 			{
 				std::cout << "\nNAME NUMBER: " << std::dec << i << std::endl;
-				std::cout << "Name: " << std::hex << adf->header_nametable->name->at(i).c_str() << std::endl;
-				std::cout << "Size: " << std::dec << static_cast<int>(adf->header_nametable->size->at(i)) << std::endl;
+				std::cout << "Name: " << std::hex << adf->header_nametable.name.at(i).c_str() << std::endl;
+				std::cout << "Size: " << std::dec << static_cast<int>(adf->header_nametable.size.at(i)) << std::endl;
 			}
 			std::cout << "====================================================" << std::endl << std::endl;
 
 			i = 0;
-			for (auto it = adf->instances->begin(); it != adf->instances->end(); ++it)
+			for (auto it = adf->instances.begin(); it != adf->instances.end(); ++it)
 			{
 				std::cout << "====================================================";
 				std::cout << "\nINSTANCE NUMBER: " << std::dec << i << std::endl;
@@ -702,26 +703,26 @@ int main(int argc, char *argv[])
 			auto *output = new std::ofstream(file_path_out->c_str(), std::ios::binary | std::ios::out | std::ios::in | std::ios::ate | std::ios::trunc);
 			*output << "**************************************** HEADER INFO GENERAL ****************************************" << std::endl
 				<< "*" << std::setw(100) << std::right << "*" << std::endl << std::right
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Version: " << std::setw(32) << std::left << std::dec << adf->header->version << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Instance_count: " << std::setw(32) << std::left << std::dec << adf->header->instance_count << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Instance_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header->instance_offset << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Typedef_count: " << std::setw(32) << std::left << std::dec << adf->header->typedef_count << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Typedef_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header->typedef_offset << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Strhash_count: " << std::setw(32) << std::left << std::dec << adf->header->strhash_count << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Strhash_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header->strhash_offset << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Nametable_count: " << std::setw(32) << std::left << std::dec << adf->header->nametable_count << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Nametable_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header->nametable_offset << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Total_size: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header->total_size << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Comment: " << std::setw(32) << std::left << adf->header->comment << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Version: " << std::setw(32) << std::left << std::dec << adf->header.version << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Instance_count: " << std::setw(32) << std::left << std::dec << adf->header.instance_count << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Instance_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header.instance_offset << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Typedef_count: " << std::setw(32) << std::left << std::dec << adf->header.typedef_count << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Typedef_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header.typedef_offset << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Strhash_count: " << std::setw(32) << std::left << std::dec << adf->header.strhash_count << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Strhash_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header.strhash_offset << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Nametable_count: " << std::setw(32) << std::left << std::dec << adf->header.nametable_count << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Nametable_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header.nametable_offset << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Total_size: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header.total_size << std::setw(43) << std::right << "*" << std::endl
+				// << "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Comment: " << std::setw(32) << std::left << adf->header.comment.data() << std::setw(43) << std::right << "*" << std::endl
 				<< "*" << std::setw(100) << std::right << "*" << std::endl
 				<< "*****************************************************************************************************" << std::endl << std::endl;
 
-			for (auto it = adf->header_instances->begin(); it != adf->header_instances->end(); ++it)
+			for (auto it = adf->header_instances.begin(); it != adf->header_instances.end(); ++it)
 			{
-				uint32_t idx = it - adf->header_instances->begin();
+				uint32_t idx = it - adf->header_instances.begin();
 				*output << "************************************** HEADER INFO INSTANCE " << std::dec << idx << " ***************************************" << std::endl
 					<< "*" << std::setw(100) << std::right << "*" << std::endl << std::right
-					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable->name->at(1).c_str() << std::setw(43) << std::right << "*" << std::endl
+					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable.name.at(1).c_str() << std::setw(43) << std::right << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Name_hash: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << it->name_hash << std::setw(43) << std::right << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Type_hash: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << it->type_hash << std::setw(43) << std::right << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << it->offset << std::setw(43) << std::right << "*" << std::endl
@@ -731,16 +732,16 @@ int main(int argc, char *argv[])
 					<< "*****************************************************************************************************" << std::endl << std::endl;
 			}
 
-			for (auto it = adf->header_typedef->begin(); it != adf->header_typedef->end(); ++it)
+			for (auto it = adf->header_typedef.begin(); it != adf->header_typedef.end(); ++it)
 			{
-				uint32_t idx = it - adf->header_typedef->begin();
+				uint32_t idx = it - adf->header_typedef.begin();
 				const char* tmp;
 				if (idx >= 10) tmp = " ***************************************";
 				else tmp = " ****************************************";
 
 				*output << "************************************** HEADER INFO TYPEDEF " << std::dec << idx << tmp << std::endl
 					<< "*" << std::setw(100) << std::right << "*" << std::endl << std::right
-					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable->name->at(static_cast<const unsigned int>(it->name_idx)).c_str() << std::setw(43) << std::right << "*" << std::endl
+					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable.name.at(static_cast<const unsigned int>(it->name_idx)).c_str() << std::setw(43) << std::right << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Type: " << std::setw(32) << std::left << std::dec << typeString[static_cast<uint32_t>(it->type)] << std::setw(43) << std::right << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Size: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << it->size << std::setw(43) << std::right << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Alignment: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << it->alignment << std::setw(43) << std::right << "*" << std::endl
@@ -762,7 +763,7 @@ int main(int argc, char *argv[])
 
 						*output << "*" << std::setw(0) << "     " << "********************************* HEADER INFO MEMBER " << std::dec << mem_idx << tmp << "     " << "*" << std::endl
 							<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(89) << std::right << "*     *" << std::endl
-							<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable->name->at(static_cast<const unsigned int>(mem_it->name_idx)).c_str() << std::setw(42) << std::right << "*     *" << std::endl
+							<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable.name.at(static_cast<const unsigned int>(mem_it->name_idx)).c_str() << std::setw(42) << std::right << "*     *" << std::endl
 							<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Type: " << std::left << std::setw(32) << std::hex << primitiveString(Primitive(mem_it->type_hash)) << std::setw(42) << std::right << "*     *" << std::endl
 							<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name_idx: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << mem_it->name_idx << std::setw(42) << std::right << "*     *" << std::endl
 							<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Type_hash: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << mem_it->type_hash << std::setw(42) << std::right << "*     *" << std::endl
@@ -781,7 +782,7 @@ int main(int argc, char *argv[])
 
 			*output << "***************************************** HEADER NAMETABLE ******************************************" << std::endl
 				<< "*" << std::setw(100) << std::right << "*" << std::endl << std::right;
-			for (uint32_t i = 0; i < adf->header_nametable->size->size(); i++)
+			for (uint32_t i = 0; i < adf->header_nametable.size.size(); i++)
 			{
 				const char* tmp;
 				if (i >= 10) tmp = " ***************************************";
@@ -789,17 +790,17 @@ int main(int argc, char *argv[])
 
 				*output << "*" << std::setw(0) << "     " << "***************************************** NAME " << std::dec << i << tmp << "     " << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(89) << std::right << "*     *" << std::endl
-					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name: " << std::setw(32) << std::left << std::hex << adf->header_nametable->name->at(i).c_str() << std::setw(42) << std::right << "*     *" << std::endl
-					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Size: " << std::setw(32) << std::left << std::dec << static_cast<int>(adf->header_nametable->size->at(i)) << std::setw(42) << std::right << "*     *" << std::endl
+					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name: " << std::setw(32) << std::left << std::hex << adf->header_nametable.name.at(i).c_str() << std::setw(42) << std::right << "*     *" << std::endl
+					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Size: " << std::setw(32) << std::left << std::dec << static_cast<int>(adf->header_nametable.size.at(i)) << std::setw(42) << std::right << "*     *" << std::endl
 					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(89) << std::right << "*     *" << std::endl;
 			}
 			*output << "*     *****************************************************************************************     *" << std::endl
 				<< "*" << std::setw(100) << std::right << "*" << std::endl << std::right
 				<< "*****************************************************************************************************" << std::endl << std::endl;
 
-			for (auto it = adf->instances->begin(); it != adf->instances->end(); ++it)
+			for (auto it = adf->instances.begin(); it != adf->instances.end(); ++it)
 			{
-				uint32_t idx_0 = it - adf->instances->begin();
+				uint32_t idx_0 = it - adf->instances.begin();
 				const char* tmp;
 				if (idx_0 >= 10) tmp = " ***************************************";
 				else tmp = " ****************************************";
@@ -1270,8 +1271,15 @@ int main(int argc, char *argv[])
 
 			if (!str_ocg.empty())
 			{
-				it_begin = adf->reserve_data->animal_names.find(str_ocg);
-				loop_all = false;
+				if (it_begin == it_end)
+				{
+					it_begin = adf->reserve_data->animal_names.begin();
+				}
+				else
+				{
+					it_begin = adf->reserve_data->animal_names.find(str_ocg);
+					loop_all = false;
+				}
 			}
 
 			for (; it_begin != it_end; ++it_begin)

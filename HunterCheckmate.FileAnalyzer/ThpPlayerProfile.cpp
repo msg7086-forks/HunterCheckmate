@@ -48,56 +48,56 @@ namespace HunterCheckmate_FileAnalyzer
 
 	uint8_t ThpPlayerProfile::GetIsSaveGameAvailable() const
 	{
-		auto* data = this->instances->at(0).members->at(1).data;
+		auto* data = this->instances.at(0).members->at(1).data;
 		return *reinterpret_cast<uint8_t*>(data);
 	}
 
 	uint8_t ThpPlayerProfile::GetGender() const
 	{
-		auto* data = this->instances->at(0).members->at(2).data;
+		auto* data = this->instances.at(0).members->at(2).data;
 		return *reinterpret_cast<uint8_t*>(data);
 	}
 
 	uint32_t ThpPlayerProfile::GetSkinToneHash() const
 	{
-		auto* data = this->instances->at(0).members->at(3).data;
+		auto* data = this->instances.at(0).members->at(3).data;
 		return *reinterpret_cast<uint32_t*>(data);
 	}
 
 	uint32_t ThpPlayerProfile::GetOutfitVariantHash() const
 	{
-		auto* data = this->instances->at(0).members->at(4).data;
+		auto* data = this->instances.at(0).members->at(4).data;
 		return *reinterpret_cast<uint32_t*>(data);
 	}
 
 	uint32_t ThpPlayerProfile::GetLevel() const
 	{
-		auto* data = this->instances->at(0).members->at(5).data;
+		auto* data = this->instances.at(0).members->at(5).data;
 		return *reinterpret_cast<uint32_t*>(data);
 	}
 
 	uint32_t ThpPlayerProfile::GetXP() const
 	{
-		auto* data = this->instances->at(0).members->at(6).data;
+		auto* data = this->instances.at(0).members->at(6).data;
 		return *reinterpret_cast<uint32_t*>(data);
 	}
 
 	uint32_t ThpPlayerProfile::GetSkillPoints() const
 	{
-		auto* data = this->instances->at(0).members->at(7).data;
+		auto* data = this->instances.at(0).members->at(7).data;
 		return *reinterpret_cast<uint32_t*>(data);
 	}
 
 	uint32_t ThpPlayerProfile::GetPerkPoints() const
 	{
-		auto* data = this->instances->at(0).members->at(8).data;
+		auto* data = this->instances.at(0).members->at(8).data;
 		return *reinterpret_cast<uint32_t*>(data);
 	}
 
 	std::vector<uint32_t> ThpPlayerProfile::GetSkillPointsSpent() const
 	{
 		std::vector<uint32_t> buffer(16);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(9).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(9).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -109,7 +109,7 @@ namespace HunterCheckmate_FileAnalyzer
 	std::vector<uint32_t> ThpPlayerProfile::GetPerkPointsSpent() const
 	{
 		std::vector<uint32_t> buffer(16);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(10).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(10).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -120,14 +120,14 @@ namespace HunterCheckmate_FileAnalyzer
 
 	uint32_t ThpPlayerProfile::GetCash() const
 	{
-		auto* data = this->instances->at(0).members->at(11).data;
+		auto* data = this->instances.at(0).members->at(11).data;
 		return *reinterpret_cast<uint32_t*>(data);
 	}
 
 	std::vector<uint32_t> ThpPlayerProfile::GetWeaponLevel() const
 	{
 		std::vector<uint32_t> buffer(4);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(12).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(12).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -139,7 +139,7 @@ namespace HunterCheckmate_FileAnalyzer
 	std::vector<uint32_t> ThpPlayerProfile::GetWeaponScore() const
 	{
 		std::vector<uint32_t> buffer(4);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(13).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(13).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -151,7 +151,7 @@ namespace HunterCheckmate_FileAnalyzer
 	std::vector<uint32_t> ThpPlayerProfile::GetEquipmentUnlocked() const
 	{
 		std::vector<uint32_t> buffer(512);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(14).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(14).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -163,7 +163,7 @@ namespace HunterCheckmate_FileAnalyzer
 	std::vector<uint32_t> ThpPlayerProfile::GetEquipmentOwned() const
 	{
 		std::vector<uint32_t> buffer(512);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(15).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(15).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -175,7 +175,7 @@ namespace HunterCheckmate_FileAnalyzer
 	std::vector<uint32_t> ThpPlayerProfile::GetEquipmentAmount() const
 	{
 		std::vector<uint32_t> buffer(512);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(16).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(16).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -187,7 +187,7 @@ namespace HunterCheckmate_FileAnalyzer
 	std::vector<uint32_t> ThpPlayerProfile::GetEquipmentBackPack() const
 	{
 		std::vector<uint32_t> buffer(512);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(17).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(17).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -199,7 +199,7 @@ namespace HunterCheckmate_FileAnalyzer
 	std::vector<uint32_t> ThpPlayerProfile::GetSkills() const
 	{
 		std::vector<uint32_t> buffer(128);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(18).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(18).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -211,7 +211,7 @@ namespace HunterCheckmate_FileAnalyzer
 	std::vector<uint32_t> ThpPlayerProfile::GetSkillLevel() const
 	{
 		std::vector<uint32_t> buffer(128);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(19).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(19).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -222,14 +222,14 @@ namespace HunterCheckmate_FileAnalyzer
 
 	uint32_t ThpPlayerProfile::GetActiveSkill() const
 	{
-		auto* data = this->instances->at(0).members->at(20).data;
+		auto* data = this->instances.at(0).members->at(20).data;
 		return *reinterpret_cast<uint32_t*>(data);
 	}
 
 	std::vector<std::vector<uint32_t>> ThpPlayerProfile::GetInventorySlot() const
 	{
 		std::vector<std::vector<uint32_t>> buffer(16);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(21).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(21).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -246,13 +246,13 @@ namespace HunterCheckmate_FileAnalyzer
 
 	uint32_t ThpPlayerProfile::GetRestingCurrentCost() const
 	{
-		auto* data = this->instances->at(0).members->at(22).data;
+		auto* data = this->instances.at(0).members->at(22).data;
 		return *reinterpret_cast<uint32_t*>(data);
 	}
 
 	float ThpPlayerProfile::GetRemainingTimeRestCostReduction() const
 	{
-		auto* data = this->instances->at(0).members->at(23).data;
+		auto* data = this->instances.at(0).members->at(23).data;
 		return *reinterpret_cast<float*>(data);
 	}
 
@@ -261,7 +261,7 @@ namespace HunterCheckmate_FileAnalyzer
 	std::vector<uint32_t> ThpPlayerProfile::GetVehicleEquipmentStorage() const
 	{
 		std::vector<uint32_t> buffer(512);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(25).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(25).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -272,14 +272,14 @@ namespace HunterCheckmate_FileAnalyzer
 
 	uint8_t ThpPlayerProfile::GetVehiclePreferedCameraThirdPerson() const
 	{
-		auto* data = this->instances->at(0).members->at(26).data;
+		auto* data = this->instances.at(0).members->at(26).data;
 		return *reinterpret_cast<uint8_t*>(data);
 	}
 
 	std::vector<uint32_t> ThpPlayerProfile::GetGivenDLCItems() const
 	{
 		std::vector<uint32_t> buffer(11);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(27).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(27).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -290,14 +290,14 @@ namespace HunterCheckmate_FileAnalyzer
 
 	uint32_t ThpPlayerProfile::GetEquippedBackpackHash() const
 	{
-		auto* data = this->instances->at(0).members->at(28).data;
+		auto* data = this->instances.at(0).members->at(28).data;
 		return *reinterpret_cast<uint32_t*>(data);
 	}
 
 	std::vector<uint32_t> ThpPlayerProfile::GetUnlockedHuntClubEquipment() const
 	{
 		std::vector<uint32_t> buffer(2);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(29).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(29).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();
@@ -308,13 +308,13 @@ namespace HunterCheckmate_FileAnalyzer
 
 	uint8_t ThpPlayerProfile::GetHuntClubDisabled() const
 	{
-		auto* data = this->instances->at(0).members->at(30).data;
+		auto* data = this->instances.at(0).members->at(30).data;
 		return *reinterpret_cast<uint8_t*>(data);
 	}
 
 	float ThpPlayerProfile::GetAnimalSensesMultiplier() const
 	{
-		auto* data = this->instances->at(0).members->at(31).data;
+		auto* data = this->instances.at(0).members->at(31).data;
 		return *reinterpret_cast<float*>(data);
 	}
 
@@ -322,14 +322,14 @@ namespace HunterCheckmate_FileAnalyzer
 	
 	uint8_t ThpPlayerProfile::GetProfileIsNew() const
 	{
-		auto* data = this->instances->at(0).members->at(33).data;
+		auto* data = this->instances.at(0).members->at(33).data;
 		return *reinterpret_cast<uint8_t*>(data);
 	}
 
 	std::vector<PPWeaponData> ThpPlayerProfile::GetWeaponData() const
 	{
 		std::vector<PPWeaponData> buffer(512);
-		std::vector<Member> *instance_members = this->instances->at(0).members->at(34).sub_members;
+		std::vector<Member> *instance_members = this->instances.at(0).members->at(34).sub_members;
 		for (auto it = instance_members->begin(); it != instance_members->end(); ++it)
 		{
 			uint32_t idx = it - instance_members->begin();

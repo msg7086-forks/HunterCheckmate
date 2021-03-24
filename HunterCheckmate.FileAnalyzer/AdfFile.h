@@ -107,10 +107,10 @@ namespace HunterCheckmate_FileAnalyzer
 		uint32_t unknown_0x34;
 		uint32_t unknown_0x38;
 		uint32_t unknown_0x3C;
-		char* comment = new char[32];
+		//comment
 
 		AdfHeader() = default;
-		~AdfHeader() { delete[] comment; }
+		~AdfHeader() = default;
 	};
 
 	struct InstanceHeader
@@ -161,15 +161,11 @@ namespace HunterCheckmate_FileAnalyzer
 
 	struct NametableHeader
 	{
-		std::vector<uint8_t>* size;
-		std::vector<std::string>* name;
+		std::vector<uint8_t> size;
+		std::vector<std::string> name;
 
 		NametableHeader() = default;
-		~NametableHeader()
-		{
-			delete size;
-			delete name;
-		}
+		~NametableHeader() = default;
 	};
 
 	static TypedefHeader* HashExists(uint32_t hash, std::vector<TypedefHeader> *header_typedefs);
@@ -200,6 +196,7 @@ namespace HunterCheckmate_FileAnalyzer
 		TypedefHeader *header_typedef;
 		std::vector<Member> *members = nullptr;
 
+		Instance() = default;
 		Instance(std::vector<TypedefHeader> *header_typedefs, Utility *utility, InstanceHeader *header_instance, TypedefHeader *header_typedef);
 		~Instance();
 
@@ -218,12 +215,12 @@ namespace HunterCheckmate_FileAnalyzer
 		bool initialized = false;
 		Utility *utility;
 	public:
-		AdfHeader *header;
-		std::vector<InstanceHeader> *header_instances;
-		std::vector<TypedefHeader> *header_typedef;
-		std::vector<StrhashHeader> *header_strhash;
-		NametableHeader *header_nametable;
-		std::vector<Instance> *instances;
+		AdfHeader header;
+		std::vector<InstanceHeader> header_instances;
+		std::vector<TypedefHeader> header_typedef;
+		std::vector<StrhashHeader> header_strhash;
+		NametableHeader header_nametable;
+		std::vector<Instance> instances;
 		
 		AdfFile(Utility *utility);
 		~AdfFile();

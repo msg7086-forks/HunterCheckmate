@@ -27,7 +27,8 @@ namespace HunterCheckmate_FileAnalyzer
 		~Utility();
 		
 		template<class T>
-		void Read(T* data, uint32_t offset, uint32_t size = 0) {
+		void Read(T* data, uint32_t offset, uint32_t size = 0) const
+		{
 			if (size == 0) size = sizeof(*data);
 
 			auto *buffer = new std::vector<char>(size);
