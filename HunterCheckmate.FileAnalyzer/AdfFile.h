@@ -9,18 +9,6 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		std::vector<char> *whitetail_great_one_0;
 		std::vector<char> *whitetail_great_one_1;
-		std::vector<char> *whitetail_max_weight_diamond_0;
-		std::vector<char> *whitetail_max_weight_diamond_1;
-		std::vector<char> *whitetail_max_weight_diamond_2;
-		std::vector<char> *whitetail_max_weight_diamond_3;
-		std::vector<char> *whitetail_max_weight_diamond_4;
-		std::vector<char> *whitetail_max_weight_diamond_5;
-		std::vector<char> *whitetail_max_weight_diamond_6;
-		std::vector<char> *whitetail_max_weight_diamond_7;
-		std::vector<char> *whitetail_max_weight_diamond_8;
-		std::vector<char> *whitetail_max_weight_diamond_9;
-		std::vector<char> *whitetail_max_weight_diamond_10;
-		std::vector<char> *whitetail_max_weight_diamond_11;
 
 		AnimalData2()
 		{
@@ -45,145 +33,12 @@ namespace HunterCheckmate_FileAnalyzer
 					'\x00','\x00','\x00','\x00',
 					'\x00','\x00','\x00','\x00'
 				});
-
-			whitetail_max_weight_diamond_0 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_1 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_2 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_3 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x0D','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_4 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_5 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_6 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_7 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_8 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_9 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_10 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_11 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
 		}
 
 		~AnimalData2()
 		{
 			delete whitetail_great_one_0;
 			delete whitetail_great_one_1;
-			delete whitetail_max_weight_diamond_0;
-			delete whitetail_max_weight_diamond_1;
-			delete whitetail_max_weight_diamond_2;
-			delete whitetail_max_weight_diamond_3;
-			delete whitetail_max_weight_diamond_4;
-			delete whitetail_max_weight_diamond_5;
-			delete whitetail_max_weight_diamond_6;
-			delete whitetail_max_weight_diamond_7;
-			delete whitetail_max_weight_diamond_8;
-			delete whitetail_max_weight_diamond_9;
-			delete whitetail_max_weight_diamond_10;
-			delete whitetail_max_weight_diamond_11;
 		}
 	};
 

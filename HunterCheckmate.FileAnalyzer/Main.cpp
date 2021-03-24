@@ -10,7 +10,6 @@
 // TODO: - add -rep -preset presets
 // TODO: - add preset cli (print available presets upon asking user which animal presets to print)
 // TODO: - add -rep -custom type converter to std::vector<char>*
-// TODO: - (!!!) change animal name detection to name hash
 // 
 // TODO: - make exception class for e.g. if (!initialized) return 0 in AdfFile.cpp;
 // TODO: - change Utility class to accept input file destination and handle setting up if's and of's on its own
