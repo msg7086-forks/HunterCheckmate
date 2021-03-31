@@ -16,6 +16,7 @@
 // TODO: - change Utility class to accept input file destination and handle setting up if's and of's on its own
 // TODO: - refactor, faster runtime
 
+#pragma region CLI_FUNCTIONS
 void PrintUsage()
 {
 	std::cout << "Usage: HunterCheckmate.FileAnalyzer.exe <population_file_path> [-oc | -of | -ocg | -rep <[-custom | -preset]>" << std::endl
@@ -81,21 +82,23 @@ void SetMask(char *arr[], std::vector<bool> *mask, uint8_t pos)
 		if (std::string(arr[idx]) == "-preset") { mask->at(1) = true; break; }
 	}
 }
+#pragma endregion
 
 int main(int argc, char *argv[])
 {
 	using namespace HunterCheckmate_FileAnalyzer;
 
-	auto file_path = std::string();
+#pragma region CLI
+	std::string file_path;
 	bool flag_oc, flag_of, flag_ocg, flag_rep = false;
 
 	std::string str_ocg;
 	uint8_t str_ocg_pos;
 
 	uint8_t mask_rep_pos;
-	std::vector<bool> mask_rep = std::vector<bool>(2);
+	std::vector<bool> mask_rep(2);
 	
-	if (argc < 2) {	PrintUsage(); return 1;	}
+	if (argc < 2) { PrintUsage(); return 1; }
 	if (argc >= 2 && ContainsElement(argv,  "-h")) { PrintUsage(); return 1; }
 	if (argc >= 2) { file_path = std::string(argv[1]); }
 	else { return 1; }
@@ -123,20 +126,17 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	auto file_path_out = std::string(file_path);
+	std::string file_path_out(file_path);
 	file_path_out.append(".txt");
-	std::ifstream *ifstream = new std::ifstream(file_path.c_str(), std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
+#pragma endregion
 
-	if (!ifstream->is_open()) return 1;
-
-
-	if (file_path.find("decomp_animal_population") != std::string::npos)
+#pragma region FUNCTIONALITY_
+#pragma region FUNCTIONALITY_ANIMAL_POPULATION
+	if (file_path.find("animal_population_") != std::string::npos)
 	{
-		auto *ofstream = new std::ofstream(file_path.c_str(), std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
-		auto *utility = new Utility(Endian::Little, ifstream, ofstream);
+		auto *utility = new Utility(Endian::Little, file_path);
 		uint8_t reserve_id = static_cast<uint8_t>(file_path.back()) - static_cast<uint8_t>('0');
-		auto *reserve_data = new ReserveData(reserve_id);
-		auto *adf = new AnimalPopulation(utility, reserve_data);
+		auto *adf = new AnimalPopulation(utility, reserve_id);
 		
 		bool success = adf->Deserialize();
 
@@ -1264,62 +1264,51 @@ int main(int argc, char *argv[])
 		// console output group infos
 		if (success && flag_ocg)
 		{
-			auto it_begin = adf->reserve_data->animal_names.begin();
-			auto it_end = adf->reserve_data->animal_names.end();
+			auto it_begin = adf->reserve_data.animal_names.begin();
+			auto it_end = adf->reserve_data.animal_names.end();
 
-			bool loop_all = true;
-
-			if (!str_ocg.empty())
-			{
-				if (it_begin == it_end)
-				{
-					it_begin = adf->reserve_data->animal_names.begin();
-				}
-				else
-				{
-					it_begin = adf->reserve_data->animal_names.find(str_ocg);
-					loop_all = false;
-				}
-			}
-
+			bool loop_all = str_ocg.empty();
+			
 			for (; it_begin != it_end; ++it_begin)
 			{
 				std::string animal = it_begin->first;
-
-				uint32_t total_number_of_animals = 0;
-				uint32_t number_of_groups = adf->GetNumberOfGroups(it_begin->first);
-				std::cout << animal.c_str() << " Groups [ #" << number_of_groups << " ]" << std::endl;
-
-				for (uint32_t j = 0; j < number_of_groups; j++)
+				if (animal.find(str_ocg) != std::string::npos)
 				{
-					uint32_t group_size = adf->GetGroupSize(it_begin->first, j);
-					total_number_of_animals += group_size;
+					uint32_t total_number_of_animals = 0;
+					uint32_t number_of_groups = adf->GetNumberOfGroups(it_begin->first);
+					std::cout << animal.c_str() << " Groups [ #" << number_of_groups << " ]" << std::endl;
 
-					std::cout << std::endl << "           " << "[ " << j << " | #" << std::setw(2) << group_size
-						<< " | " << std::setw(0) << adf->GetSpawnAreaId(it_begin->first, j) << " ]" << std::endl;
-
-					for (uint32_t k = 0; k < group_size; k++)
+					for (uint32_t j = 0; j < number_of_groups; j++)
 					{
-						std::string gender_arr[2] = { "Male", "Female" };
-						uint8_t ui_gender = adf->GetGender(it_begin->first, j, k);
-						std::string gender = gender_arr[ui_gender - 1];
-						float weight = adf->GetWeight(it_begin->first, j, k);
-						float score = adf->GetScore(it_begin->first, j, k);
-						bool is_great_one = adf->IsGreatOne(it_begin->first, j, k);
-						uint32_t visual_variation_seed = adf->GetVisualVariationSeed(it_begin->first, j, k);
+						uint32_t group_size = adf->GetGroupSize(it_begin->first, j);
+						total_number_of_animals += group_size;
 
-						std::cout << "[ " << std::setw(2) << k
-							<< " | " << std::setw(6) << gender.c_str()
-							<< " | " << std::setw(7) << weight
-							<< " | " << std::setw(8) << score
-							<< " | " << std::setw(1) << is_great_one
-							<< " | " << std::setw(5) << visual_variation_seed
-							<< " ]" << std::endl;
+						std::cout << std::endl << "           " << "[ " << j << " | #" << std::setw(2) << group_size
+							<< " | " << std::setw(0) << adf->GetSpawnAreaId(it_begin->first, j) << " ]" << std::endl;
+
+						for (uint32_t k = 0; k < group_size; k++)
+						{
+							std::string gender_arr[2] = { "Male", "Female" };
+							uint8_t ui_gender = adf->GetGender(it_begin->first, j, k);
+							std::string gender = gender_arr[ui_gender - 1];
+							float weight = adf->GetWeight(it_begin->first, j, k);
+							float score = adf->GetScore(it_begin->first, j, k);
+							bool is_great_one = adf->IsGreatOne(it_begin->first, j, k);
+							uint32_t visual_variation_seed = adf->GetVisualVariationSeed(it_begin->first, j, k);
+
+							std::cout << "[ " << std::setw(2) << k
+								<< " | " << std::setw(6) << gender.c_str()
+								<< " | " << std::setw(7) << weight
+								<< " | " << std::setw(8) << score
+								<< " | " << std::setw(1) << is_great_one
+								<< " | " << std::setw(5) << visual_variation_seed
+								<< " ]" << std::endl;
+						}
 					}
-				}
 
-				std::cout << std::endl << "Total number of animals: " << static_cast<int>(total_number_of_animals) << std::endl << std::endl;
-				if (!loop_all) break;
+					std::cout << std::endl << "Total number of animals: " << static_cast<int>(total_number_of_animals) << std::endl << std::endl;
+					if (!loop_all) break;
+				}
 			}
 		}
 
@@ -1388,14 +1377,16 @@ int main(int argc, char *argv[])
 
 		delete adf;
 	}
-	else if (file_path.find("decomp_thp_player_profile") != std::string::npos)
+#pragma endregion
+#pragma region FUNCTIONALITY_LOADOUT
+	else if (file_path.find("thp_player_profile") != std::string::npos)
 	{
 		// TODO: remove temporary loadout construction in here
 		// cli user: save current loadout with name xxx
 		// cli user: load loadout with name xxx
 		
 		auto *json_path = new std::string(R"(C:\Users\oleSQL\Documents\thehunter working\pop\inventory.json)");
-		auto *utility = new Utility(Endian::Little, ifstream);
+		auto *utility = new Utility(Endian::Little, file_path);
 		auto *ifstream_json = new std::ifstream(json_path->c_str(), std::ios::in | std::ios::out);
 		auto *adf = new ThpPlayerProfile(utility, json_path, ifstream_json);
 
@@ -1403,6 +1394,11 @@ int main(int argc, char *argv[])
 		
 		delete adf;
 	}
-	
+#pragma endregion
+#pragma endregion
+
+#ifdef _DEBUG
+	_CrtDumpMemoryLeaks();
+#endif
 	return 0;
 }

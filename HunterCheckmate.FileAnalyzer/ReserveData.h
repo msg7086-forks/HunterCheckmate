@@ -11,11 +11,12 @@ namespace HunterCheckmate_FileAnalyzer
 	public:
 		uint8_t id;
 		std::map<std::string, uint32_t> animal_names;
-		
+
+		ReserveData() = default;
 		ReserveData(uint8_t id);
-		~ReserveData();
+		~ReserveData() = default;
 
 		bool Verify() const;
-		uint32_t GetIndex(const std::string &name) const;
+		uint32_t GetNameHash(const std::string &name) const;
 	};
 }

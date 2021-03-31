@@ -65,6 +65,7 @@ namespace HunterCheckmate_FileAnalyzer
 		case (Primitive::UINT8_T):
 			member->size = sizeof(uint8_t);
 			break;
+		case(Primitive::NONE):
 		default:
 			break;
 		}

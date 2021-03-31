@@ -1,8 +1,5 @@
 #include "ReserveData.h"
 
-#include <algorithm>
-
-
 namespace HunterCheckmate_FileAnalyzer
 {
 	ReserveData::ReserveData(uint8_t id)
@@ -125,16 +122,18 @@ namespace HunterCheckmate_FileAnalyzer
 			}
 		}
 	}
-	
-	ReserveData::~ReserveData() = default;
 
 	bool ReserveData::Verify() const
 	{
 		return this->id <= 8 && !this->animal_names.empty();
 	}
 
-	uint32_t ReserveData::GetIndex(const std::string &name) const
+	uint32_t ReserveData::GetNameHash(const std::string &name) const
 	{
-		return this->animal_names.at(name);
+		for (const auto& animal_name : animal_names)
+		{
+			if (animal_name.first.find(name) != std::string::npos) return animal_name.second;
+		}
+		return 0;
 	}
 }

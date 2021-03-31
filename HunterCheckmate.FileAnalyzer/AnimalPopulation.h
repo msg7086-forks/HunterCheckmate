@@ -9,9 +9,9 @@ namespace HunterCheckmate_FileAnalyzer
 		uint32_t ResolveNameHash(uint32_t name_hash);
 		uint32_t GetAnimalOffset(const std::string&name, uint32_t group_idx, uint32_t animal_idx);
 	public:
-		ReserveData *reserve_data;
-		AnimalPopulation(Utility *utility, ReserveData *reserve_data);
-		~AnimalPopulation();
+		ReserveData reserve_data;
+		AnimalPopulation(Utility *utility, uint8_t reserve_id);
+		~AnimalPopulation() = default;
 		
 		bool IsValidAnimal(const std::string& name, uint32_t group_idx, uint32_t animal_idx);
 		uint8_t GetGender(const std::string &name, uint32_t group_idx, uint32_t animal_idx);

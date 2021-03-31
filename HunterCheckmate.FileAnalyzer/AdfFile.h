@@ -84,6 +84,7 @@ namespace HunterCheckmate_FileAnalyzer
 			return "SINT32_T";
 		case (Primitive::FLOAT):
 			return "FLOAT";
+		case (Primitive::NONE):
 		default:
 			return "NONE";
 		}
@@ -141,16 +142,16 @@ namespace HunterCheckmate_FileAnalyzer
 
 	struct TypedefHeader
 	{
-		Type type;
-		uint32_t size;
-		uint32_t alignment;
-		uint32_t name_hash;
-		uint64_t name_idx;
-		uint32_t name;
-		uint32_t flags;
-		uint32_t element_type_hash;
-		uint32_t element_length;
-		uint32_t member_count;
+		Type type = Type::None;
+		uint32_t size = 0;
+		uint32_t alignment = 0;
+		uint32_t name_hash = 0;
+		uint64_t name_idx = 0;
+		uint32_t name = 0;
+		uint32_t flags = 0;
+		uint32_t element_type_hash = 0;
+		uint32_t element_length = 0;
+		uint32_t member_count = 0;
 		std::vector<MemberHeader> member_headers;
 
 		TypedefHeader() = default;
@@ -173,8 +174,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Member
 	{
 	public:
-		TypedefHeader *header_typedef;
-		MemberHeader *header_member;
+		TypedefHeader *header_typedef = nullptr;
+		MemberHeader *header_member = nullptr;
 		Type type = Type::None;
 		Primitive primitive = Primitive::NONE;
 		uint32_t offset = 0;
@@ -190,10 +191,10 @@ namespace HunterCheckmate_FileAnalyzer
 	class Instance
 	{
 	public:
-		std::vector<TypedefHeader> *header_typedefs;
-		Utility *utility;
-		InstanceHeader *header_instance;
-		TypedefHeader *header_typedef;
+		std::vector<TypedefHeader> *header_typedefs = nullptr;
+		Utility *utility = nullptr;
+		InstanceHeader *header_instance = nullptr;
+		TypedefHeader *header_typedef = nullptr;
 		std::vector<Member> members;
 
 		Instance() = default;
