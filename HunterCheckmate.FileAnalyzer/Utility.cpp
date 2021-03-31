@@ -26,8 +26,6 @@ namespace HunterCheckmate_FileAnalyzer
 
 	Utility::~Utility()
 	{
-		if (!(ifstream == nullptr)) ifstream->close();
-		if (!(ofstream == nullptr)) ofstream->close();
 		delete this->ifstream;
 		delete this->ofstream;
 	}

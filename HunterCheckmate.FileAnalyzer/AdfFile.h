@@ -179,12 +179,12 @@ namespace HunterCheckmate_FileAnalyzer
 		Primitive primitive = Primitive::NONE;
 		uint32_t offset = 0;
 		uint32_t size = 0;
-		char *data;
-		std::vector<Member> *sub_members;
+		std::vector<char> data;
+		std::vector<Member> sub_members;
 
 		Member();
 		Member(TypedefHeader* header_typedef, MemberHeader *header_member);
-		~Member();
+		~Member() = default;
 	};
 
 	class Instance
@@ -194,11 +194,11 @@ namespace HunterCheckmate_FileAnalyzer
 		Utility *utility;
 		InstanceHeader *header_instance;
 		TypedefHeader *header_typedef;
-		std::vector<Member> *members = nullptr;
+		std::vector<Member> members;
 
 		Instance() = default;
 		Instance(std::vector<TypedefHeader> *header_typedefs, Utility *utility, InstanceHeader *header_instance, TypedefHeader *header_typedef);
-		~Instance();
+		~Instance() = default;
 
 		void PopulatePrimitive(Member *member, MemberHeader *header_member, uint32_t offset, Primitive primitive) const;
 		void PopulateStructure(Member *member, uint32_t offset, TypedefHeader *header_typedef);
