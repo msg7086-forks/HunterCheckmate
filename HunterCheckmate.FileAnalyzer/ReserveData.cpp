@@ -36,47 +36,47 @@ namespace HunterCheckmate_FileAnalyzer
 			break;
 			}
 			// Medved
-/*		case 2:
+		case 2:
 			{
 			this->animal_names = std::map<std::string, uint32_t>();
-			animal_names.emplace("musk_deer");
-			animal_names.emplace("moose");
-			animal_names.emplace("wild_boar");
-			animal_names.emplace("reindeer");
-			animal_names.emplace("eurasian_lynx");
-			animal_names.emplace("brown_bear");
+			animal_names.emplace("musk_deer", 74472795);
+			animal_names.emplace("moose", 155298792);
+			animal_names.emplace("wild_boar", 1570854601);
+			animal_names.emplace("reindeer", 1779251800);
+			animal_names.emplace("eurasian_lynx", 1814015872);
+			animal_names.emplace("brown_bear", 1923623595);
 			break;
 			}
 			// Vurhonga
 		case 3:
 			{
 			this->animal_names = std::map<std::string, uint32_t>();
-			animal_names.emplace("blue_wildebeest");
-			animal_names.emplace("side_striped_jackal");
-			animal_names.emplace("gemsbok");
-			animal_names.emplace("lesser_kudu");
-			animal_names.emplace("scrub_hare");
-			animal_names.emplace("lion");
-			animal_names.emplace("warthog");
-			animal_names.emplace("cape_buffalo");
-			animal_names.emplace("springbok");
+			animal_names.emplace("blue_wildebeest", 183848642);
+			animal_names.emplace("side_striped_jackal", 802991936);
+			animal_names.emplace("gemsbok", 1148301097);
+			animal_names.emplace("lesser_kudu", 1955191955);
+			animal_names.emplace("scrub_hare", 1961213070);
+			animal_names.emplace("lion", 2188838277);
+			animal_names.emplace("warthog", 3080620210);
+			animal_names.emplace("cape_buffalo", 3311120975);
+			animal_names.emplace("springbok", 4064523038);
 			break;
 			}
 			// Parque
 		case 4:
 			{
 			this->animal_names = std::map<std::string, uint32_t>();
-			animal_names.emplace("red_deer");
-			animal_names.emplace("water_buffalo");
-			animal_names.emplace("puma");
-			animal_names.emplace("blackbuck");
-			animal_names.emplace("cinnamon_teal");
-			animal_names.emplace("mule_deer");
-			animal_names.emplace("axis_deer");
+			animal_names.emplace("red_deer", 429398428);
+			animal_names.emplace("water_buffalo", 743631237);
+			animal_names.emplace("puma", 769204555);
+			animal_names.emplace("blackbuck", 1729971715);
+			animal_names.emplace("cinnamon_teal", 1756552882);
+			animal_names.emplace("mule_deer", 2953920016);
+			animal_names.emplace("axis_deer", 3406669569);
 			break;
 			}
 			// Yukon
-		case 6:
+/*		case 6:
 			{
 			this->animal_names = std::map<std::string, uint32_t>();
 			animal_names.emplace("harlequin_duck");

@@ -9,17 +9,14 @@
 
 // TODO: - add -rep -preset presets
 // TODO: - add preset cli (print available presets upon asking user which animal presets to print)
-// TODO: - add -rep -custom type converter to std::vector<char>*
-// TODO: - FIX THE FUCKING IFSTREAM MEMORY LEAK! GOD! DAMN! IT!
 // 
 // TODO: - make exception class for e.g. if (!initialized) return 0 in AdfFile.cpp;
 // TODO: - change Utility class to accept input file destination and handle setting up if's and of's on its own
-// TODO: - refactor, faster runtime
 
 #pragma region CLI_FUNCTIONS
 void PrintUsage()
 {
-	std::cout << "Usage: HunterCheckmate.FileAnalyzer.exe <population_file_path> [-oc | -of | -ocg | -rep <[-custom | -preset]>" << std::endl
+	std::cout << "Usage: HunterCheckmate.FileAnalyzer.exe <population_file_path> [-oc | -of | -ocg | -rep <[-custom | -preset]>]" << std::endl
 		<< std::setw(6) << "-oc: " << std::setw(0) << "Output whole file contents on console" << std::endl
 		<< std::setw(6) << "-of: " << std::setw(0) << "Output whole file contents into .txt file" << std::endl
 		<< std::setw(6) << "-ocg: " << std::setw(0) << "Output animal group informations on console" << std::endl
