@@ -5,7 +5,8 @@
 #include <string>
 #include "AdfFile.h"
 #include "AnimalPopulation.h"
-#include "ThpPlayerProfile.h"
+#include <boost/json.hpp>
+#include "File.h"
 
 // TODO: - add -rep -preset presets
 // TODO: - add preset cli (print available presets upon asking user which animal presets to print)
@@ -80,6 +81,9 @@ void SetMask(char *arr[], std::vector<bool> *mask, uint8_t pos)
 	}
 }
 #pragma endregion
+
+boost::json::value parse_file(char const* filename);
+void pretty_print(std::ostream& os, boost::json::value const& jv, std::string* indent = nullptr);
 
 int main(int argc, char *argv[])
 {
@@ -1376,20 +1380,26 @@ int main(int argc, char *argv[])
 	}
 #pragma endregion
 #pragma region FUNCTIONALITY_LOADOUT
-	else if (file_path.find("thp_player_profile") != std::string::npos)
+	else if (file_path.find("player_profile") != std::string::npos)
 	{
 		// TODO: remove temporary loadout construction in here
 		// cli user: save current loadout with name xxx
 		// cli user: load loadout with name xxx
-		
-		auto *json_path = new std::string(R"(C:\Users\oleSQL\Documents\thehunter working\pop\inventory.json)");
-		auto *utility = new Utility(Endian::Little, file_path);
-		auto *ifstream_json = new std::ifstream(json_path->c_str(), std::ios::in | std::ios::out);
-		auto *adf = new ThpPlayerProfile(utility, json_path, ifstream_json);
 
-		adf->Deserialize();
-		
-		delete adf;
+		std::string json_path (R"(C:\Users\Luca\Desktop\player_profile.json)");
+		namespace json = boost::json;
+
+		try 
+		{
+			auto const jv = parse_file(json_path.c_str());
+			pretty_print(std::cout, jv);
+		}
+		catch (std::exception const& e)
+		{
+			std::cerr << "Caught exception " << e.what() << std::endl;
+			return EXIT_FAILURE;
+		}
+		return EXIT_SUCCESS;
 	}
 #pragma endregion
 #pragma endregion
@@ -1398,4 +1408,110 @@ int main(int argc, char *argv[])
 	_CrtDumpMemoryLeaks();
 #endif
 	return 0;
+}
+
+boost::json::value parse_file(char const* filename)
+{
+	file f(filename, "r");
+	boost::json::stream_parser p;
+	boost::json::error_code ec;
+	do
+	{
+		char buf[4096];
+		auto const nread = f.read(buf, sizeof(buf));
+		p.write(buf, nread, ec);
+	}     while (!f.eof());
+	if (ec)
+		return nullptr;
+	p.finish(ec);
+	if (ec)
+		return nullptr;
+	return p.release();
+}
+
+void pretty_print(std::ostream& os, boost::json::value const& jv, std::string* indent) 
+{
+	std::string indent_;
+	if (!indent)
+		indent = &indent_;
+	switch (jv.kind())
+	{
+	case boost::json::kind::object:
+	{
+		os << "{\n";
+		indent->append(4, ' ');
+		auto const& obj = jv.get_object();
+		if (!obj.empty())
+		{
+			auto it = obj.begin();
+			for (;;)
+			{
+				os << *indent << boost::json::serialize(it->key()) << " : ";
+				pretty_print(os, it->value(), indent);
+				if (++it == obj.end())
+					break;
+				os << ",\n";
+			}
+		}
+		os << "\n";
+		indent->resize(indent->size() - 4);
+		os << *indent << "}";
+		break;
+	}
+
+	case boost::json::kind::array:
+	{
+		os << "[\n";
+		indent->append(4, ' ');
+		auto const& arr = jv.get_array();
+		if (!arr.empty())
+		{
+			auto it = arr.begin();
+			for (;;)
+			{
+				os << *indent;
+				pretty_print(os, *it, indent);
+				if (++it == arr.end())
+					break;
+				os << ",\n";
+			}
+		}
+		os << "\n";
+		indent->resize(indent->size() - 4);
+		os << *indent << "]";
+		break;
+	}
+
+	case boost::json::kind::string:
+	{
+		os << boost::json::serialize(jv.get_string());
+		break;
+	}
+
+	case boost::json::kind::uint64:
+		os << jv.get_uint64();
+		break;
+
+	case boost::json::kind::int64:
+		os << jv.get_int64();
+		break;
+
+	case boost::json::kind::double_:
+		os << jv.get_double();
+		break;
+
+	case boost::json::kind::bool_:
+		if (jv.get_bool())
+			os << "true";
+		else
+			os << "false";
+		break;
+
+	case boost::json::kind::null:
+		os << "null";
+		break;
+	}
+
+	if (indent->empty())
+		os << "\n";
 }
