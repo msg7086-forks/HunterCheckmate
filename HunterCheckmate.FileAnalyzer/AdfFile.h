@@ -9,18 +9,6 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		std::vector<char> *whitetail_great_one_0;
 		std::vector<char> *whitetail_great_one_1;
-		std::vector<char> *whitetail_max_weight_diamond_0;
-		std::vector<char> *whitetail_max_weight_diamond_1;
-		std::vector<char> *whitetail_max_weight_diamond_2;
-		std::vector<char> *whitetail_max_weight_diamond_3;
-		std::vector<char> *whitetail_max_weight_diamond_4;
-		std::vector<char> *whitetail_max_weight_diamond_5;
-		std::vector<char> *whitetail_max_weight_diamond_6;
-		std::vector<char> *whitetail_max_weight_diamond_7;
-		std::vector<char> *whitetail_max_weight_diamond_8;
-		std::vector<char> *whitetail_max_weight_diamond_9;
-		std::vector<char> *whitetail_max_weight_diamond_10;
-		std::vector<char> *whitetail_max_weight_diamond_11;
 
 		AnimalData2()
 		{
@@ -45,145 +33,12 @@ namespace HunterCheckmate_FileAnalyzer
 					'\x00','\x00','\x00','\x00',
 					'\x00','\x00','\x00','\x00'
 				});
-
-			whitetail_max_weight_diamond_0 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_1 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_2 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_3 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x0D','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_4 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_5 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_6 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_7 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_8 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_9 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_10 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-			whitetail_max_weight_diamond_11 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\xC8','\x42',
-					'\x7E','\xC4','\x89','\x43',
-					'\x00','\x00','\x00','\x00',
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
 		}
 
 		~AnimalData2()
 		{
 			delete whitetail_great_one_0;
 			delete whitetail_great_one_1;
-			delete whitetail_max_weight_diamond_0;
-			delete whitetail_max_weight_diamond_1;
-			delete whitetail_max_weight_diamond_2;
-			delete whitetail_max_weight_diamond_3;
-			delete whitetail_max_weight_diamond_4;
-			delete whitetail_max_weight_diamond_5;
-			delete whitetail_max_weight_diamond_6;
-			delete whitetail_max_weight_diamond_7;
-			delete whitetail_max_weight_diamond_8;
-			delete whitetail_max_weight_diamond_9;
-			delete whitetail_max_weight_diamond_10;
-			delete whitetail_max_weight_diamond_11;
 		}
 	};
 
@@ -229,6 +84,7 @@ namespace HunterCheckmate_FileAnalyzer
 			return "SINT32_T";
 		case (Primitive::FLOAT):
 			return "FLOAT";
+		case (Primitive::NONE):
 		default:
 			return "NONE";
 		}
@@ -252,10 +108,10 @@ namespace HunterCheckmate_FileAnalyzer
 		uint32_t unknown_0x34;
 		uint32_t unknown_0x38;
 		uint32_t unknown_0x3C;
-		char* comment = new char[32];
+		//comment
 
 		AdfHeader() = default;
-		~AdfHeader() { delete[] comment; }
+		~AdfHeader() = default;
 	};
 
 	struct InstanceHeader
@@ -286,16 +142,16 @@ namespace HunterCheckmate_FileAnalyzer
 
 	struct TypedefHeader
 	{
-		Type type;
-		uint32_t size;
-		uint32_t alignment;
-		uint32_t name_hash;
-		uint64_t name_idx;
-		uint32_t name;
-		uint32_t flags;
-		uint32_t element_type_hash;
-		uint32_t element_length;
-		uint32_t member_count;
+		Type type = Type::None;
+		uint32_t size = 0;
+		uint32_t alignment = 0;
+		uint32_t name_hash = 0;
+		uint64_t name_idx = 0;
+		uint32_t name = 0;
+		uint32_t flags = 0;
+		uint32_t element_type_hash = 0;
+		uint32_t element_length = 0;
+		uint32_t member_count = 0;
 		std::vector<MemberHeader> member_headers;
 
 		TypedefHeader() = default;
@@ -306,15 +162,11 @@ namespace HunterCheckmate_FileAnalyzer
 
 	struct NametableHeader
 	{
-		std::vector<uint8_t>* size;
-		std::vector<std::string>* name;
+		std::vector<uint8_t> size;
+		std::vector<std::string> name;
 
 		NametableHeader() = default;
-		~NametableHeader()
-		{
-			delete size;
-			delete name;
-		}
+		~NametableHeader() = default;
 	};
 
 	static TypedefHeader* HashExists(uint32_t hash, std::vector<TypedefHeader> *header_typedefs);
@@ -322,31 +174,32 @@ namespace HunterCheckmate_FileAnalyzer
 	class Member
 	{
 	public:
-		TypedefHeader *header_typedef;
-		MemberHeader *header_member;
+		TypedefHeader *header_typedef = nullptr;
+		MemberHeader *header_member = nullptr;
 		Type type = Type::None;
 		Primitive primitive = Primitive::NONE;
 		uint32_t offset = 0;
 		uint32_t size = 0;
-		char *data;
-		std::vector<Member> *sub_members;
+		std::vector<char> data;
+		std::vector<Member> sub_members;
 
 		Member();
 		Member(TypedefHeader* header_typedef, MemberHeader *header_member);
-		~Member();
+		~Member() = default;
 	};
 
 	class Instance
 	{
 	public:
-		std::vector<TypedefHeader> *header_typedefs;
-		Utility *utility;
-		InstanceHeader *header_instance;
-		TypedefHeader *header_typedef;
-		std::vector<Member> *members = nullptr;
+		std::vector<TypedefHeader> *header_typedefs = nullptr;
+		Utility *utility = nullptr;
+		InstanceHeader *header_instance = nullptr;
+		TypedefHeader *header_typedef = nullptr;
+		std::vector<Member> members;
 
+		Instance() = default;
 		Instance(std::vector<TypedefHeader> *header_typedefs, Utility *utility, InstanceHeader *header_instance, TypedefHeader *header_typedef);
-		~Instance();
+		~Instance() = default;
 
 		void PopulatePrimitive(Member *member, MemberHeader *header_member, uint32_t offset, Primitive primitive) const;
 		void PopulateStructure(Member *member, uint32_t offset, TypedefHeader *header_typedef);
@@ -363,12 +216,12 @@ namespace HunterCheckmate_FileAnalyzer
 		bool initialized = false;
 		Utility *utility;
 	public:
-		AdfHeader *header;
-		std::vector<InstanceHeader> *header_instances;
-		std::vector<TypedefHeader> *header_typedef;
-		std::vector<StrhashHeader> *header_strhash;
-		NametableHeader *header_nametable;
-		std::vector<Instance> *instances;
+		AdfHeader header;
+		std::vector<InstanceHeader> header_instances;
+		std::vector<TypedefHeader> header_typedef;
+		std::vector<StrhashHeader> header_strhash;
+		NametableHeader header_nametable;
+		std::vector<Instance> instances;
 		
 		AdfFile(Utility *utility);
 		~AdfFile();

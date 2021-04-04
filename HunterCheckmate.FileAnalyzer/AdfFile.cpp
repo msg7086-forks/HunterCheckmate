@@ -19,8 +19,8 @@ namespace HunterCheckmate_FileAnalyzer
 			this->primitive = Primitive::NONE;
 			this->offset = 0;
 			this->size = 0;
-			this->data = nullptr;
-			this->sub_members = nullptr;
+			this->data = std::vector<char>();
+			this->sub_members = std::vector<Member>(0);
 	}
 
 	Member::Member(TypedefHeader* header_typedef, MemberHeader *header_member)
@@ -31,14 +31,8 @@ namespace HunterCheckmate_FileAnalyzer
 		this->primitive = Primitive::NONE;
 		this->offset = 0;
 		this->size = 0;
-		this->data = nullptr;
-		this->sub_members = new std::vector<Member>(header_typedef->member_count);
-	}
-
-	Member::~Member()
-	{
-		delete sub_members;
-		delete[] data;
+		this->data = std::vector<char>();
+		this->sub_members = std::vector<Member>(header_typedef->member_count);
 	}
 	
 	Instance::Instance(std::vector<TypedefHeader>* header_typedefs, Utility *utility, InstanceHeader *header_instance, TypedefHeader *header_typedef)
@@ -47,12 +41,7 @@ namespace HunterCheckmate_FileAnalyzer
 		this->utility = utility;
 		this->header_instance = header_instance;
 		this->header_typedef = header_typedef;
-		this->members = new std::vector<Member>(this->header_typedef->member_headers.size());
-	}
-
-	Instance::~Instance()
-	{
-		delete members;
+		this->members = std::vector<Member>(this->header_typedef->member_headers.size());
 	}
 
 	void Instance::PopulatePrimitive(Member *member, MemberHeader *header_member, uint32_t offset, Primitive primitive) const
@@ -76,12 +65,13 @@ namespace HunterCheckmate_FileAnalyzer
 		case (Primitive::UINT8_T):
 			member->size = sizeof(uint8_t);
 			break;
+		case(Primitive::NONE):
 		default:
 			break;
 		}
 
-		char* data = new char[member->size];
-		utility->Read(data, offset, member->size);
+		std::vector<char> data = std::vector<char>(member->size);
+		utility->Read(data.data(), offset, member->size);
 		member->data = data;
 	}
 
@@ -92,11 +82,11 @@ namespace HunterCheckmate_FileAnalyzer
 		member->primitive = Primitive::NONE;
 		member->offset = offset;
 		member->size = header_typedef->size;
-		member->sub_members = new std::vector<Member>(header_typedef->member_count);
+		member->sub_members = std::vector<Member>(header_typedef->member_count);
 
-		for (auto it = member->sub_members->begin(); it != member->sub_members->end(); ++it)
+		for (auto it = member->sub_members.begin(); it != member->sub_members.end(); ++it)
 		{
-			uint32_t idx = it - member->sub_members->begin();
+			uint32_t idx = it - member->sub_members.begin();
 			MemberHeader *header_member = &header_typedef->member_headers.at(idx);
 			TypedefHeader *sub_typedef = HashExists(header_member->type_hash, this->header_typedefs);
 
@@ -142,16 +132,16 @@ namespace HunterCheckmate_FileAnalyzer
 		member->primitive = Primitive::NONE;
 		member->offset = offset;
 		member->size = size;
-		if (is_inline) member->sub_members = new std::vector<Member>(header_typedef->element_length);
-		else member->sub_members = new std::vector<Member>(size);
+		if (is_inline) member->sub_members = std::vector<Member>(header_typedef->element_length);
+		else member->sub_members = std::vector<Member>(size);
 
 		TypedefHeader *sub_typedef = HashExists(header_typedef->element_type_hash, this->header_typedefs);
 
 		if (sub_typedef == nullptr)
 		{
-			for (auto it = member->sub_members->begin(); it != member->sub_members->end(); ++it)
+			for (auto it = member->sub_members.begin(); it != member->sub_members.end(); ++it)
 			{
-				const uint32_t idx = it - member->sub_members->begin();
+				const uint32_t idx = it - member->sub_members.begin();
 				const Primitive prim = Primitive(header_typedef->element_type_hash);
 				uint32_t tmp_size;
 				switch (prim)
@@ -182,9 +172,9 @@ namespace HunterCheckmate_FileAnalyzer
 				break; // shouldn't happen in testing
 			case (Type::Structure):
 			{
-				for (auto it = member->sub_members->begin(); it != member->sub_members->end(); ++it)
+				for (auto it = member->sub_members.begin(); it != member->sub_members.end(); ++it)
 				{
-					const uint32_t idx = it - member->sub_members->begin();
+					const uint32_t idx = it - member->sub_members.begin();
 					const uint32_t tmp_offset = offset + idx * sub_typedef->size;
 					PopulateStructure(&*it, tmp_offset, sub_typedef);
 				}
@@ -200,10 +190,10 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		uint32_t base = this->header_instance->offset;
 
-		for (auto it = members->begin(); it != members->end(); ++it)
+		for (auto it = members.begin(); it != members.end(); ++it)
 		{
 			Member* current = &*it;
-			uint32_t idx = it - members->begin();
+			uint32_t idx = it - members.begin();
 			MemberHeader* member_header = &header_typedef->member_headers.at(idx);
 			uint32_t offset = base + member_header->offset;
 
@@ -237,9 +227,10 @@ namespace HunterCheckmate_FileAnalyzer
 				}
 				case (Type::InlineArray):
 				{
-					uint32_t offset = base + member_header->offset;
+					uint32_t inline_offset = base + member_header->offset;
 					uint32_t size = sub_typedef->element_length;
-					PopulateArray(&*it, sub_typedef, offset, size, true);
+					PopulateArray(&*it, sub_typedef, inline_offset, size, true);
+					break;
 				}
 				default:
 					break;
@@ -251,23 +242,17 @@ namespace HunterCheckmate_FileAnalyzer
 	AdfFile::AdfFile(Utility *utility)
 	{
 		this->utility = utility;
-		this->header = new AdfHeader();
-		this->header_instances = new std::vector<InstanceHeader>;
-		this->header_typedef = new std::vector<TypedefHeader>;
-		this->header_strhash = new std::vector<StrhashHeader>;
-		this->header_nametable = new NametableHeader;
-		this->instances = new std::vector<Instance>;
+		this->header = AdfHeader();
+		this->header_instances = std::vector<InstanceHeader>(0);
+		this->header_typedef = std::vector<TypedefHeader>(0);
+		this->header_strhash = std::vector<StrhashHeader>(0);
+		this->header_nametable = NametableHeader();
+		this->instances = std::vector<Instance>(0);
 	}
 
 	AdfFile::~AdfFile()
 	{
 		delete utility;
-		delete header;
-		delete header_instances;
-		delete header_typedef;
-		delete header_strhash;
-		delete header_nametable;
-		delete instances;
 	}
 
 	bool AdfFile::SigMatch() const
@@ -285,45 +270,44 @@ namespace HunterCheckmate_FileAnalyzer
 
 		if (!SigMatch()) return false;
 
-		header->sig = this->sig;
-		utility->Read(&header->version, 0x4);
-		utility->Read(&header->instance_count, 0x8);
-		utility->Read(&header->instance_offset, 0xC);
-		utility->Read(&header->typedef_count, 0x10);
-		utility->Read(&header->typedef_offset, 0x14);
-		utility->Read(&header->strhash_count, 0x18);
-		utility->Read(&header->strhash_offset, 0x1C);
-		utility->Read(&header->nametable_count, 0x20);
-		utility->Read(&header->nametable_offset, 0x24);
-		utility->Read(&header->total_size, 0x28);
-		utility->Read(&header->unknown_0x2C, 0x2C);
-		utility->Read(&header->unknown_0x30, 0x30);
-		utility->Read(&header->unknown_0x34, 0x34);
-		utility->Read(&header->unknown_0x38, 0x38);
-		utility->Read(&header->unknown_0x3C, 0x3C);
-		utility->Read(header->comment, 0x40, 0x20);
+		header.sig = this->sig;
+		utility->Read(&header.version, 0x4);
+		utility->Read(&header.instance_count, 0x8);
+		utility->Read(&header.instance_offset, 0xC);
+		utility->Read(&header.typedef_count, 0x10);
+		utility->Read(&header.typedef_offset, 0x14);
+		utility->Read(&header.strhash_count, 0x18);
+		utility->Read(&header.strhash_offset, 0x1C);
+		utility->Read(&header.nametable_count, 0x20);
+		utility->Read(&header.nametable_offset, 0x24);
+		utility->Read(&header.total_size, 0x28);
+		utility->Read(&header.unknown_0x2C, 0x2C);
+		utility->Read(&header.unknown_0x30, 0x30);
+		utility->Read(&header.unknown_0x34, 0x34);
+		utility->Read(&header.unknown_0x38, 0x38);
+		utility->Read(&header.unknown_0x3C, 0x3C);
 
-		for (uint32_t i = 0; i < header->instance_count; i++)
+		for (uint32_t i = 0; i < header.instance_count; i++)
 		{
 			auto* buffer = new InstanceHeader;
-			const uint32_t base = header->instance_offset;
+			const uint32_t base = header.instance_offset;
 			utility->Read(&buffer->name_hash, base);
 			utility->Read(&buffer->type_hash, base + 0x4);
 			utility->Read(&buffer->offset, base + 0x8);
 			utility->Read(&buffer->size, base + 0xC);
 			utility->Read(&buffer->name_idx, base + 0x10);
 
-			header_instances->push_back(*buffer);
+			header_instances.push_back(*buffer);
 			delete buffer;
 		}
 
 		uint32_t num_previous_members = 0;
-		for (uint32_t i = 0; i < header->typedef_count; i++)
+		for (uint32_t i = 0; i < header.typedef_count; i++)
 		{
 			auto* buffer = new TypedefHeader;
 			uint32_t base;
-			if (i == 0) base = header->typedef_offset;
-			else base = header->typedef_offset + TYPEDEF_SIZE * i + num_previous_members * MEMBER_SIZE;
+			if (i == 0) base = header.typedef_offset;
+			else base = header.typedef_offset + TYPEDEF_SIZE * i + num_previous_members * MEMBER_SIZE;
 
 			utility->Read(&buffer->type, base);
 			utility->Read(&buffer->size, base + 0x4);
@@ -359,42 +343,42 @@ namespace HunterCheckmate_FileAnalyzer
 				break;
 			}
 
-			header_typedef->push_back(*buffer);
+			header_typedef.push_back(*buffer);
 			delete buffer;
 		}
 
-		header_nametable->size = new std::vector<uint8_t>(header->nametable_count);
-		header_nametable->name = new std::vector<std::string>(header->nametable_count);
+		header_nametable.size = std::vector<uint8_t>(header.nametable_count);
+		header_nametable.name = std::vector<std::string>(header.nametable_count);
 
-		for (uint32_t i = 0; i < header->nametable_count; i++)
+		for (uint32_t i = 0; i < header.nametable_count; i++)
 		{
 			uint8_t buffer;
-			const uint32_t base = header->nametable_offset + sizeof(uint8_t) * i;
+			const uint32_t base = header.nametable_offset + sizeof(uint8_t) * i;
 			utility->Read(&buffer, base, sizeof(uint8_t));
-			header_nametable->size->at(i) = buffer;
+			header_nametable.size.at(i) = buffer;
 		}
 
 		uint32_t current_offset = 0;
-		for (uint32_t i = 0; i < header->nametable_count; i++)
+		for (uint32_t i = 0; i < header.nametable_count; i++)
 		{
-			char* buffer = new char[header_nametable->size->at(i) + 1];
-			const uint32_t base = header->nametable_offset + header->nametable_count + current_offset;
-			utility->Read(buffer, base, header_nametable->size->at(i));
-			current_offset += header_nametable->size->at(i) + 1;
+			char* buffer = new char[header_nametable.size.at(i) + 1];
+			const uint32_t base = header.nametable_offset + header.nametable_count + current_offset;
+			utility->Read(buffer, base, header_nametable.size.at(i));
+			current_offset += header_nametable.size.at(i) + 1;
 
-			for (uint32_t j = 0; j < header_nametable->size->at(i); j++)
+			for (uint32_t j = 0; j < header_nametable.size.at(i); j++)
 			{
-				header_nametable->name->at(i).push_back(buffer[j]);
+				header_nametable.name.at(i).push_back(buffer[j]);
 			}
 			delete[] buffer;
 		}
 
-		for (auto it = header_instances->begin(); it != header_instances->end(); ++it)
+		for (auto it = header_instances.begin(); it != header_instances.end(); ++it)
 		{
-			uint32_t idx = it - header_instances->begin();
-			auto* instance = new Instance(this->header_typedef, this->utility, &*it, &this->header_typedef->at(idx));
+			uint32_t idx = it - header_instances.begin();
+			std::unique_ptr<Instance> instance (new Instance(&this->header_typedef, this->utility, &*it, &this->header_typedef.at(idx)));
 			instance->PopulateMembers();
-			instances->push_back(*instance);
+			instances.push_back(*instance);
 		}
 
 		this->initialized = true;

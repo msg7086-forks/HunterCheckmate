@@ -50,7 +50,7 @@ namespace HunterCheckmate_FileAnalyzer
 		bool SetId(const std::string& animal_name);
 		~AnimalData();
 
-		std::vector<char> *GetBytes();
+		std::vector<char> GetBytes();
 		bool SetGender(uint8_t gender);
 		bool SetGender(const std::string &gender);
 		bool SetWeight(float weight);

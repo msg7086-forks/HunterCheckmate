@@ -5,19 +5,19 @@
 #include <string>
 #include "AdfFile.h"
 #include "AnimalPopulation.h"
-#include "ThpPlayerProfile.h"
+#include <boost/json.hpp>
+#include "File.h"
 
 // TODO: - add -rep -preset presets
 // TODO: - add preset cli (print available presets upon asking user which animal presets to print)
-// TODO: - add -rep -custom type converter to std::vector<char>*
 // 
 // TODO: - make exception class for e.g. if (!initialized) return 0 in AdfFile.cpp;
 // TODO: - change Utility class to accept input file destination and handle setting up if's and of's on its own
-// TODO: - refactor, faster runtime
 
+#pragma region CLI_FUNCTIONS
 void PrintUsage()
 {
-	std::cout << "Usage: HunterCheckmate.FileAnalyzer.exe <population_file_path> [-oc | -of | -ocg | -rep <[-custom | -preset]>" << std::endl
+	std::cout << "Usage: HunterCheckmate.FileAnalyzer.exe <population_file_path> [-oc | -of | -ocg | -rep <[-custom | -preset]>]" << std::endl
 		<< std::setw(6) << "-oc: " << std::setw(0) << "Output whole file contents on console" << std::endl
 		<< std::setw(6) << "-of: " << std::setw(0) << "Output whole file contents into .txt file" << std::endl
 		<< std::setw(6) << "-ocg: " << std::setw(0) << "Output animal group informations on console" << std::endl
@@ -80,23 +80,28 @@ void SetMask(char *arr[], std::vector<bool> *mask, uint8_t pos)
 		if (std::string(arr[idx]) == "-preset") { mask->at(1) = true; break; }
 	}
 }
+#pragma endregion
+
+boost::json::value parse_file(char const* filename);
+void pretty_print(std::ostream& os, boost::json::value const& jv, std::string* indent = nullptr);
 
 int main(int argc, char *argv[])
 {
 	using namespace HunterCheckmate_FileAnalyzer;
 
-	std::string* file_path = new std::string();
+#pragma region CLI
+	std::string file_path;
 	bool flag_oc, flag_of, flag_ocg, flag_rep = false;
 
 	std::string str_ocg;
 	uint8_t str_ocg_pos;
 
 	uint8_t mask_rep_pos;
-	std::vector<bool> mask_rep = std::vector<bool>(2);
+	std::vector<bool> mask_rep(2);
 	
-	if (argc < 2) {	PrintUsage(); return 1;	}
+	if (argc < 2) { PrintUsage(); return 1; }
 	if (argc >= 2 && ContainsElement(argv,  "-h")) { PrintUsage(); return 1; }
-	if (argc >= 2) { *file_path = std::string(argv[1]); }
+	if (argc >= 2) { file_path = std::string(argv[1]); }
 	else { return 1; }
 	if (argc >= 3)
 	{
@@ -122,20 +127,17 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	std::string *file_path_out = new std::string(*file_path);
-	file_path_out->append(".txt");
-	auto *ifstream = new std::ifstream(file_path->c_str(), std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
+	std::string file_path_out(file_path);
+	file_path_out.append(".txt");
+#pragma endregion
 
-	if (!ifstream->is_open()) return 1;
-
-
-	if (file_path->find("decomp_animal_population") != std::string::npos)
+#pragma region FUNCTIONALITY_
+#pragma region FUNCTIONALITY_ANIMAL_POPULATION
+	if (file_path.find("animal_population_") != std::string::npos)
 	{
-		auto *ofstream = new std::ofstream(file_path->c_str(), std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
-		auto *utility = new Utility(Endian::Little, ifstream, ofstream);
-		uint8_t reserve_id = static_cast<uint8_t>(file_path->back()) - static_cast<uint8_t>('0');
-		auto *reserve_data = new ReserveData(reserve_id);
-		auto *adf = new AnimalPopulation(utility, reserve_data);
+		auto *utility = new Utility(Endian::Little, file_path);
+		uint8_t reserve_id = static_cast<uint8_t>(file_path.back()) - static_cast<uint8_t>('0');
+		auto *adf = new AnimalPopulation(utility, reserve_id);
 		
 		bool success = adf->Deserialize();
 
@@ -144,21 +146,21 @@ int main(int argc, char *argv[])
 		{
 			std::cout << "====================================================" << std::endl;
 			std::cout << "GENERAL HEADER INFO:" << std::endl;
-			std::cout << "Version:			" << std::dec << adf->header->version << std::endl;
-			std::cout << "Instance_count:			" << std::dec << adf->header->instance_count << std::endl;
-			std::cout << "Instance_offset:		0x" << std::hex << adf->header->instance_offset << std::endl;
-			std::cout << "Typedef_count:			" << std::dec << adf->header->typedef_count << std::endl;
-			std::cout << "Typedef_offset:			0x" << std::hex << adf->header->typedef_offset << std::endl;
-			std::cout << "Strhash_count:			" << std::dec << adf->header->strhash_count << std::endl;
-			std::cout << "Strhash_offset:			0x" << std::hex << adf->header->strhash_offset << std::endl;
-			std::cout << "Nametable_count:		" << std::dec << adf->header->nametable_count << std::endl;
-			std::cout << "Nametable_offset:		0x" << std::hex << adf->header->nametable_offset << std::endl;
-			std::cout << "Total_size:			" << std::dec << adf->header->total_size << std::endl;
-			std::cout << "Comment:			" << adf->header->comment << std::endl;
+			std::cout << "Version:			" << std::dec << adf->header.version << std::endl;
+			std::cout << "Instance_count:			" << std::dec << adf->header.instance_count << std::endl;
+			std::cout << "Instance_offset:		0x" << std::hex << adf->header.instance_offset << std::endl;
+			std::cout << "Typedef_count:			" << std::dec << adf->header.typedef_count << std::endl;
+			std::cout << "Typedef_offset:			0x" << std::hex << adf->header.typedef_offset << std::endl;
+			std::cout << "Strhash_count:			" << std::dec << adf->header.strhash_count << std::endl;
+			std::cout << "Strhash_offset:			0x" << std::hex << adf->header.strhash_offset << std::endl;
+			std::cout << "Nametable_count:		" << std::dec << adf->header.nametable_count << std::endl;
+			std::cout << "Nametable_offset:		0x" << std::hex << adf->header.nametable_offset << std::endl;
+			std::cout << "Total_size:			" << std::dec << adf->header.total_size << std::endl;
+			// std::cout << "Comment:			" << adf->header.comment.data() << std::endl;
 			std::cout << "====================================================" << std::endl << std::endl;
 
 			uint32_t i = 0;
-			for (auto it = adf->header_instances->begin(); it != adf->header_instances->end(); ++it)
+			for (auto it = adf->header_instances.begin(); it != adf->header_instances.end(); ++it)
 			{
 				std::cout << "====================================================" << std::endl;
 				std::cout << "INSTANCE HEADER NUMBER: " << std::dec << i << std::endl;
@@ -172,7 +174,7 @@ int main(int argc, char *argv[])
 			}
 
 			i = 0;
-			for (auto it = adf->header_typedef->begin(); it != adf->header_typedef->end(); ++it)
+			for (auto it = adf->header_typedef.begin(); it != adf->header_typedef.end(); ++it)
 			{
 				std::cout << "====================================================" << std::endl;
 				std::cout << "TYPEDEF HEADER NUMBER: " << std::dec << i << std::endl;
@@ -206,65 +208,65 @@ int main(int argc, char *argv[])
 			}
 
 			std::cout << "====================================================";
-			for (i = 0; i < adf->header_nametable->size->size(); i++)
+			for (i = 0; i < adf->header_nametable.size.size(); i++)
 			{
 				std::cout << "\nNAME NUMBER: " << std::dec << i << std::endl;
-				std::cout << "Name: " << std::hex << adf->header_nametable->name->at(i).c_str() << std::endl;
-				std::cout << "Size: " << std::dec << static_cast<int>(adf->header_nametable->size->at(i)) << std::endl;
+				std::cout << "Name: " << std::hex << adf->header_nametable.name.at(i).c_str() << std::endl;
+				std::cout << "Size: " << std::dec << static_cast<int>(adf->header_nametable.size.at(i)) << std::endl;
 			}
 			std::cout << "====================================================" << std::endl << std::endl;
 
 			i = 0;
-			for (auto it = adf->instances->begin(); it != adf->instances->end(); ++it)
+			for (auto it = adf->instances.begin(); it != adf->instances.end(); ++it)
 			{
 				std::cout << "====================================================";
 				std::cout << "\nINSTANCE NUMBER: " << std::dec << i << std::endl;
 				auto j = 0;
-				if (it->members == nullptr || it->members->empty()) continue;
-				for (auto jt = it->members->begin(); jt != it->members->end(); ++jt)
+				if (it->members.empty()) continue;
+				for (auto jt = it->members.begin(); jt != it->members.end(); ++jt)
 				{
 					std::cout << "	MEMBER NUMBER: " << std::dec << j << std::endl;
 					std::cout << "	Type: " << typeString[static_cast<uint32_t>(jt->type)] << ", PrimitiveType: " << primitiveString(jt->primitive) << ", Offset: 0x" << std::hex << jt
 						->offset << ", Size: 0x" << std::hex << jt->size << std::endl;
 
-					if (jt->data != nullptr && jt->primitive != Primitive::NONE)
+					if (jt->primitive != Primitive::NONE)
 					{
-						std::cout << "	Raw_Data: " << std::hex << jt->data << std::endl;
+						std::cout << "	Raw_Data: " << std::hex << jt->data.data() << std::endl;
 						std::cout << "	Data: ";
 						switch (jt->primitive)
 						{
 						case (Primitive::UINT8_T):
 						{
 							uint8_t data;
-							memcpy(&data, jt->data, 1);
+							memcpy(&data, jt->data.data(), 1);
 							std::cout << std::dec << static_cast<unsigned short>(data);
 							break;
 						}
 						case (Primitive::UINT32_T):
 						{
 							uint32_t data;
-							memcpy(&data, jt->data, 4);
+							memcpy(&data, jt->data.data(), 4);
 							std::cout << std::dec << static_cast<unsigned long>(data);
 							break;
 						}
 						case (Primitive::UINT64_T):
 						{
 							uint64_t data;
-							memcpy(&data, jt->data, 8);
+							memcpy(&data, jt->data.data(), 8);
 							std::cout << std::dec << static_cast<unsigned long long>(data);
 							break;
 						}
 						case (Primitive::SINT32_T):
 						{
 							int32_t data;
-							memcpy(&data, jt->data, 4);
+							memcpy(&data, jt->data.data(), 4);
 							std::cout << std::dec << static_cast<long>(data);
 							break;
 						}
 						case (Primitive::FLOAT):
 						{
 							float data;
-							memcpy(&data, jt->data, 4);
+							memcpy(&data, jt->data.data(), 4);
 							std::cout << std::dec << static_cast<float>(data);
 							break;
 						}
@@ -276,51 +278,51 @@ int main(int argc, char *argv[])
 					}
 
 					auto k = 0;
-					if (jt->sub_members == nullptr || jt->sub_members->empty()) continue;
-					for (auto kt = jt->sub_members->begin(); kt != jt->sub_members->end(); ++kt)
+					if (jt->sub_members.empty()) continue;
+					for (auto kt = jt->sub_members.begin(); kt != jt->sub_members.end(); ++kt)
 					{
 						std::cout << "		SUB_MEMBER NUMBER: " << std::dec << k << std::endl;
 						std::cout << "		Type: " << typeString[static_cast<uint32_t>(kt->type)] << ", PrimitiveType: " << primitiveString(kt->primitive) << ", Offset: 0x" << std::hex << kt
 							->offset << ", Size: 0x" << std::hex << kt->size << std::endl;
 
-						if (kt->data != nullptr && kt->primitive != Primitive::NONE)
+						if (kt->primitive != Primitive::NONE)
 						{
-							std::cout << "		Raw_Data: " << kt->data << std::endl;
+							std::cout << "		Raw_Data: " << kt->data.data() << std::endl;
 							std::cout << "		Data: ";
 							switch (kt->primitive)
 							{
 							case (Primitive::UINT8_T):
 							{
 								uint8_t data;
-								memcpy(&data, kt->data, 1);
+								memcpy(&data, kt->data.data(), 1);
 								std::cout << std::dec << static_cast<unsigned short>(data);;
 								break;
 							}
 							case (Primitive::UINT32_T):
 							{
 								uint32_t data;
-								memcpy(&data, kt->data, 4);
+								memcpy(&data, kt->data.data(), 4);
 								std::cout << std::dec << static_cast<unsigned long>(data);
 								break;
 							}
 							case (Primitive::UINT64_T):
 							{
 								uint64_t data;
-								memcpy(&data, kt->data, 8);
+								memcpy(&data, kt->data.data(), 8);
 								std::cout << std::dec << static_cast<unsigned long long>(data);
 								break;
 							}
 							case (Primitive::SINT32_T):
 							{
 								int32_t data;
-								memcpy(&data, kt->data, 4);
+								memcpy(&data, kt->data.data(), 4);
 								std::cout << std::dec << static_cast<long>(data);
 								break;
 							}
 							case (Primitive::FLOAT):
 							{
 								float data;
-								memcpy(&data, kt->data, 4);
+								memcpy(&data, kt->data.data(), 4);
 								std::cout << std::dec << static_cast<float>(data);
 								break;
 							}
@@ -332,51 +334,51 @@ int main(int argc, char *argv[])
 						}
 
 						auto l = 0;
-						if (kt->sub_members == nullptr || kt->sub_members->empty()) continue;
-						for (auto lt = kt->sub_members->begin(); lt != kt->sub_members->end(); ++lt)
+						if (kt->sub_members.empty()) continue;
+						for (auto lt = kt->sub_members.begin(); lt != kt->sub_members.end(); ++lt)
 						{
 							std::cout << "			SUB_SUB_MEMBER NUMBER: " << std::dec << l << std::endl;
 							std::cout << "			Type: " << typeString[static_cast<uint32_t>(lt->type)] << ", PrimitiveType: " << primitiveString(lt->primitive) << ", Offset: 0x" << std::hex << lt
 								->offset << ", Size: 0x" << std::hex << lt->size << std::endl;
 
-							if (lt->data != nullptr && lt->primitive != Primitive::NONE)
+							if (lt->primitive != Primitive::NONE)
 							{
-								std::cout << "			Raw_Data: " << lt->data << std::endl;
+								std::cout << "			Raw_Data: " << lt->data.data() << std::endl;
 								std::cout << "			Data: ";
 								switch (lt->primitive)
 								{
 								case (Primitive::UINT8_T):
 								{
 									uint8_t data;
-									memcpy(&data, lt->data, 1);
+									memcpy(&data, lt->data.data(), 1);
 									std::cout << std::dec << static_cast<unsigned short>(data);;
 									break;
 								}
 								case (Primitive::UINT32_T):
 								{
 									uint32_t data;
-									memcpy(&data, lt->data, 4);
+									memcpy(&data, lt->data.data(), 4);
 									std::cout << std::dec << static_cast<unsigned long>(data);
 									break;
 								}
 								case (Primitive::UINT64_T):
 								{
 									uint64_t data;
-									memcpy(&data, lt->data, 8);
+									memcpy(&data, lt->data.data(), 8);
 									std::cout << std::dec << static_cast<unsigned long long>(data);
 									break;
 								}
 								case (Primitive::SINT32_T):
 								{
 									int32_t data;
-									memcpy(&data, lt->data, 4);
+									memcpy(&data, lt->data.data(), 4);
 									std::cout << std::dec << static_cast<long>(data);
 									break;
 								}
 								case (Primitive::FLOAT):
 								{
 									float data;
-									memcpy(&data, lt->data, 4);
+									memcpy(&data, lt->data.data(), 4);
 									std::cout << std::dec << static_cast<float>(data);
 									break;
 								}
@@ -388,51 +390,51 @@ int main(int argc, char *argv[])
 							}
 
 							auto m = 0;
-							if (lt->sub_members == nullptr || lt->sub_members->empty()) continue;
-							for (auto mt = lt->sub_members->begin(); mt != lt->sub_members->end(); ++mt)
+							if (lt->sub_members.empty()) continue;
+							for (auto mt = lt->sub_members.begin(); mt != lt->sub_members.end(); ++mt)
 							{
 								std::cout << "				SUB_SUB_SUB_MEMBER NUMBER: " << std::dec << m << std::endl;
 								std::cout << "				Type: " << typeString[static_cast<uint32_t>(mt->type)] << ", PrimitiveType: " << primitiveString(mt->primitive) << ", Offset: 0x" << std::hex << mt
 									->offset << ", Size: 0x" << std::hex << mt->size << std::endl;
 
-								if (mt->data != nullptr && mt->primitive != Primitive::NONE)
+								if (mt->primitive != Primitive::NONE)
 								{
-									std::cout << "				Raw_Data: " << mt->data << std::endl;
+									std::cout << "				Raw_Data: " << mt->data.data() << std::endl;
 									std::cout << "				Data: ";
 									switch (mt->primitive)
 									{
 									case (Primitive::UINT8_T):
 									{
 										uint8_t data;
-										memcpy(&data, mt->data, 1);
+										memcpy(&data, mt->data.data(), 1);
 										std::cout << std::dec << static_cast<unsigned short>(data);
 										break;
 									}
 									case (Primitive::UINT32_T):
 									{
 										uint32_t data;
-										memcpy(&data, mt->data, 4);
+										memcpy(&data, mt->data.data(), 4);
 										std::cout << std::dec << static_cast<unsigned long>(data);
 										break;
 									}
 									case (Primitive::UINT64_T):
 									{
 										uint64_t data;
-										memcpy(&data, mt->data, 8);
+										memcpy(&data, mt->data.data(), 8);
 										std::cout << std::dec << static_cast<unsigned long long>(data);
 										break;
 									}
 									case (Primitive::SINT32_T):
 									{
 										int32_t data;
-										memcpy(&data, mt->data, 4);
+										memcpy(&data, mt->data.data(), 4);
 										std::cout << std::dec << static_cast<long>(data);
 										break;
 									}
 									case (Primitive::FLOAT):
 									{
 										float data;
-										memcpy(&data, mt->data, 4);
+										memcpy(&data, mt->data.data(), 4);
 										std::cout << std::dec << static_cast<float>(data);
 										break;
 									}
@@ -444,51 +446,51 @@ int main(int argc, char *argv[])
 								}
 
 								auto n = 0;
-								if (mt->sub_members == nullptr || mt->sub_members->empty()) continue;
-								for (auto nt = mt->sub_members->begin(); nt != mt->sub_members->end(); ++nt)
+								if (mt->sub_members.empty()) continue;
+								for (auto nt = mt->sub_members.begin(); nt != mt->sub_members.end(); ++nt)
 								{
 									std::cout << "					SUB_SUB_SUB_SUB_MEMBER NUMBER: " << std::dec << n << std::endl;
 									std::cout << "					Type: " << typeString[static_cast<uint32_t>(nt->type)] << ", PrimitiveType: " << primitiveString(nt->primitive) << ", Offset: 0x" << std::hex << nt
 										->offset << ", Size: 0x" << std::hex << nt->size << std::endl;
 
-									if (nt->data != nullptr && nt->primitive != Primitive::NONE)
+									if (nt->primitive != Primitive::NONE)
 									{
-										std::cout << "					Raw_Data: " << nt->data << std::endl;
+										std::cout << "					Raw_Data: " << nt->data.data() << std::endl;
 										std::cout << "					Data: ";
 										switch (nt->primitive)
 										{
 										case (Primitive::UINT8_T):
 										{
 											uint8_t data;
-											memcpy(&data, nt->data, 1);
+											memcpy(&data, nt->data.data(), 1);
 											std::cout << std::dec << static_cast<unsigned short>(data);
 											break;
 										}
 										case (Primitive::UINT32_T):
 										{
 											uint32_t data;
-											memcpy(&data, nt->data, 4);
+											memcpy(&data, nt->data.data(), 4);
 											std::cout << std::dec << static_cast<unsigned long>(data);
 											break;
 										}
 										case (Primitive::UINT64_T):
 										{
 											uint64_t data;
-											memcpy(&data, nt->data, 8);
+											memcpy(&data, nt->data.data(), 8);
 											std::cout << std::dec << static_cast<unsigned long long>(data);
 											break;
 										}
 										case (Primitive::SINT32_T):
 										{
 											int32_t data;
-											memcpy(&data, nt->data, 4);
+											memcpy(&data, nt->data.data(), 4);
 											std::cout << std::dec << static_cast<long>(data);
 											break;
 										}
 										case (Primitive::FLOAT):
 										{
 											float data;
-											memcpy(&data, nt->data, 4);
+											memcpy(&data, nt->data.data(), 4);
 											std::cout << std::dec << static_cast<float>(data);
 											break;
 										}
@@ -500,51 +502,51 @@ int main(int argc, char *argv[])
 									}
 
 									auto o = 0;
-									if (nt->sub_members == nullptr || nt->sub_members->empty()) continue;
-									for (auto ot = nt->sub_members->begin(); ot != nt->sub_members->end(); ++ot)
+									if (nt->sub_members.empty()) continue;
+									for (auto ot = nt->sub_members.begin(); ot != nt->sub_members.end(); ++ot)
 									{
 										std::cout << "						SUB_SUB_SUB_SUB_SUB_MEMBER NUMBER: " << std::dec << o << std::endl;
 										std::cout << "						Type: " << typeString[static_cast<uint32_t>(ot->type)] << ", PrimitiveType: " << primitiveString(ot->primitive) << ", Offset: 0x" << std::hex << ot
 											->offset << ", Size: 0x" << std::hex << ot->size << std::endl;
 
-										if (ot->data != nullptr && ot->primitive != Primitive::NONE)
+										if (ot->primitive != Primitive::NONE)
 										{
-											std::cout << "						Raw_Data: " << ot->data << std::endl;
+											std::cout << "						Raw_Data: " << ot->data.data() << std::endl;
 											std::cout << "						Data: ";
 											switch (ot->primitive)
 											{
 											case (Primitive::UINT8_T):
 											{
 												uint8_t data;
-												memcpy(&data, ot->data, 1);
+												memcpy(&data, ot->data.data(), 1);
 												std::cout << std::dec << static_cast<unsigned short>(data);
 												break;
 											}
 											case (Primitive::UINT32_T):
 											{
 												uint32_t data;
-												memcpy(&data, ot->data, 4);
+												memcpy(&data, ot->data.data(), 4);
 												std::cout << std::dec << static_cast<unsigned long>(data);
 												break;
 											}
 											case (Primitive::UINT64_T):
 											{
 												uint64_t data;
-												memcpy(&data, ot->data, 8);
+												memcpy(&data, ot->data.data(), 8);
 												std::cout << std::dec << static_cast<unsigned long long>(data);
 												break;
 											}
 											case (Primitive::SINT32_T):
 											{
 												int32_t data;
-												memcpy(&data, ot->data, 4);
+												memcpy(&data, ot->data.data(), 4);
 												std::cout << std::dec << static_cast<long>(data);
 												break;
 											}
 											case (Primitive::FLOAT):
 											{
 												float data;
-												memcpy(&data, ot->data, 4);
+												memcpy(&data, ot->data.data(), 4);
 												std::cout << std::dec << static_cast<float>(data);
 												break;
 											}
@@ -556,51 +558,51 @@ int main(int argc, char *argv[])
 										}
 
 										auto p = 0;
-										if (ot->sub_members == nullptr || ot->sub_members->empty()) continue;
-										for (auto pt = ot->sub_members->begin(); pt != ot->sub_members->end(); ++pt)
+										if (ot->sub_members.empty()) continue;
+										for (auto pt = ot->sub_members.begin(); pt != ot->sub_members.end(); ++pt)
 										{
 											std::cout << "						SUB_SUB_SUB_SUB_SUB_MEMBER NUMBER: " << std::dec << p << std::endl;
 											std::cout << "						Type: " << typeString[static_cast<uint32_t>(pt->type)] << ", PrimitiveType: " << primitiveString(pt->primitive) << ", Offset: 0x" << std::hex << pt
 												->offset << ", Size: 0x" << std::hex << pt->size << std::endl;
 
-											if (pt->data != nullptr && pt->primitive != Primitive::NONE)
+											if (pt->primitive != Primitive::NONE)
 											{
-												std::cout << "						Raw_Data: " << pt->data << std::endl;
+												std::cout << "						Raw_Data: " << pt->data.data() << std::endl;
 												std::cout << "						Data: ";
 												switch (pt->primitive)
 												{
 												case (Primitive::UINT8_T):
 												{
 													uint8_t data;
-													memcpy(&data, pt->data, 1);
+													memcpy(&data, pt->data.data(), 1);
 													std::cout << std::dec << static_cast<unsigned short>(data);
 													break;
 												}
 												case (Primitive::UINT32_T):
 												{
 													uint32_t data;
-													memcpy(&data, pt->data, 4);
+													memcpy(&data, pt->data.data(), 4);
 													std::cout << std::dec << static_cast<unsigned long>(data);
 													break;
 												}
 												case (Primitive::UINT64_T):
 												{
 													uint64_t data;
-													memcpy(&data, pt->data, 8);
+													memcpy(&data, pt->data.data(), 8);
 													std::cout << std::dec << static_cast<unsigned long long>(data);
 													break;
 												}
 												case (Primitive::SINT32_T):
 												{
 													int32_t data;
-													memcpy(&data, pt->data, 4);
+													memcpy(&data, pt->data.data(), 4);
 													std::cout << std::dec << static_cast<long>(data);
 													break;
 												}
 												case (Primitive::FLOAT):
 												{
 													float data;
-													memcpy(&data, pt->data, 4);
+													memcpy(&data, pt->data.data(), 4);
 													std::cout << std::dec << static_cast<float>(data);
 													break;
 												}
@@ -612,51 +614,51 @@ int main(int argc, char *argv[])
 											}
 
 											auto q = 0;
-											if (pt->sub_members == nullptr || pt->sub_members->empty()) continue;
-											for (auto qt = pt->sub_members->begin(); qt != pt->sub_members->end(); ++qt)
+											if (pt->sub_members.empty()) continue;
+											for (auto qt = pt->sub_members.begin(); qt != pt->sub_members.end(); ++qt)
 											{
 												std::cout << "						SUB_SUB_SUB_SUB_SUB_MEMBER NUMBER: " << std::dec << p << std::endl;
 												std::cout << "						Type: " << typeString[static_cast<uint32_t>(qt->type)] << ", PrimitiveType: " << primitiveString(qt->primitive) << ", Offset: 0x" << std::hex << qt
 													->offset << ", Size: 0x" << std::hex << qt->size << std::endl;
 
-												if (qt->data != nullptr && qt->primitive != Primitive::NONE)
+												if (qt->primitive != Primitive::NONE)
 												{
-													std::cout << "						Raw_Data: " << qt->data << std::endl;
+													std::cout << "						Raw_Data: " << qt->data.data() << std::endl;
 													std::cout << "						Data: ";
 													switch (qt->primitive)
 													{
 													case (Primitive::UINT8_T):
 													{
 														uint8_t data;
-														memcpy(&data, qt->data, 1);
+														memcpy(&data, qt->data.data(), 1);
 														std::cout << std::dec << static_cast<unsigned short>(data);
 														break;
 													}
 													case (Primitive::UINT32_T):
 													{
 														uint32_t data;
-														memcpy(&data, qt->data, 4);
+														memcpy(&data, qt->data.data(), 4);
 														std::cout << std::dec << static_cast<unsigned long>(data);
 														break;
 													}
 													case (Primitive::UINT64_T):
 													{
 														uint64_t data;
-														memcpy(&data, qt->data, 8);
+														memcpy(&data, qt->data.data(), 8);
 														std::cout << std::dec << static_cast<unsigned long long>(data);
 														break;
 													}
 													case (Primitive::SINT32_T):
 													{
 														int32_t data;
-														memcpy(&data, qt->data, 4);
+														memcpy(&data, qt->data.data(), 4);
 														std::cout << std::dec << static_cast<long>(data);
 														break;
 													}
 													case (Primitive::FLOAT):
 													{
 														float data;
-														memcpy(&data, qt->data, 4);
+														memcpy(&data, qt->data.data(), 4);
 														std::cout << std::dec << static_cast<float>(data);
 														break;
 													}
@@ -699,29 +701,29 @@ int main(int argc, char *argv[])
 		// file output
 		if (success && flag_of)
 		{
-			auto *output = new std::ofstream(file_path_out->c_str(), std::ios::binary | std::ios::out | std::ios::in | std::ios::ate | std::ios::trunc);
+			auto *output = new std::ofstream(file_path_out.c_str(), std::ios::binary | std::ios::out | std::ios::in | std::ios::ate | std::ios::trunc);
 			*output << "**************************************** HEADER INFO GENERAL ****************************************" << std::endl
 				<< "*" << std::setw(100) << std::right << "*" << std::endl << std::right
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Version: " << std::setw(32) << std::left << std::dec << adf->header->version << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Instance_count: " << std::setw(32) << std::left << std::dec << adf->header->instance_count << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Instance_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header->instance_offset << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Typedef_count: " << std::setw(32) << std::left << std::dec << adf->header->typedef_count << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Typedef_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header->typedef_offset << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Strhash_count: " << std::setw(32) << std::left << std::dec << adf->header->strhash_count << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Strhash_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header->strhash_offset << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Nametable_count: " << std::setw(32) << std::left << std::dec << adf->header->nametable_count << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Nametable_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header->nametable_offset << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Total_size: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header->total_size << std::setw(43) << std::right << "*" << std::endl
-				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Comment: " << std::setw(32) << std::left << adf->header->comment << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Version: " << std::setw(32) << std::left << std::dec << adf->header.version << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Instance_count: " << std::setw(32) << std::left << std::dec << adf->header.instance_count << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Instance_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header.instance_offset << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Typedef_count: " << std::setw(32) << std::left << std::dec << adf->header.typedef_count << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Typedef_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header.typedef_offset << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Strhash_count: " << std::setw(32) << std::left << std::dec << adf->header.strhash_count << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Strhash_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header.strhash_offset << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Nametable_count: " << std::setw(32) << std::left << std::dec << adf->header.nametable_count << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Nametable_offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header.nametable_offset << std::setw(43) << std::right << "*" << std::endl
+				<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Total_size: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << adf->header.total_size << std::setw(43) << std::right << "*" << std::endl
+				// << "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Comment: " << std::setw(32) << std::left << adf->header.comment.data() << std::setw(43) << std::right << "*" << std::endl
 				<< "*" << std::setw(100) << std::right << "*" << std::endl
 				<< "*****************************************************************************************************" << std::endl << std::endl;
 
-			for (auto it = adf->header_instances->begin(); it != adf->header_instances->end(); ++it)
+			for (auto it = adf->header_instances.begin(); it != adf->header_instances.end(); ++it)
 			{
-				uint32_t idx = it - adf->header_instances->begin();
+				uint32_t idx = it - adf->header_instances.begin();
 				*output << "************************************** HEADER INFO INSTANCE " << std::dec << idx << " ***************************************" << std::endl
 					<< "*" << std::setw(100) << std::right << "*" << std::endl << std::right
-					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable->name->at(1).c_str() << std::setw(43) << std::right << "*" << std::endl
+					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable.name.at(1).c_str() << std::setw(43) << std::right << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Name_hash: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << it->name_hash << std::setw(43) << std::right << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Type_hash: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << it->type_hash << std::setw(43) << std::right << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Offset: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << it->offset << std::setw(43) << std::right << "*" << std::endl
@@ -731,16 +733,16 @@ int main(int argc, char *argv[])
 					<< "*****************************************************************************************************" << std::endl << std::endl;
 			}
 
-			for (auto it = adf->header_typedef->begin(); it != adf->header_typedef->end(); ++it)
+			for (auto it = adf->header_typedef.begin(); it != adf->header_typedef.end(); ++it)
 			{
-				uint32_t idx = it - adf->header_typedef->begin();
+				uint32_t idx = it - adf->header_typedef.begin();
 				const char* tmp;
 				if (idx >= 10) tmp = " ***************************************";
 				else tmp = " ****************************************";
 
 				*output << "************************************** HEADER INFO TYPEDEF " << std::dec << idx << tmp << std::endl
 					<< "*" << std::setw(100) << std::right << "*" << std::endl << std::right
-					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable->name->at(static_cast<const unsigned int>(it->name_idx)).c_str() << std::setw(43) << std::right << "*" << std::endl
+					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable.name.at(static_cast<const unsigned int>(it->name_idx)).c_str() << std::setw(43) << std::right << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Type: " << std::setw(32) << std::left << std::dec << typeString[static_cast<uint32_t>(it->type)] << std::setw(43) << std::right << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Size: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << it->size << std::setw(43) << std::right << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << std::setw(20) << std::right << "Alignment: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << it->alignment << std::setw(43) << std::right << "*" << std::endl
@@ -762,7 +764,7 @@ int main(int argc, char *argv[])
 
 						*output << "*" << std::setw(0) << "     " << "********************************* HEADER INFO MEMBER " << std::dec << mem_idx << tmp << "     " << "*" << std::endl
 							<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(89) << std::right << "*     *" << std::endl
-							<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable->name->at(static_cast<const unsigned int>(mem_it->name_idx)).c_str() << std::setw(42) << std::right << "*     *" << std::endl
+							<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name: " << std::left << std::setw(32) << std::hex << adf->header_nametable.name.at(static_cast<const unsigned int>(mem_it->name_idx)).c_str() << std::setw(42) << std::right << "*     *" << std::endl
 							<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Type: " << std::left << std::setw(32) << std::hex << primitiveString(Primitive(mem_it->type_hash)) << std::setw(42) << std::right << "*     *" << std::endl
 							<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name_idx: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << mem_it->name_idx << std::setw(42) << std::right << "*     *" << std::endl
 							<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Type_hash: " << std::setw(2) << std::left << "0x" << std::setw(30) << std::hex << mem_it->type_hash << std::setw(42) << std::right << "*     *" << std::endl
@@ -781,7 +783,7 @@ int main(int argc, char *argv[])
 
 			*output << "***************************************** HEADER NAMETABLE ******************************************" << std::endl
 				<< "*" << std::setw(100) << std::right << "*" << std::endl << std::right;
-			for (uint32_t i = 0; i < adf->header_nametable->size->size(); i++)
+			for (uint32_t i = 0; i < adf->header_nametable.size.size(); i++)
 			{
 				const char* tmp;
 				if (i >= 10) tmp = " ***************************************";
@@ -789,17 +791,17 @@ int main(int argc, char *argv[])
 
 				*output << "*" << std::setw(0) << "     " << "***************************************** NAME " << std::dec << i << tmp << "     " << "*" << std::endl
 					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(89) << std::right << "*     *" << std::endl
-					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name: " << std::setw(32) << std::left << std::hex << adf->header_nametable->name->at(i).c_str() << std::setw(42) << std::right << "*     *" << std::endl
-					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Size: " << std::setw(32) << std::left << std::dec << static_cast<int>(adf->header_nametable->size->at(i)) << std::setw(42) << std::right << "*     *" << std::endl
+					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Name: " << std::setw(32) << std::left << std::hex << adf->header_nametable.name.at(i).c_str() << std::setw(42) << std::right << "*     *" << std::endl
+					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(15) << std::right << "Size: " << std::setw(32) << std::left << std::dec << static_cast<int>(adf->header_nametable.size.at(i)) << std::setw(42) << std::right << "*     *" << std::endl
 					<< "*" << std::setw(0) << "     " << "*" << std::setw(0) << "     " << std::setw(89) << std::right << "*     *" << std::endl;
 			}
 			*output << "*     *****************************************************************************************     *" << std::endl
 				<< "*" << std::setw(100) << std::right << "*" << std::endl << std::right
 				<< "*****************************************************************************************************" << std::endl << std::endl;
 
-			for (auto it = adf->instances->begin(); it != adf->instances->end(); ++it)
+			for (auto it = adf->instances.begin(); it != adf->instances.end(); ++it)
 			{
-				uint32_t idx_0 = it - adf->instances->begin();
+				uint32_t idx_0 = it - adf->instances.begin();
 				const char* tmp;
 				if (idx_0 >= 10) tmp = " ***************************************";
 				else tmp = " ****************************************";
@@ -807,14 +809,14 @@ int main(int argc, char *argv[])
 				*output << "******************************************* INSTANCE " << std::dec << idx_0 << tmp << std::endl
 					<< "*" << std::setw(100) << std::right << "*" << std::endl << std::right;
 
-				if (it->members == nullptr || it->members->empty()) continue;
-				for (auto jt = it->members->begin(); jt != it->members->end(); ++jt)
+				if (it->members.empty()) continue;
+				for (auto jt = it->members.begin(); jt != it->members.end(); ++jt)
 				{
-					uint32_t idx_1 = jt - it->members->begin();
+					uint32_t idx_1 = jt - it->members.begin();
 					*output << "     MEMBER " << std::dec << idx_1 << std::endl
 						<< "          Type: " << typeString[static_cast<uint32_t>(jt->type)] << ", PrimitiveType: " << primitiveString(jt->primitive) << ", Offset: 0x" << std::hex << jt->offset << ", Size: 0x" << std::hex << jt->size << std::endl;
 
-					if (jt->data != nullptr && jt->primitive != Primitive::NONE)
+					if (jt->primitive != Primitive::NONE)
 					{
 						*output << "          Data: ";
 						switch (jt->primitive)
@@ -822,35 +824,35 @@ int main(int argc, char *argv[])
 						case (Primitive::UINT8_T):
 						{
 							uint8_t data;
-							memcpy(&data, jt->data, 1);
+							memcpy(&data, jt->data.data(), 1);
 							*output << std::dec << static_cast<unsigned short>(data);
 							break;
 						}
 						case (Primitive::UINT32_T):
 						{
 							uint32_t data;
-							memcpy(&data, jt->data, 4);
+							memcpy(&data, jt->data.data(), 4);
 							*output << std::dec << static_cast<unsigned long>(data);
 							break;
 						}
 						case (Primitive::UINT64_T):
 						{
 							uint64_t data;
-							memcpy(&data, jt->data, 8);
+							memcpy(&data, jt->data.data(), 8);
 							*output << std::dec << static_cast<unsigned long long>(data);
 							break;
 						}
 						case (Primitive::SINT32_T):
 						{
 							int32_t data;
-							memcpy(&data, jt->data, 4);
+							memcpy(&data, jt->data.data(), 4);
 							*output << std::dec << static_cast<long>(data);
 							break;
 						}
 						case (Primitive::FLOAT):
 						{
 							float data;
-							memcpy(&data, jt->data, 4);
+							memcpy(&data, jt->data.data(), 4);
 							*output << std::dec << static_cast<float>(data);
 							break;
 						}
@@ -861,15 +863,15 @@ int main(int argc, char *argv[])
 						*output << std::endl;
 					}
 
-					if (jt->sub_members == nullptr || jt->sub_members->empty()) continue;
-					for (auto kt = jt->sub_members->begin(); kt != jt->sub_members->end(); ++kt)
+					if (jt->sub_members.empty()) continue;
+					for (auto kt = jt->sub_members.begin(); kt != jt->sub_members.end(); ++kt)
 					{
-						uint32_t idx_2 = kt - jt->sub_members->begin();
+						uint32_t idx_2 = kt - jt->sub_members.begin();
 						*output << "               SUB_MEMBER NUMBER " << std::dec << idx_2 << std::endl
 							<< "               Type: " << typeString[static_cast<uint32_t>(kt->type)] << ", PrimitiveType: " << primitiveString(kt->primitive) << ", Offset: 0x" << std::hex << kt
 							->offset << ", Size: 0x" << std::hex << kt->size << std::endl;
 
-						if (kt->data != nullptr && kt->primitive != Primitive::NONE)
+						if (kt->primitive != Primitive::NONE)
 						{
 							*output << "               Data: ";
 							switch (kt->primitive)
@@ -877,35 +879,35 @@ int main(int argc, char *argv[])
 							case (Primitive::UINT8_T):
 							{
 								uint8_t data;
-								memcpy(&data, kt->data, 1);
+								memcpy(&data, kt->data.data(), 1);
 								*output << std::dec << static_cast<unsigned short>(data);;
 								break;
 							}
 							case (Primitive::UINT32_T):
 							{
 								uint32_t data;
-								memcpy(&data, kt->data, 4);
+								memcpy(&data, kt->data.data(), 4);
 								*output << std::dec << static_cast<unsigned long>(data);
 								break;
 							}
 							case (Primitive::UINT64_T):
 							{
 								uint64_t data;
-								memcpy(&data, kt->data, 8);
+								memcpy(&data, kt->data.data(), 8);
 								*output << std::dec << static_cast<unsigned long long>(data);
 								break;
 							}
 							case (Primitive::SINT32_T):
 							{
 								int32_t data;
-								memcpy(&data, kt->data, 4);
+								memcpy(&data, kt->data.data(), 4);
 								*output << std::dec << static_cast<long>(data);
 								break;
 							}
 							case (Primitive::FLOAT):
 							{
 								float data;
-								memcpy(&data, kt->data, 4);
+								memcpy(&data, kt->data.data(), 4);
 								*output << std::dec << static_cast<float>(data);
 								break;
 							}
@@ -916,15 +918,15 @@ int main(int argc, char *argv[])
 							*output << std::endl;
 						}
 
-						if (kt->sub_members == nullptr || kt->sub_members->empty()) continue;
-						for (auto lt = kt->sub_members->begin(); lt != kt->sub_members->end(); ++lt)
+						if (kt->sub_members.empty()) continue;
+						for (auto lt = kt->sub_members.begin(); lt != kt->sub_members.end(); ++lt)
 						{
-							uint32_t idx_3 = lt - kt->sub_members->begin();
+							uint32_t idx_3 = lt - kt->sub_members.begin();
 							*output << "                    SUB_SUB_MEMBER NUMBER " << std::dec << idx_3 << std::endl
 								<< "                    Type: " << typeString[static_cast<uint32_t>(lt->type)] << ", PrimitiveType: " << primitiveString(lt->primitive) << ", Offset: 0x" << std::hex << lt
 								->offset << ", Size: 0x" << std::hex << lt->size << std::endl;
 
-							if (lt->data != nullptr && lt->primitive != Primitive::NONE)
+							if (lt->primitive != Primitive::NONE)
 							{
 								*output << "                    Data: ";
 								switch (lt->primitive)
@@ -932,35 +934,35 @@ int main(int argc, char *argv[])
 								case (Primitive::UINT8_T):
 								{
 									uint8_t data;
-									memcpy(&data, lt->data, 1);
+									memcpy(&data, lt->data.data(), 1);
 									*output << std::dec << static_cast<unsigned short>(data);;
 									break;
 								}
 								case (Primitive::UINT32_T):
 								{
 									uint32_t data;
-									memcpy(&data, lt->data, 4);
+									memcpy(&data, lt->data.data(), 4);
 									*output << std::dec << static_cast<unsigned long>(data);
 									break;
 								}
 								case (Primitive::UINT64_T):
 								{
 									uint64_t data;
-									memcpy(&data, lt->data, 8);
+									memcpy(&data, lt->data.data(), 8);
 									*output << std::dec << static_cast<unsigned long long>(data);
 									break;
 								}
 								case (Primitive::SINT32_T):
 								{
 									int32_t data;
-									memcpy(&data, lt->data, 4);
+									memcpy(&data, lt->data.data(), 4);
 									*output << std::dec << static_cast<long>(data);
 									break;
 								}
 								case (Primitive::FLOAT):
 								{
 									float data;
-									memcpy(&data, lt->data, 4);
+									memcpy(&data, lt->data.data(), 4);
 									*output << std::dec << static_cast<float>(data);
 									break;
 								}
@@ -971,15 +973,15 @@ int main(int argc, char *argv[])
 								*output << std::endl;
 							}
 
-							if (lt->sub_members == nullptr || lt->sub_members->empty()) continue;
-							for (auto mt = lt->sub_members->begin(); mt != lt->sub_members->end(); ++mt)
+							if (lt->sub_members.empty()) continue;
+							for (auto mt = lt->sub_members.begin(); mt != lt->sub_members.end(); ++mt)
 							{
-								uint32_t idx_4 = mt - lt->sub_members->begin();
+								uint32_t idx_4 = mt - lt->sub_members.begin();
 								*output << "                         SUB_SUB_SUB_MEMBER NUMBER " << std::dec << idx_4 << std::endl
 									<< "                         Type: " << typeString[static_cast<uint32_t>(mt->type)] << ", PrimitiveType: " << primitiveString(mt->primitive) << ", Offset: 0x" << std::hex << mt
 									->offset << ", Size: 0x" << std::hex << mt->size << std::endl;
 
-								if (mt->data != nullptr && mt->primitive != Primitive::NONE)
+								if (mt->primitive != Primitive::NONE)
 								{
 									*output << "                         Data: ";
 									switch (mt->primitive)
@@ -987,35 +989,35 @@ int main(int argc, char *argv[])
 									case (Primitive::UINT8_T):
 									{
 										uint8_t data;
-										memcpy(&data, mt->data, 1);
+										memcpy(&data, mt->data.data(), 1);
 										*output << std::dec << static_cast<unsigned short>(data);
 										break;
 									}
 									case (Primitive::UINT32_T):
 									{
 										uint32_t data;
-										memcpy(&data, mt->data, 4);
+										memcpy(&data, mt->data.data(), 4);
 										*output << std::dec << static_cast<unsigned long>(data);
 										break;
 									}
 									case (Primitive::UINT64_T):
 									{
 										uint64_t data;
-										memcpy(&data, mt->data, 8);
+										memcpy(&data, mt->data.data(), 8);
 										*output << std::dec << static_cast<unsigned long long>(data);
 										break;
 									}
 									case (Primitive::SINT32_T):
 									{
 										int32_t data;
-										memcpy(&data, mt->data, 4);
+										memcpy(&data, mt->data.data(), 4);
 										*output << std::dec << static_cast<long>(data);
 										break;
 									}
 									case (Primitive::FLOAT):
 									{
 										float data;
-										memcpy(&data, mt->data, 4);
+										memcpy(&data, mt->data.data(), 4);
 										*output << std::dec << static_cast<float>(data);
 										break;
 									}
@@ -1026,15 +1028,15 @@ int main(int argc, char *argv[])
 									*output << std::endl;
 								}
 
-								if (mt->sub_members == nullptr || mt->sub_members->empty()) continue;
-								for (auto nt = mt->sub_members->begin(); nt != mt->sub_members->end(); ++nt)
+								if (mt->sub_members.empty()) continue;
+								for (auto nt = mt->sub_members.begin(); nt != mt->sub_members.end(); ++nt)
 								{
-									uint32_t idx_5 = nt - mt->sub_members->begin();
+									uint32_t idx_5 = nt - mt->sub_members.begin();
 									*output << "                              SUB_SUB_SUB_SUB_MEMBER NUMBER: " << std::dec << idx_5 << std::endl
 										<< "                              Type: " << typeString[static_cast<uint32_t>(nt->type)] << ", PrimitiveType: " << primitiveString(nt->primitive) << ", Offset: 0x" << std::hex << nt
 										->offset << ", Size: 0x" << std::hex << nt->size << std::endl;
 
-									if (nt->data != nullptr && nt->primitive != Primitive::NONE)
+									if (nt->primitive != Primitive::NONE)
 									{
 										*output << "                              Data: ";
 										switch (nt->primitive)
@@ -1042,35 +1044,35 @@ int main(int argc, char *argv[])
 										case (Primitive::UINT8_T):
 										{
 											uint8_t data;
-											memcpy(&data, nt->data, 1);
+											memcpy(&data, nt->data.data(), 1);
 											*output << std::dec << static_cast<unsigned short>(data);
 											break;
 										}
 										case (Primitive::UINT32_T):
 										{
 											uint32_t data;
-											memcpy(&data, nt->data, 4);
+											memcpy(&data, nt->data.data(), 4);
 											*output << std::dec << static_cast<unsigned long>(data);
 											break;
 										}
 										case (Primitive::UINT64_T):
 										{
 											uint64_t data;
-											memcpy(&data, nt->data, 8);
+											memcpy(&data, nt->data.data(), 8);
 											*output << std::dec << static_cast<unsigned long long>(data);
 											break;
 										}
 										case (Primitive::SINT32_T):
 										{
 											int32_t data;
-											memcpy(&data, nt->data, 4);
+											memcpy(&data, nt->data.data(), 4);
 											*output << std::dec << static_cast<long>(data);
 											break;
 										}
 										case (Primitive::FLOAT):
 										{
 											float data;
-											memcpy(&data, nt->data, 4);
+											memcpy(&data, nt->data.data(), 4);
 											*output << std::dec << static_cast<float>(data);
 											break;
 										}
@@ -1081,15 +1083,15 @@ int main(int argc, char *argv[])
 										*output << std::endl;
 									}
 
-									if (nt->sub_members == nullptr || nt->sub_members->empty()) continue;
-									for (auto ot = nt->sub_members->begin(); ot != nt->sub_members->end(); ++ot)
+									if (nt->sub_members.empty()) continue;
+									for (auto ot = nt->sub_members.begin(); ot != nt->sub_members.end(); ++ot)
 									{
-										uint32_t idx_6 = ot - nt->sub_members->begin();
+										uint32_t idx_6 = ot - nt->sub_members.begin();
 										*output << "                                   SUB_SUB_SUB_SUB_SUB_MEMBER NUMBER: " << std::dec << idx_6 << std::endl
 											<< "                                   Type: " << typeString[static_cast<uint32_t>(ot->type)] << ", PrimitiveType: " << primitiveString(ot->primitive) << ", Offset: 0x" << std::hex << ot
 											->offset << ", Size: 0x" << std::hex << ot->size << std::endl;
 
-										if (ot->data != nullptr && ot->primitive != Primitive::NONE)
+										if (ot->primitive != Primitive::NONE)
 										{
 											*output << "                                   Data: ";
 											switch (ot->primitive)
@@ -1097,35 +1099,35 @@ int main(int argc, char *argv[])
 											case (Primitive::UINT8_T):
 											{
 												uint8_t data;
-												memcpy(&data, ot->data, 1);
+												memcpy(&data, ot->data.data(), 1);
 												*output << std::dec << static_cast<unsigned short>(data);
 												break;
 											}
 											case (Primitive::UINT32_T):
 											{
 												uint32_t data;
-												memcpy(&data, ot->data, 4);
+												memcpy(&data, ot->data.data(), 4);
 												*output << std::dec << static_cast<unsigned long>(data);
 												break;
 											}
 											case (Primitive::UINT64_T):
 											{
 												uint64_t data;
-												memcpy(&data, ot->data, 8);
+												memcpy(&data, ot->data.data(), 8);
 												*output << std::dec << static_cast<unsigned long long>(data);
 												break;
 											}
 											case (Primitive::SINT32_T):
 											{
 												int32_t data;
-												memcpy(&data, ot->data, 4);
+												memcpy(&data, ot->data.data(), 4);
 												*output << std::dec << static_cast<long>(data);
 												break;
 											}
 											case (Primitive::FLOAT):
 											{
 												float data;
-												memcpy(&data, ot->data, 4);
+												memcpy(&data, ot->data.data(), 4);
 												*output << std::dec << static_cast<float>(data);
 												break;
 											}
@@ -1136,15 +1138,15 @@ int main(int argc, char *argv[])
 											*output << std::endl;
 										}
 
-										if (ot->sub_members == nullptr || ot->sub_members->empty()) continue;
-										for (auto pt = ot->sub_members->begin(); pt != ot->sub_members->end(); ++pt)
+										if (ot->sub_members.empty()) continue;
+										for (auto pt = ot->sub_members.begin(); pt != ot->sub_members.end(); ++pt)
 										{
-											uint32_t idx_7 = pt - ot->sub_members->begin();
+											uint32_t idx_7 = pt - ot->sub_members.begin();
 											*output << "                                        SUB_SUB_SUB_SUB_SUB_MEMBER NUMBER: " << std::dec << idx_7 << std::endl
 												<< "                                        Type: " << typeString[static_cast<uint32_t>(pt->type)] << ", PrimitiveType: " << primitiveString(pt->primitive) << ", Offset: 0x" << std::hex << pt
 												->offset << ", Size: 0x" << std::hex << pt->size << std::endl;
 
-											if (pt->data != nullptr && pt->primitive != Primitive::NONE)
+											if (pt->primitive != Primitive::NONE)
 											{
 												*output << "                                        Data: ";
 												switch (pt->primitive)
@@ -1152,35 +1154,35 @@ int main(int argc, char *argv[])
 												case (Primitive::UINT8_T):
 												{
 													uint8_t data;
-													memcpy(&data, pt->data, 1);
+													memcpy(&data, pt->data.data(), 1);
 													*output << std::dec << static_cast<unsigned short>(data);
 													break;
 												}
 												case (Primitive::UINT32_T):
 												{
 													uint32_t data;
-													memcpy(&data, pt->data, 4);
+													memcpy(&data, pt->data.data(), 4);
 													*output << std::dec << static_cast<unsigned long>(data);
 													break;
 												}
 												case (Primitive::UINT64_T):
 												{
 													uint64_t data;
-													memcpy(&data, pt->data, 8);
+													memcpy(&data, pt->data.data(), 8);
 													*output << std::dec << static_cast<unsigned long long>(data);
 													break;
 												}
 												case (Primitive::SINT32_T):
 												{
 													int32_t data;
-													memcpy(&data, pt->data, 4);
+													memcpy(&data, pt->data.data(), 4);
 													*output << std::dec << static_cast<long>(data);
 													break;
 												}
 												case (Primitive::FLOAT):
 												{
 													float data;
-													memcpy(&data, pt->data, 4);
+													memcpy(&data, pt->data.data(), 4);
 													*output << std::dec << static_cast<float>(data);
 													break;
 												}
@@ -1191,15 +1193,15 @@ int main(int argc, char *argv[])
 												*output << std::endl;
 											}
 
-											if (pt->sub_members == nullptr || pt->sub_members->empty()) continue;
-											for (auto qt = pt->sub_members->begin(); qt != pt->sub_members->end(); ++qt)
+											if (pt->sub_members.empty()) continue;
+											for (auto qt = pt->sub_members.begin(); qt != pt->sub_members.end(); ++qt)
 											{
-												uint32_t idx_8 = qt - pt->sub_members->begin();
+												uint32_t idx_8 = qt - pt->sub_members.begin();
 												*output << "                                             SUB_SUB_SUB_SUB_SUB_MEMBER NUMBER: " << std::dec << idx_8 << std::endl
 													<< "                                             Type: " << typeString[static_cast<uint32_t>(qt->type)] << ", PrimitiveType: " << primitiveString(qt->primitive) << ", Offset: 0x" << std::hex << qt
 													->offset << ", Size: 0x" << std::hex << qt->size << std::endl;
 
-												if (qt->data != nullptr && qt->primitive != Primitive::NONE)
+												if (qt->primitive != Primitive::NONE)
 												{
 													*output << "                                             Data: ";
 													switch (qt->primitive)
@@ -1207,35 +1209,35 @@ int main(int argc, char *argv[])
 													case (Primitive::UINT8_T):
 													{
 														uint8_t data;
-														memcpy(&data, qt->data, 1);
+														memcpy(&data, qt->data.data(), 1);
 														*output << std::dec << static_cast<unsigned short>(data);
 														break;
 													}
 													case (Primitive::UINT32_T):
 													{
 														uint32_t data;
-														memcpy(&data, qt->data, 4);
+														memcpy(&data, qt->data.data(), 4);
 														*output << std::dec << static_cast<unsigned long>(data);
 														break;
 													}
 													case (Primitive::UINT64_T):
 													{
 														uint64_t data;
-														memcpy(&data, qt->data, 8);
+														memcpy(&data, qt->data.data(), 8);
 														*output << std::dec << static_cast<unsigned long long>(data);
 														break;
 													}
 													case (Primitive::SINT32_T):
 													{
 														int32_t data;
-														memcpy(&data, qt->data, 4);
+														memcpy(&data, qt->data.data(), 4);
 														*output << std::dec << static_cast<long>(data);
 														break;
 													}
 													case (Primitive::FLOAT):
 													{
 														float data;
-														memcpy(&data, qt->data, 4);
+														memcpy(&data, qt->data.data(), 4);
 														*output << std::dec << static_cast<float>(data);
 														break;
 													}
@@ -1263,62 +1265,51 @@ int main(int argc, char *argv[])
 		// console output group infos
 		if (success && flag_ocg)
 		{
-			auto it_begin = adf->reserve_data->animal_names.begin();
-			auto it_end = adf->reserve_data->animal_names.end();
+			auto it_begin = adf->reserve_data.animal_names.begin();
+			auto it_end = adf->reserve_data.animal_names.end();
 
-			bool loop_all = true;
-
-			if (!str_ocg.empty())
-			{
-				auto tmp_elem = std::find_if(it_begin, it_end, [str_ocg](const std::string &str)
-				{
-					return !str_ocg.empty() && str.find(str_ocg) != std::string::npos;
-				});
-				if (tmp_elem != it_end)
-				{
-					it_begin = tmp_elem;
-					loop_all = false;
-				}
-			}
-
+			bool loop_all = str_ocg.empty();
+			
 			for (; it_begin != it_end; ++it_begin)
 			{
-				std::string animal = *it_begin;
-
-				uint32_t total_number_of_animals = 0;
-				uint32_t number_of_groups = adf->GetNumberOfGroups(*it_begin);
-				std::cout << animal.c_str() << " Groups [ #" << number_of_groups << " ]" << std::endl;
-
-				for (uint32_t j = 0; j < number_of_groups; j++)
+				std::string animal = it_begin->first;
+				if (animal.find(str_ocg) != std::string::npos)
 				{
-					uint32_t group_size = adf->GetGroupSize(*it_begin, j);
-					total_number_of_animals += group_size;
+					uint32_t total_number_of_animals = 0;
+					uint32_t number_of_groups = adf->GetNumberOfGroups(it_begin->first);
+					std::cout << animal.c_str() << " Groups [ #" << number_of_groups << " ]" << std::endl;
 
-					std::cout << std::endl << "           " << "[ " << j << " | #" << std::setw(2) << group_size
-						<< " | " << std::setw(0) << adf->GetSpawnAreaId(*it_begin, j) << " ]" << std::endl;
-
-					for (uint32_t k = 0; k < group_size; k++)
+					for (uint32_t j = 0; j < number_of_groups; j++)
 					{
-						std::string gender_arr[2] = { "Male", "Female" };
-						uint8_t ui_gender = adf->GetGender(*it_begin, j, k);
-						std::string gender = gender_arr[ui_gender - 1];
-						float weight = adf->GetWeight(*it_begin, j, k);
-						float score = adf->GetScore(*it_begin, j, k);
-						bool is_great_one = adf->IsGreatOne(*it_begin, j, k);
-						uint32_t visual_variation_seed = adf->GetVisualVariationSeed(*it_begin, j, k);
+						uint32_t group_size = adf->GetGroupSize(it_begin->first, j);
+						total_number_of_animals += group_size;
 
-						std::cout << "[ " << std::setw(2) << k
-							<< " | " << std::setw(6) << gender.c_str()
-							<< " | " << std::setw(7) << weight
-							<< " | " << std::setw(8) << score
-							<< " | " << std::setw(1) << is_great_one
-							<< " | " << std::setw(5) << visual_variation_seed
-							<< " ]" << std::endl;
+						std::cout << std::endl << "           " << "[ " << j << " | #" << std::setw(2) << group_size
+							<< " | " << std::setw(0) << adf->GetSpawnAreaId(it_begin->first, j) << " ]" << std::endl;
+
+						for (uint32_t k = 0; k < group_size; k++)
+						{
+							std::string gender_arr[2] = { "Male", "Female" };
+							uint8_t ui_gender = adf->GetGender(it_begin->first, j, k);
+							std::string gender = gender_arr[ui_gender - 1];
+							float weight = adf->GetWeight(it_begin->first, j, k);
+							float score = adf->GetScore(it_begin->first, j, k);
+							bool is_great_one = adf->IsGreatOne(it_begin->first, j, k);
+							uint32_t visual_variation_seed = adf->GetVisualVariationSeed(it_begin->first, j, k);
+
+							std::cout << "[ " << std::setw(2) << k
+								<< " | " << std::setw(6) << gender.c_str()
+								<< " | " << std::setw(7) << weight
+								<< " | " << std::setw(8) << score
+								<< " | " << std::setw(1) << is_great_one
+								<< " | " << std::setw(5) << visual_variation_seed
+								<< " ]" << std::endl;
+						}
 					}
-				}
 
-				std::cout << std::endl << "Total number of animals: " << static_cast<int>(total_number_of_animals) << std::endl << std::endl;
-				if (!loop_all) break;
+					std::cout << std::endl << "Total number of animals: " << static_cast<int>(total_number_of_animals) << std::endl << std::endl;
+					if (!loop_all) break;
+				}
 			}
 		}
 
@@ -1350,8 +1341,6 @@ int main(int argc, char *argv[])
 				}
 				else
 				{
-					uint32_t name_idx = adf->reserve_data->GetIndexSub(name);
-					name = adf->reserve_data->animal_names.at(name_idx);
 					std::string gender;
 					std::string weight;
 					std::string score;
@@ -1389,21 +1378,140 @@ int main(int argc, char *argv[])
 
 		delete adf;
 	}
-	else if (file_path->find("decomp_thp_player_profile") != std::string::npos)
+#pragma endregion
+#pragma region FUNCTIONALITY_LOADOUT
+	else if (file_path.find("player_profile") != std::string::npos)
 	{
 		// TODO: remove temporary loadout construction in here
-		auto *json_path = new std::string(R"(C:\Users\oleSQL\Documents\thehunter working\pop\inventory.json)");
-		auto *utility = new Utility(Endian::Little, ifstream);
-		auto *ifstream_json = new std::ifstream(json_path->c_str(), std::ios::in | std::ios::out);
-		auto *loadout_data = new LoadoutData(ifstream_json);
-		auto *adf = new ThpPlayerProfile(utility, loadout_data);
+		// cli user: save current loadout with name xxx
+		// cli user: load loadout with name xxx
 
-		delete loadout_data;
-		delete adf;
+		std::string json_path (R"(C:\Users\Luca\Desktop\player_profile.json)");
+		namespace json = boost::json;
+
+		try 
+		{
+			auto const jv = parse_file(json_path.c_str());
+			pretty_print(std::cout, jv);
+		}
+		catch (std::exception const& e)
+		{
+			std::cerr << "Caught exception " << e.what() << std::endl;
+			return EXIT_FAILURE;
+		}
+		return EXIT_SUCCESS;
+	}
+#pragma endregion
+#pragma endregion
+
+#ifdef _DEBUG
+	_CrtDumpMemoryLeaks();
+#endif
+	return 0;
+}
+
+boost::json::value parse_file(char const* filename)
+{
+	file f(filename, "r");
+	boost::json::stream_parser p;
+	boost::json::error_code ec;
+	do
+	{
+		char buf[4096];
+		auto const nread = f.read(buf, sizeof(buf));
+		p.write(buf, nread, ec);
+	}     while (!f.eof());
+	if (ec)
+		return nullptr;
+	p.finish(ec);
+	if (ec)
+		return nullptr;
+	return p.release();
+}
+
+void pretty_print(std::ostream& os, boost::json::value const& jv, std::string* indent) 
+{
+	std::string indent_;
+	if (!indent)
+		indent = &indent_;
+	switch (jv.kind())
+	{
+	case boost::json::kind::object:
+	{
+		os << "{\n";
+		indent->append(4, ' ');
+		auto const& obj = jv.get_object();
+		if (!obj.empty())
+		{
+			auto it = obj.begin();
+			for (;;)
+			{
+				os << *indent << boost::json::serialize(it->key()) << " : ";
+				pretty_print(os, it->value(), indent);
+				if (++it == obj.end())
+					break;
+				os << ",\n";
+			}
+		}
+		os << "\n";
+		indent->resize(indent->size() - 4);
+		os << *indent << "}";
+		break;
 	}
 
-	delete file_path_out;
-	delete file_path;
-	
-	return 0;
+	case boost::json::kind::array:
+	{
+		os << "[\n";
+		indent->append(4, ' ');
+		auto const& arr = jv.get_array();
+		if (!arr.empty())
+		{
+			auto it = arr.begin();
+			for (;;)
+			{
+				os << *indent;
+				pretty_print(os, *it, indent);
+				if (++it == arr.end())
+					break;
+				os << ",\n";
+			}
+		}
+		os << "\n";
+		indent->resize(indent->size() - 4);
+		os << *indent << "]";
+		break;
+	}
+
+	case boost::json::kind::string:
+	{
+		os << boost::json::serialize(jv.get_string());
+		break;
+	}
+
+	case boost::json::kind::uint64:
+		os << jv.get_uint64();
+		break;
+
+	case boost::json::kind::int64:
+		os << jv.get_int64();
+		break;
+
+	case boost::json::kind::double_:
+		os << jv.get_double();
+		break;
+
+	case boost::json::kind::bool_:
+		if (jv.get_bool())
+			os << "true";
+		else
+			os << "false";
+		break;
+
+	case boost::json::kind::null:
+		os << "null";
+		break;
+	}
+
+	if (indent->empty())
+		os << "\n";
 }

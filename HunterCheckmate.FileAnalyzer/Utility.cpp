@@ -3,55 +3,22 @@
 
 namespace HunterCheckmate_FileAnalyzer
 {
-	Utility::Utility(Endian endian, std::ifstream *ifstream)
+	Utility::Utility(Endian endian, const std::string &file_path)
 	{
 		this->endian = endian;
-		this->ifstream = ifstream;
-		this->ofstream = nullptr;
-	}
-
-	Utility::Utility(Endian endian, std::ofstream *ofstream)
-	{
-		this->endian = endian;
-		this->ifstream = nullptr;
-		this->ofstream = ofstream;
+		this->ifstream = std::ifstream(file_path.c_str(), std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
+		this->ofstream = std::ofstream(file_path.c_str(), std::ios::binary | std::ios::out | std::ios::in | std::ios::ate);
 	}
 	
-	Utility::Utility(Endian endian, std::ifstream *ifstream, std::ofstream *ofstream)
-	{
-		this->endian = endian;
-		this->ifstream = ifstream;
-		this->ofstream = ofstream;
-	}
-
-	Utility::~Utility()
-	{
-		if (!(ifstream == nullptr)) ifstream->close();
-		if (!(ofstream == nullptr)) ofstream->close();
-		delete this->ifstream;
-		delete this->ofstream;
-	}
-
-	void Utility::Write(std::vector<char>* data, uint32_t offset, uint32_t size) const
+	void Utility::Write(std::vector<char>* data, uint32_t offset, uint32_t size)
 	{
 		if (size == 0) size = data->size();
 
 		for (auto it = data->begin(); it != data->end(); ++it)
 		{
 			const uint32_t idx = it - data->begin();
-			this->ofstream->seekp(offset + idx);
-			this->ofstream->put(*it);
+			this->ofstream.seekp(offset + idx);
+			this->ofstream.put(*it);
 		}
 	}
-
-	std::ifstream *Utility::GetIfstream() const
-	{
-		return this->ifstream;
-	}
-
-	std::ofstream *Utility::GetOfstream() const
-	{
-		return this->ofstream;
-	}
-
 }
