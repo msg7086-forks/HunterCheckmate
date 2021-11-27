@@ -7,6 +7,7 @@
 #include "AnimalPopulation.h"
 #include <boost/json.hpp>
 #include "File.h"
+#include "CLI.h"
 
 // TODO: - add -rep -preset presets
 // TODO: - add preset cli (print available presets upon asking user which animal presets to print)
@@ -88,6 +89,13 @@ void pretty_print(std::ostream& os, boost::json::value const& jv, std::string* i
 int main(int argc, char *argv[])
 {
 	using namespace HunterCheckmate_FileAnalyzer;
+	CLI* cli = new CLI(argc, argv);
+	cli->run();
+
+	delete cli;
+
+	return 1;
+	
 
 #pragma region CLI
 	std::string file_path;
