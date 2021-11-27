@@ -21,17 +21,18 @@ namespace HunterCheckmate_FileAnalyzer
 	
 	void FileHandler::write(std::vector<char>* data, uint32_t offset, uint32_t size)
 	{
-		this->open();
-
-		if (size == 0) size = data->size();
-
-		for (auto it = data->begin(); it != data->end(); ++it)
+		if (open())
 		{
-			const uint32_t idx = it - data->begin();
-			this->fstream.seekp(offset + idx);
-			this->fstream.put(*it);
-		}
+			if (size == 0) size = data->size();
 
-		this->close();
+			for (auto it = data->begin(); it != data->end(); ++it)
+			{
+				const uint32_t idx = it - data->begin();
+				this->fstream.seekp(offset + idx);
+				this->fstream.put(*it);
+			}
+
+			this->close();
+		}
 	}
 }

@@ -216,6 +216,12 @@ namespace HunterCheckmate_FileAnalyzer
 	private:
 		bool SigMatch() const;
 		bool DeserializeHeader();
+		bool DeserializeInstanceHeader();
+		bool DeserializeTypedefHeader();
+		bool DeserializeMemberHeader(TypedefHeader & typedefHeader, uint32_t base, uint32_t typedef_size, uint32_t member_size) const;
+		bool DeserializeNametableHeader();
+		bool DeserializeInstances();
+
 	protected:
 		uint32_t m_sig;
 		bool m_valid;
@@ -231,6 +237,7 @@ namespace HunterCheckmate_FileAnalyzer
 		
 		AdfFile(std::shared_ptr<FileHandler> file_handler);
 		~AdfFile() = default;
+
 		bool Deserialize();
 	};
 }
