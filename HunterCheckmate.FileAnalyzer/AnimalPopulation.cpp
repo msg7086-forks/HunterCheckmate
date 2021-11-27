@@ -22,7 +22,7 @@ namespace HunterCheckmate_FileAnalyzer
 			.sub_members.at(animal_idx).offset;
 	}
 
-	AnimalPopulation::AnimalPopulation(Utility *utility, uint8_t reserve_id): AdfFile(utility)
+	AnimalPopulation::AnimalPopulation(FileHandler *file_handler, uint8_t reserve_id): AdfFile(file_handler)
 	{
 		this->reserve_data = ReserveData(reserve_id);
 	}
@@ -116,7 +116,7 @@ namespace HunterCheckmate_FileAnalyzer
 		const uint32_t offset = this->GetAnimalOffset(name, group_idx, animal_idx);
 		if (offset != 0)
 		{
-			this->utility->Write(animal_info, offset, animal_info->size());
+			this->file_handler->write(animal_info, offset, animal_info->size());
 			return true;
 		}
 		return false;
@@ -124,7 +124,7 @@ namespace HunterCheckmate_FileAnalyzer
 
 	bool AnimalPopulation::ReplaceAnimal(std::vector<char> *animal_info, uint32_t offset)
 	{
-		this->utility->Write(animal_info, offset, animal_info->size());
+		this->file_handler->write(animal_info, offset, animal_info->size());
 		return true;
 	}
 
@@ -132,14 +132,14 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		const uint32_t offset = this->GetAnimalOffset(name, group_idx, animal_idx);
 		std::vector<char> data = animal_data->GetBytes();
-		this->utility->Write(&data, offset, data.size());
+		this->file_handler->write(&data, offset, data.size());
 		return true;
 	}
 
 	bool AnimalPopulation::ReplaceAnimal(AnimalData *animal_data, uint32_t offset)
 	{
 		std::vector<char> data = animal_data->GetBytes();
-		this->utility->Write(&data, offset, data.size());
+		this->file_handler->write(&data, offset, data.size());
 		return true;
 	}
 

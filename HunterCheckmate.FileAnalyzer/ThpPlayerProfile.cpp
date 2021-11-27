@@ -17,7 +17,7 @@ namespace HunterCheckmate_FileAnalyzer
 		this->furthest_vital_organ_shot = furthest_vital_organ_shot;
 	}
 
-	ThpPlayerProfile::ThpPlayerProfile(Utility* utility, std::string *file_path, std::ifstream *ifstream) : AdfFile(utility)
+	ThpPlayerProfile::ThpPlayerProfile(FileHandler* file_handler, std::string *file_path, std::ifstream *ifstream) : AdfFile(file_handler)
 	{
 		this->file_path = file_path;
 		this->ifstream = ifstream;

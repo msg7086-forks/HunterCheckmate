@@ -1,5 +1,5 @@
 #pragma once
-#include "Utility.h"
+#include "FileHandler.h"
 #include "AnimalData.h"
 
 namespace HunterCheckmate_FileAnalyzer
@@ -192,13 +192,13 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 	public:
 		std::vector<TypedefHeader> *header_typedefs = nullptr;
-		Utility *utility = nullptr;
+		FileHandler *file_handler = nullptr;
 		InstanceHeader *header_instance = nullptr;
 		TypedefHeader *header_typedef = nullptr;
 		std::vector<Member> members;
 
 		Instance() = default;
-		Instance(std::vector<TypedefHeader> *header_typedefs, Utility *utility, InstanceHeader *header_instance, TypedefHeader *header_typedef);
+		Instance(std::vector<TypedefHeader> *header_typedefs, FileHandler *file_handler, InstanceHeader *header_instance, TypedefHeader *header_typedef);
 		~Instance() = default;
 
 		void PopulatePrimitive(Member *member, MemberHeader *header_member, uint32_t offset, Primitive primitive) const;
@@ -214,7 +214,7 @@ namespace HunterCheckmate_FileAnalyzer
 	protected:
 		const uint32_t sig = 0x41444620;
 		bool initialized = false;
-		Utility *utility;
+		FileHandler *file_handler;
 	public:
 		AdfHeader header;
 		std::vector<InstanceHeader> header_instances;
@@ -223,8 +223,8 @@ namespace HunterCheckmate_FileAnalyzer
 		NametableHeader header_nametable;
 		std::vector<Instance> instances;
 		
-		AdfFile(Utility *utility);
-		~AdfFile();
+		AdfFile(FileHandler *file_handler);
+		~AdfFile() = default;
 		bool Deserialize();
 	};
 }

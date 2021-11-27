@@ -3,7 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
-#include "Utility.h"
+#include "FileHandler.h"
 #include "AnimalPopulation.h"
 
 namespace HunterCheckmate_FileAnalyzer
@@ -78,10 +78,10 @@ namespace HunterCheckmate_FileAnalyzer
 			// TODO: do validation in actual file reversing class and throw exception or break
 			if (str_filename.find("animal_population_") != std::string::npos)
 			{
-				// TODO: change utility class to use boost filesystem
-				auto *utility = new Utility(Endian::Little, str_filepath);
+				// TODO: change file_handler class to use boost filesystem
+				auto *file_handler = new FileHandler(Endian::Little, str_filepath);
 				uint8_t reserve_id = static_cast<uint8_t>(str_filepath.back()) - static_cast<uint8_t>('0');
-				auto *adf = new AnimalPopulation(utility, reserve_id);
+				auto *adf = new AnimalPopulation(file_handler, reserve_id);
 
 				if (adf->Deserialize())
 				{
@@ -133,8 +133,12 @@ namespace HunterCheckmate_FileAnalyzer
 					}
 				}
 
-				delete utility;
+				delete file_handler;
 				delete adf;
+#ifdef _DEBUG
+				_CrtDumpMemoryLeaks();
+#endif
+				return 1;
 			}
 			else if (str_filename.find("thp_player_profile_adf") != std::string::npos)
 			{

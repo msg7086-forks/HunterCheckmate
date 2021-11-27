@@ -10,7 +10,7 @@ namespace HunterCheckmate_FileAnalyzer
 		uint32_t GetAnimalOffset(const std::string&name, uint32_t group_idx, uint32_t animal_idx);
 	public:
 		ReserveData reserve_data;
-		AnimalPopulation(Utility *utility, uint8_t reserve_id);
+		AnimalPopulation(FileHandler *file_handler, uint8_t reserve_id);
 		~AnimalPopulation() = default;
 		
 		bool IsValidAnimal(const std::string& name, uint32_t group_idx, uint32_t animal_idx);

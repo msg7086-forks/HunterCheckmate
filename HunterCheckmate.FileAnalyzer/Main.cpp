@@ -13,7 +13,7 @@
 // TODO: - add preset cli (print available presets upon asking user which animal presets to print)
 // 
 // TODO: - make exception class for e.g. if (!initialized) return 0 in AdfFile.cpp;
-// TODO: - change Utility class to accept input file destination and handle setting up if's and of's on its own
+// TODO: - change FileHandler class to accept input file destination and handle setting up if's and of's on its own
 
 #pragma region CLI_FUNCTIONS
 void PrintUsage()
@@ -143,9 +143,9 @@ int main(int argc, char *argv[])
 #pragma region FUNCTIONALITY_ANIMAL_POPULATION
 	if (file_path.find("animal_population_") != std::string::npos)
 	{
-		auto *utility = new Utility(Endian::Little, file_path);
+		auto *file_handler = new FileHandler(Endian::Little, file_path);
 		uint8_t reserve_id = static_cast<uint8_t>(file_path.back()) - static_cast<uint8_t>('0');
-		auto *adf = new AnimalPopulation(utility, reserve_id);
+		auto *adf = new AnimalPopulation(file_handler, reserve_id);
 		
 		bool success = adf->Deserialize();
 
