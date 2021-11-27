@@ -88,14 +88,13 @@ void pretty_print(std::ostream& os, boost::json::value const& jv, std::string* i
 
 int main(int argc, char *argv[])
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
 	using namespace HunterCheckmate_FileAnalyzer;
-	CLI* cli = new CLI(argc, argv);
+	const std::unique_ptr<CLI> cli = std::make_unique<CLI>(argc, argv);
 	cli->run();
 
-	delete cli;
-
-	return 1;
-	
+	return 0;
 
 #pragma region CLI
 	std::string file_path;
@@ -138,7 +137,7 @@ int main(int argc, char *argv[])
 	std::string file_path_out(file_path);
 	file_path_out.append(".txt");
 #pragma endregion
-
+	/* 
 #pragma region FUNCTIONALITY_
 #pragma region FUNCTIONALITY_ANIMAL_POPULATION
 	if (file_path.find("animal_population_") != std::string::npos)
@@ -1414,9 +1413,8 @@ int main(int argc, char *argv[])
 #pragma endregion
 #pragma endregion
 
-#ifdef _DEBUG
-	_CrtDumpMemoryLeaks();
-#endif
+	*/
+
 	return 0;
 }
 

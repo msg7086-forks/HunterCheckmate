@@ -112,6 +112,10 @@ namespace HunterCheckmate_FileAnalyzer
 
 		AdfHeader() = default;
 		~AdfHeader() = default;
+		AdfHeader(AdfHeader& other) = default;
+		AdfHeader& operator=(const AdfHeader& other) = default;
+		AdfHeader(AdfHeader&& other) = default;
+		AdfHeader& operator=(AdfHeader&& other) = default;
 	};
 
 	struct InstanceHeader
@@ -192,13 +196,13 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 	public:
 		std::vector<TypedefHeader> *header_typedefs = nullptr;
-		FileHandler *file_handler = nullptr;
+		std::shared_ptr<FileHandler> file_handler = nullptr;
 		InstanceHeader *header_instance = nullptr;
 		TypedefHeader *header_typedef = nullptr;
 		std::vector<Member> members;
 
 		Instance() = default;
-		Instance(std::vector<TypedefHeader> *header_typedefs, FileHandler *file_handler, InstanceHeader *header_instance, TypedefHeader *header_typedef);
+		Instance(std::vector<TypedefHeader> *header_typedefs, std::shared_ptr<FileHandler> file_handler, InstanceHeader *header_instance, TypedefHeader *header_typedef);
 		~Instance() = default;
 
 		void PopulatePrimitive(Member *member, MemberHeader *header_member, uint32_t offset, Primitive primitive) const;
@@ -211,10 +215,12 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 	private:
 		bool SigMatch() const;
+		bool DeserializeHeader();
 	protected:
-		const uint32_t sig = 0x41444620;
-		bool initialized = false;
-		FileHandler *file_handler;
+		uint32_t m_sig;
+		bool m_valid;
+		bool m_initialized;
+		std::shared_ptr<FileHandler> file_handler;
 	public:
 		AdfHeader header;
 		std::vector<InstanceHeader> header_instances;
@@ -223,7 +229,7 @@ namespace HunterCheckmate_FileAnalyzer
 		NametableHeader header_nametable;
 		std::vector<Instance> instances;
 		
-		AdfFile(FileHandler *file_handler);
+		AdfFile(std::shared_ptr<FileHandler> file_handler);
 		~AdfFile() = default;
 		bool Deserialize();
 	};

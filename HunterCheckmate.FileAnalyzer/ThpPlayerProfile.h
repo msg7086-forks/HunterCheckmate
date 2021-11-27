@@ -33,7 +33,7 @@ namespace HunterCheckmate_FileAnalyzer
 		std::vector<uint32_t> equipment_back_pack;
 		std::vector < std::vector<uint32_t>> inventory_slot;
 	public:
-		ThpPlayerProfile(FileHandler *file_handler, std::string *file_path, std::ifstream *ifstream);
+		ThpPlayerProfile(std::shared_ptr<FileHandler> file_handler, std::string *file_path, std::ifstream *ifstream);
 		~ThpPlayerProfile();
 		
 		bool SerializeJson();

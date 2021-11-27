@@ -8,14 +8,15 @@ namespace HunterCheckmate_FileAnalyzer
 		this->file_path = file_path;
 	}
 
-	void FileHandler::open()
+	bool FileHandler::open()
 	{
-		this->fstream.open(file_path, fs::fstream::binary | fs::fstream::out | fs::fstream::in | fs::fstream::ate);
+		fstream.open(file_path, fs::fstream::binary | fs::fstream::out | fs::fstream::in | fs::fstream::ate);
+		return fstream.is_open();
 	}
 
 	void FileHandler::close()
 	{
-		this->fstream.close();
+		fstream.close();
 	}
 	
 	void FileHandler::write(std::vector<char>* data, uint32_t offset, uint32_t size)

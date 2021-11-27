@@ -22,6 +22,5 @@ namespace HunterCheckmate_FileAnalyzer
 		CLI(int argc, char* argv[]);
 		~CLI() = default;
 		int run();
-		void print_usage();
 	};
 }

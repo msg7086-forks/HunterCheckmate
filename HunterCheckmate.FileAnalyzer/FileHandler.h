@@ -26,26 +26,25 @@ namespace HunterCheckmate_FileAnalyzer
 		FileHandler(Endian endian, const fs::path file_path);
 		~FileHandler() = default;
 
-		void open();
+		bool open();
 		void close();
 
 		template<class T>
 		void read(T* data, uint32_t offset, uint32_t size = 0)
 		{
-			this->open();
+			if(open())
+			{
+				if (size == 0) size = sizeof(*data);
 
-			if (size == 0) size = sizeof(*data);
+				const std::unique_ptr<std::vector<char>> buffer = std::make_unique<std::vector<char>>(size);
 
-			auto *buffer = new std::vector<char>(size);
+				fstream.seekg(offset);
+				for (auto& i : *buffer) this->fstream.get(i);
+				if (endian == Endian::Big) std::reverse(buffer->begin(), buffer->end());
+				memcpy(data, buffer->data(), size);
 
-			this->fstream.seekg(offset);
-			for (auto& i : *buffer) this->fstream.get(i);
-			if (endian == Endian::Big) std::reverse(buffer->begin(), buffer->end());
-			memcpy(data, buffer->data(), size);
-
-			delete buffer;
-
-			this->close();
+				this->close();
+			}
 		}
 
 		void write(std::vector<char>* data, uint32_t offset, uint32_t size = 0);

@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <vector>
 #include "FileHandler.h"
 #include "AnimalPopulation.h"
 
@@ -30,19 +29,8 @@ namespace HunterCheckmate_FileAnalyzer
 								  + "' requires option '" + required_option + "'.");
 	}
 
-	void CLI::print_usage()
-	{
-		std::cout << "Usage: HunterCheckmate.FileAnalyzer.exe <population_file_path> [-oc | -of | -ocg | -rep <[-custom | -preset]>]" << std::endl
-			<< std::setw(6) << "-oc: " << std::setw(0) << "Output whole file contents on console" << std::endl
-			<< std::setw(6) << "-of: " << std::setw(0) << "Output whole file contents into .txt file" << std::endl
-			<< std::setw(6) << "-ocg: " << std::setw(0) << "Output animal group informations on console" << std::endl
-			<< std::setw(6) << "-rep: " << std::setw(0) << "Replaces an animal with a new one" << std::endl
-			<< "     " << std::setw(9) << "-custom: " << std::setw(0) << "Specify animal data yourself" << std::endl
-			<< "     " << std::setw(9) << "-preset: " << std::setw(0) << "Choose from some of the presets" << std::endl;
-	}
-
 	CLI::CLI(int argc, char* argv[])
-		: m_inputFilePath(), m_desc("Allowed options")
+		: m_desc("Allowed options")
 	{
 		m_desc.add_options()
 			("help,h", "print help message")
@@ -68,7 +56,7 @@ namespace HunterCheckmate_FileAnalyzer
 			std::cout << m_desc << std::endl;
 			return 1;
 		}
-		else if (m_vm.count("output-group"))
+		if (m_vm.count("output-group"))
 		{
 			m_inputFilePath = fs::path(m_vm["input-file"].as<std::string>());
 			std::string str_filename = m_inputFilePath.filename().generic_string();
@@ -79,9 +67,10 @@ namespace HunterCheckmate_FileAnalyzer
 			if (str_filename.find("animal_population_") != std::string::npos)
 			{
 				// TODO: change file_handler class to use boost filesystem
-				auto *file_handler = new FileHandler(Endian::Little, str_filepath);
+				std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, str_filepath);
 				uint8_t reserve_id = static_cast<uint8_t>(str_filepath.back()) - static_cast<uint8_t>('0');
-				auto *adf = new AnimalPopulation(file_handler, reserve_id);
+				
+				std::unique_ptr<AnimalPopulation> adf = std::make_unique<AnimalPopulation>(file_handler, reserve_id);
 
 				if (adf->Deserialize())
 				{
@@ -131,16 +120,11 @@ namespace HunterCheckmate_FileAnalyzer
 							if (!loop_all) break;
 						}
 					}
-				}
+				} 
 
-				delete file_handler;
-				delete adf;
-#ifdef _DEBUG
-				_CrtDumpMemoryLeaks();
-#endif
-				return 1;
+				return 0;
 			}
-			else if (str_filename.find("thp_player_profile_adf") != std::string::npos)
+			if (str_filename.find("thp_player_profile_adf") != std::string::npos)
 			{
 				// do inventory stuff
 			}
