@@ -166,4 +166,17 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 		return nullptr;
 	}
+
+	AnimalData* AnimalPopulation::GenerateAnimalData(std::string name, std::string gender, std::string weight, std::string score,
+		std::string is_great_one, std::string visual_variation_seed)
+	{
+		AnimalData *animal_data = new AnimalData(&this->reserve_data);
+
+		if (animal_data->SetId(name) && animal_data->SetGender(gender) && animal_data->SetWeight(weight)
+			&& animal_data->SetScore(score) && animal_data->SetIsGreatOne(is_great_one) && animal_data->SetVisualVariationSeed(visual_variation_seed))
+		{
+			return animal_data;
+		}
+		return nullptr;
+	}
 }

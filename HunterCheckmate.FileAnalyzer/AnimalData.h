@@ -34,6 +34,7 @@ namespace HunterCheckmate_FileAnalyzer
 		bool VerifyGender(const uint8_t gender) const;
 		float ResolveWeight(std::string& weight);
 		float ResolveScore(std::string& score);
+		uint8_t ResolveIsGreatOne(std::string & is_great_one);
 		bool VerifyWeight(float weight) const;
 		bool VerifyScore(float score) const;
 		uint32_t ResolveVisualVariationSeed(const std::string &visual_variation_seed) const;
@@ -58,6 +59,7 @@ namespace HunterCheckmate_FileAnalyzer
 		bool SetScore(float score);
 		bool SetScore(std::string &score);
 		bool SetIsGreatOne(uint8_t is_great_one);
+		bool SetIsGreatOne(std::string & is_great_one);
 		bool SetVisualVariationSeed(uint32_t visual_variation_seed);
 		bool SetVisualVariationSeed(const std::string &visual_variation_seed);
 	};

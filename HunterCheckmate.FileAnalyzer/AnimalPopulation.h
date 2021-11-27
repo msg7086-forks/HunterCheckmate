@@ -28,5 +28,6 @@ namespace HunterCheckmate_FileAnalyzer
 		bool ReplaceAnimal(AnimalData *animal_data, uint32_t offset);
 		AnimalData *GenerateAnimalData(std::string name, std::string gender, float weight, float score, uint8_t is_great_one, uint32_t visual_variation_seed);
 		AnimalData* GenerateAnimalData(std::string name, std::string gender, std::string weight, std::string score, std::string visual_variation_seed);
+		AnimalData* GenerateAnimalData(std::string name, std::string gender, std::string weight, std::string score, std::string is_great_one, std::string visual_variation_seed);
 	};
 }

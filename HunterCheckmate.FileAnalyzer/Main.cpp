@@ -1344,15 +1344,17 @@ int main(int argc, char *argv[])
 					std::string gender;
 					std::string weight;
 					std::string score;
+					std::string is_great_one;
 					std::string visual_variation_seed;
 
 					std::cout << std::endl << "Animal found! Please enter the data of the " << name << "." << std::endl;
 					std::cout << "Gender: "; std::cin >> gender;
 					std::cout << "Weight: "; std::cin >> weight;
 					std::cout << "Score: "; std::cin >> score;
+					std::cout << "Is Great One: "; std::cin >> is_great_one;
 					std::cout << "Fur Type: "; std::cin >> visual_variation_seed;
 
-					AnimalData *animal_data = adf->GenerateAnimalData(name, gender, weight, score, visual_variation_seed);
+					AnimalData *animal_data = adf->GenerateAnimalData(name, gender, weight, score, is_great_one, visual_variation_seed);
 					if (animal_data != nullptr)
 					{
 						if (adf->ReplaceAnimal(animal_data, name, group_idx, animal_idx))

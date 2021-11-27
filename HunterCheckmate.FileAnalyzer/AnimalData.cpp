@@ -116,6 +116,13 @@ namespace HunterCheckmate_FileAnalyzer
 		return true;
 	}
 
+	bool AnimalData::SetIsGreatOne(std::string& is_great_one) 
+	{
+		this->is_great_one = ResolveIsGreatOne(is_great_one);
+		SetIsGreatOneBytes();
+		return true;
+	}
+
 	bool AnimalData::SetVisualVariationSeed(uint32_t visual_variation_seed)
 	{
 		if (VerifyVisualVariationSeed(visual_variation_seed))
@@ -179,6 +186,13 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		const float fl_score = std::stof(score);
 		return fl_score;
+	}
+
+	uint8_t AnimalData::ResolveIsGreatOne(std::string& is_great_one) 
+	{
+		if (is_great_one == "true") return 1;
+		if (is_great_one == "false") return 0;
+		return 0;
 	}
 
 	// TODO: collect data
