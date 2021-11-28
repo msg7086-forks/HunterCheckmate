@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <iomanip>
 
 #include "ReserveData.h"
 
@@ -10,17 +12,6 @@ namespace HunterCheckmate_FileAnalyzer
 	class AnimalData
 	{
 	private:
-		ReserveData *reserve_data;
-		uint32_t id;
-		std::string name;
-		uint8_t gender;
-		std::string str_gender;
-		float weight;
-		float score;
-		uint8_t is_great_one;
-		uint32_t visual_variation_seed;
-		std::string str_visual_variation_seed;
-
 		std::vector<char> gender_bytes;
 		std::vector<char> weight_bytes;
 		std::vector<char> score_bytes;
@@ -46,12 +37,28 @@ namespace HunterCheckmate_FileAnalyzer
 		void SetIsGreatOneBytes();
 		void SetVisualVariationSeedBytes();
 	public:
+		ReserveData *reserve_data;
+		uint32_t id;
+		std::string name;
+		uint8_t gender;
+		std::string str_gender;
+		float weight;
+		float score;
+		uint8_t is_great_one;
+		uint32_t visual_variation_seed;
+		std::string str_visual_variation_seed;
+		uint32_t idx;
+
 		AnimalData(ReserveData *reserve_data);
 		bool SetId(uint32_t id);
 		bool SetId(const std::string& animal_name);
 		~AnimalData();
 
+		friend std::ostream& operator<<(std::ostream& out, const AnimalData& data);
+
 		std::vector<char> GetBytes();
+		bool SetName(const std::string& name);
+		bool SetIdx(uint32_t idx);
 		bool SetGender(uint8_t gender);
 		bool SetGender(const std::string &gender);
 		bool SetWeight(float weight);

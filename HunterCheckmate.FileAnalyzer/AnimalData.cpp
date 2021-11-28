@@ -38,6 +38,19 @@ namespace HunterCheckmate_FileAnalyzer
 		return data;
 	}
 
+	bool AnimalData::SetName(const std::string& name)
+	{
+		this->id = reserve_data->GetNameHash(name);
+		this->name = name;
+		return true;
+	}
+
+	bool AnimalData::SetIdx(uint32_t idx)
+	{
+		this->idx = idx;
+		return true;
+	}
+
 	bool AnimalData::SetGender(uint8_t gender)
 	{
 		if (VerifyGender(gender))
@@ -626,5 +639,17 @@ namespace HunterCheckmate_FileAnalyzer
 		std::vector<char> data(sizeof(int32_t));
 		std::memcpy(data.data(), &this->visual_variation_seed, sizeof(visual_variation_seed));
 		this->visual_variation_seed_bytes = data;
+	}
+
+	std::ostream& operator<<(std::ostream& out, const AnimalData& data)
+	{
+		out << "[ " << std::setw(2) << data.idx
+			<< " | " << std::setw(6) << data.str_gender
+			<< " | " << std::setw(7) << data.weight
+			<< " | " << std::setw(8) << data.score
+			<< " | " << std::setw(1) << static_cast<int>(data.is_great_one)
+			<< " | " << std::setw(5) << data.visual_variation_seed
+			<< " ]\n";
+		return out;
 	}
 }

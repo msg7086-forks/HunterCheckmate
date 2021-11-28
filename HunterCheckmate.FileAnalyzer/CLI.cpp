@@ -37,7 +37,7 @@ namespace HunterCheckmate_FileAnalyzer
 			("input-file,i", po::value<std::string>(), "input file path (population or loadout)")
 			("output-console,c", "output whole file contents on console")
 			("output-file,f", "output whole file contents into .txt file")
-			("output-group,g",po::value<std::string>() , "output group informations for an animal on console")
+			("output-group,g",po::value<std::string>(), "output group informations for an animal on console")
 			("replace-custom,r", "replace an animal with a new one")
 			("replace-preset,p", "replace an animal with one from the presets");
 		po::store(po::parse_command_line(argc, argv, m_desc), m_vm);
@@ -66,61 +66,18 @@ namespace HunterCheckmate_FileAnalyzer
 			// TODO: do validation in actual file reversing class and throw exception or break
 			if (str_filename.find("animal_population_") != std::string::npos)
 			{
-				// TODO: change file_handler class to use boost filesystem
 				std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, str_filepath);
 				uint8_t reserve_id = static_cast<uint8_t>(str_filepath.back()) - static_cast<uint8_t>('0');
-				
 				std::unique_ptr<AnimalPopulation> adf = std::make_unique<AnimalPopulation>(file_handler, reserve_id);
 
 				if (adf->Deserialize())
 				{
-					auto it_begin = adf->reserve_data.animal_names.begin();
-					auto it_end = adf->reserve_data.animal_names.end();
-
-					bool loop_all = str_animal.empty();
-
-					for (; it_begin != it_end; ++it_begin)
-					{
-						std::string animal = it_begin->first;
-						if (animal.find(str_animal) != std::string::npos)
-						{
-							uint32_t total_number_of_animals = 0;
-							uint32_t number_of_groups = adf->GetNumberOfGroups(it_begin->first);
-							std::cout << animal.c_str() << " Groups [ #" << number_of_groups << " ]" << std::endl;
-
-							for (uint32_t j = 0; j < number_of_groups; j++)
-							{
-								uint32_t group_size = adf->GetGroupSize(it_begin->first, j);
-								total_number_of_animals += group_size;
-
-								std::cout << std::endl << "           " << "[ " << j << " | #" << std::setw(2) << group_size
-									<< " | " << std::setw(0) << adf->GetSpawnAreaId(it_begin->first, j) << " ]" << std::endl;
-
-								for (uint32_t k = 0; k < group_size; k++)
-								{
-									std::string gender_arr[2] = { "Male", "Female" };
-									uint8_t ui_gender = adf->GetGender(it_begin->first, j, k);
-									std::string gender = gender_arr[ui_gender - 1];
-									float weight = adf->GetWeight(it_begin->first, j, k);
-									float score = adf->GetScore(it_begin->first, j, k);
-									bool is_great_one = adf->IsGreatOne(it_begin->first, j, k);
-									uint32_t visual_variation_seed = adf->GetVisualVariationSeed(it_begin->first, j, k);
-
-									std::cout << "[ " << std::setw(2) << k
-										<< " | " << std::setw(6) << gender.c_str()
-										<< " | " << std::setw(7) << weight
-										<< " | " << std::setw(8) << score
-										<< " | " << std::setw(1) << is_great_one
-										<< " | " << std::setw(5) << visual_variation_seed
-										<< " ]" << std::endl;
-								}
-							}
-
-							std::cout << std::endl << "Total number of animals: " << static_cast<int>(total_number_of_animals) << std::endl << std::endl;
-							if (!loop_all) break;
-						}
-					}
-				} 
+					adf->GenerateMap();
+					std::vector<AnimalGroupData> groups = adf->animals.at(str_animal);
+					auto it_beg = groups.begin();
+					auto it_end = groups.end();
+					for (; it_beg != it_end; ++it_beg) std::cout << *it_beg;
+				}
 
 				return 0;
 			}

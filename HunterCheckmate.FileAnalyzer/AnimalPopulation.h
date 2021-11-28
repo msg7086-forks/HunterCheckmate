@@ -1,5 +1,7 @@
 #pragma once
 #include "AdfFile.h"
+#include <iostream>
+#include "AnimalGroupData.h"
 
 namespace HunterCheckmate_FileAnalyzer
 {
@@ -10,8 +12,10 @@ namespace HunterCheckmate_FileAnalyzer
 		uint32_t GetAnimalOffset(const std::string&name, uint32_t group_idx, uint32_t animal_idx);
 	public:
 		ReserveData reserve_data;
+		std::map<std::string, std::vector<AnimalGroupData>> animals;
 		AnimalPopulation(std::shared_ptr<FileHandler> file_handler, uint8_t reserve_id);
 		~AnimalPopulation() = default;
+		friend std::ostream& operator<<(std::ostream& out, const AnimalPopulation& data);
 		
 		bool IsValidAnimal(const std::string& name, uint32_t group_idx, uint32_t animal_idx);
 		uint8_t GetGender(const std::string &name, uint32_t group_idx, uint32_t animal_idx);
@@ -29,5 +33,6 @@ namespace HunterCheckmate_FileAnalyzer
 		AnimalData *GenerateAnimalData(std::string name, std::string gender, float weight, float score, uint8_t is_great_one, uint32_t visual_variation_seed);
 		AnimalData* GenerateAnimalData(std::string name, std::string gender, std::string weight, std::string score, std::string visual_variation_seed);
 		AnimalData* GenerateAnimalData(std::string name, std::string gender, std::string weight, std::string score, std::string is_great_one, std::string visual_variation_seed);
+		void GenerateMap();
 	};
 }
