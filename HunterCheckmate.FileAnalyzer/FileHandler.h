@@ -26,13 +26,10 @@ namespace HunterCheckmate_FileAnalyzer
 		FileHandler(Endian endian, const fs::path file_path);
 		~FileHandler() = default;
 
-		bool open();
-		void close();
-
 		template<class T>
 		void read(T* data, uint32_t offset, uint32_t size = 0)
 		{
-			if(open())
+			if(fstream.is_open())
 			{
 				if (size == 0) size = sizeof(*data);
 
@@ -42,8 +39,6 @@ namespace HunterCheckmate_FileAnalyzer
 				for (auto& i : *buffer) this->fstream.get(i);
 				if (endian == Endian::Big) std::reverse(buffer->begin(), buffer->end());
 				memcpy(data, buffer->data(), size);
-
-				this->close();
 			}
 		}
 

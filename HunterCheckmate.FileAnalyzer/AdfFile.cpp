@@ -17,8 +17,8 @@ namespace HunterCheckmate_FileAnalyzer
 			this->header_member = nullptr;
 			this->type = Type::None;
 			this->primitive = Primitive::NONE;
-			this->offset = 0;
-			this->size = 0;
+			this->offset = 0x0;
+			this->size = 0x0;
 			this->data = std::vector<char>();
 			this->sub_members = std::vector<Member>(0);
 	}
