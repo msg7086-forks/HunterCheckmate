@@ -224,7 +224,7 @@ namespace HunterCheckmate_FileAnalyzer
 						_animals.push_back(animal_data);
 					}
 
-					animal_groups.emplace_back(AnimalGroupData(animal_name, group_size, j, spawn_area_id, _animals));
+					animal_groups.emplace_back(AnimalGroupData(animal_name, j, spawn_area_id, _animals));
 				}
 
 				this->animals.insert_or_assign(animal_name, animal_groups);
