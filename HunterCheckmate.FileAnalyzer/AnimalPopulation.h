@@ -1,7 +1,8 @@
 #pragma once
 #include "AdfFile.h"
+#include "AnimalGroup.h"
+#include "AnimalTypeEnum.h"
 #include <iostream>
-#include "AnimalGroupData.h"
 
 namespace HunterCheckmate_FileAnalyzer
 {
@@ -9,30 +10,32 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 	private:
 		uint32_t ResolveNameHash(uint32_t name_hash);
-		uint32_t GetAnimalOffset(const std::string&name, uint32_t group_idx, uint32_t animal_idx);
+		uint32_t GetAnimalOffset(AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx);
 	public:
-		ReserveData reserve_data;
-		std::map<std::string, std::vector<AnimalGroupData>> animals;
+		std::shared_ptr<ReserveData> m_reserve_data;
+		std::map<AnimalType, std::vector<AnimalGroup>> m_animals;
 		AnimalPopulation(std::shared_ptr<FileHandler> file_handler, uint8_t reserve_id);
+		AnimalPopulation(std::shared_ptr<FileHandler> file_handler, std::shared_ptr<ReserveData> reserve_data);
 		~AnimalPopulation() = default;
-		friend std::ostream& operator<<(std::ostream& out, const AnimalPopulation& data);
 		
-		bool IsValidAnimal(const std::string& name, uint32_t group_idx, uint32_t animal_idx);
-		uint8_t GetGender(const std::string &name, uint32_t group_idx, uint32_t animal_idx);
-		float GetWeight(const std::string &name, uint32_t group_idx, uint32_t animal_idx);
-		float GetScore(const std::string &name, uint32_t group_idx, uint32_t animal_idx);
-		bool IsGreatOne(const std::string &name, uint32_t group_idx, uint32_t animal_idx);
-		uint32_t GetVisualVariationSeed(const std::string &name, uint32_t group_idx, uint32_t animal_idx);
-		int32_t GetSpawnAreaId(const std::string &name, uint32_t group_idx);
-		uint32_t GetNumberOfGroups(const std::string &name);
-		uint32_t GetGroupSize(const std::string &name, uint32_t group_idx);
-		bool ReplaceAnimal(std::vector<char> *animal_info, const std::string &name, uint32_t group_idx, uint32_t animal_idx);
+		bool IsValidAnimal(AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx);
+		uint8_t GetGender(AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx);
+		float GetWeight(AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx);
+		float GetScore(AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx);
+		bool IsGreatOne(AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx);
+		uint32_t GetVisualVariationSeed(AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx);
+		int32_t GetSpawnAreaId(AnimalType animal_type, uint32_t group_idx);
+		uint32_t GetNumberOfGroups(AnimalType animal_type);
+		uint32_t GetGroupSize(AnimalType animal_type, uint32_t group_idx);
+
+		bool ReplaceAnimal(std::vector<char> *animal_info, AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx);
 		bool ReplaceAnimal(std::vector<char> *animal_info, uint32_t offset);
-		bool ReplaceAnimal(AnimalData *animal_data, const std::string &name, uint32_t group_idx, uint32_t animal_idx);
-		bool ReplaceAnimal(AnimalData *animal_data, uint32_t offset);
-		AnimalData *GenerateAnimalData(std::string name, std::string gender, float weight, float score, uint8_t is_great_one, uint32_t visual_variation_seed);
-		AnimalData* GenerateAnimalData(std::string name, std::string gender, std::string weight, std::string score, std::string visual_variation_seed);
-		AnimalData* GenerateAnimalData(std::string name, std::string gender, std::string weight, std::string score, std::string is_great_one, std::string visual_variation_seed);
+		bool ReplaceAnimal(Animal *animal_data, AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx);
+		bool ReplaceAnimal(std::shared_ptr<Animal> animal_data, AnimalType animal_type, uint32_t group_idx,
+		                   uint32_t animal_idx);
+		bool ReplaceAnimal(Animal *animal_data, uint32_t offset);
 		void GenerateMap();
+
+		friend std::ostream& operator<<(std::ostream& out, const AnimalPopulation& data);
 	};
 }

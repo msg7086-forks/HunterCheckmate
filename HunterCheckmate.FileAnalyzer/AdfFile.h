@@ -1,6 +1,6 @@
 #pragma once
 #include "FileHandler.h"
-#include "AnimalData.h"
+#include "Animal.h"
 
 namespace HunterCheckmate_FileAnalyzer
 {
@@ -196,7 +196,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 	public:
 		std::vector<TypedefHeader> *header_typedefs = nullptr;
-		std::shared_ptr<FileHandler> file_handler = nullptr;
+		std::shared_ptr<FileHandler> m_file_handler = nullptr;
 		InstanceHeader *header_instance = nullptr;
 		TypedefHeader *header_typedef = nullptr;
 		std::vector<Member> members;
@@ -226,7 +226,7 @@ namespace HunterCheckmate_FileAnalyzer
 		uint32_t m_sig;
 		bool m_valid;
 		bool m_initialized;
-		std::shared_ptr<FileHandler> file_handler;
+		std::shared_ptr<FileHandler> m_file_handler;
 	public:
 		AdfHeader header;
 		std::vector<InstanceHeader> header_instances;

@@ -38,7 +38,7 @@ namespace HunterCheckmate_FileAnalyzer
 	Instance::Instance(std::vector<TypedefHeader>* header_typedefs, std::shared_ptr<FileHandler> file_handler, InstanceHeader *header_instance, TypedefHeader *header_typedef)
 	{
 		this->header_typedefs = header_typedefs;
-		this->file_handler = file_handler;
+		this->m_file_handler = file_handler;
 		this->header_instance = header_instance;
 		this->header_typedef = header_typedef;
 		this->members = std::vector<Member>(this->header_typedef->member_headers.size());
@@ -71,7 +71,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 
 		std::vector<char> data = std::vector<char>(member->size);
-		file_handler->read(data.data(), offset, data.size());
+		m_file_handler->read(data.data(), offset, data.size());
 		member->data = data;
 	}
 
@@ -101,11 +101,11 @@ namespace HunterCheckmate_FileAnalyzer
 					{
 					std::vector<char> buffer(8);
 
-					file_handler->read(buffer.data(), tmp_offset + 0x8, buffer.size());
+					m_file_handler->read(buffer.data(), tmp_offset + 0x8, buffer.size());
 					uint32_t array_elem_count;
 					memcpy(&array_elem_count, buffer.data(), sizeof(array_elem_count));
 
-					file_handler->read(buffer.data(), tmp_offset, buffer.size());
+					m_file_handler->read(buffer.data(), tmp_offset, buffer.size());
 					uint32_t array_data_offset;
 					memcpy(&array_data_offset, buffer.data(), sizeof(array_data_offset));
 
@@ -206,11 +206,11 @@ namespace HunterCheckmate_FileAnalyzer
 				{
 					std::vector<char> buffer = std::vector<char>(8);
 
-					file_handler->read(buffer.data(), offset + 0x8, buffer.size());
+					m_file_handler->read(buffer.data(), offset + 0x8, buffer.size());
 					uint32_t array_elem_count;
 					memcpy(&array_elem_count, buffer.data(), sizeof(array_elem_count));
 						
-					file_handler->read(buffer.data(), offset, buffer.size());
+					m_file_handler->read(buffer.data(), offset, buffer.size());
 					uint32_t array_data_offset;
 					memcpy(&array_data_offset, buffer.data(), sizeof(array_data_offset));
 						
@@ -240,7 +240,7 @@ namespace HunterCheckmate_FileAnalyzer
 	AdfFile::AdfFile(std::shared_ptr<FileHandler> file_handler)
 		: m_sig(0x41444620),
 		m_initialized(false),
-		file_handler(std::move(file_handler)),
+		m_file_handler(std::move(file_handler)),
 		header(AdfHeader()),
 		header_instances(std::vector<InstanceHeader>(0)),
 		header_typedef(std::vector<TypedefHeader>(0)),
@@ -254,28 +254,28 @@ namespace HunterCheckmate_FileAnalyzer
 	bool AdfFile::SigMatch() const
 	{
 		uint32_t tmp_sig;
-		file_handler->read(&tmp_sig, 0x0);
+		m_file_handler->read(&tmp_sig, 0x0);
 		return tmp_sig == m_sig;
 	}
 
 	bool AdfFile::DeserializeHeader()
 	{
 		header.sig = m_sig;
-		file_handler->read(&header.version, 0x4);
-		file_handler->read(&header.instance_count, 0x8);
-		file_handler->read(&header.instance_offset, 0xC);
-		file_handler->read(&header.typedef_count, 0x10);
-		file_handler->read(&header.typedef_offset, 0x14);
-		file_handler->read(&header.strhash_count, 0x18);
-		file_handler->read(&header.strhash_offset, 0x1C);
-		file_handler->read(&header.nametable_count, 0x20);
-		file_handler->read(&header.nametable_offset, 0x24);
-		file_handler->read(&header.total_size, 0x28);
-		file_handler->read(&header.unknown_0x2C, 0x2C);
-		file_handler->read(&header.unknown_0x30, 0x30);
-		file_handler->read(&header.unknown_0x34, 0x34);
-		file_handler->read(&header.unknown_0x38, 0x38);
-		file_handler->read(&header.unknown_0x3C, 0x3C);
+		m_file_handler->read(&header.version, 0x4);
+		m_file_handler->read(&header.instance_count, 0x8);
+		m_file_handler->read(&header.instance_offset, 0xC);
+		m_file_handler->read(&header.typedef_count, 0x10);
+		m_file_handler->read(&header.typedef_offset, 0x14);
+		m_file_handler->read(&header.strhash_count, 0x18);
+		m_file_handler->read(&header.strhash_offset, 0x1C);
+		m_file_handler->read(&header.nametable_count, 0x20);
+		m_file_handler->read(&header.nametable_offset, 0x24);
+		m_file_handler->read(&header.total_size, 0x28);
+		m_file_handler->read(&header.unknown_0x2C, 0x2C);
+		m_file_handler->read(&header.unknown_0x30, 0x30);
+		m_file_handler->read(&header.unknown_0x34, 0x34);
+		m_file_handler->read(&header.unknown_0x38, 0x38);
+		m_file_handler->read(&header.unknown_0x3C, 0x3C);
 
 		return true;
 	}
@@ -287,11 +287,11 @@ namespace HunterCheckmate_FileAnalyzer
 			InstanceHeader buffer = InstanceHeader();
 			const uint32_t base = header.instance_offset;
 
-			file_handler->read(&buffer.name_hash, base);
-			file_handler->read(&buffer.type_hash, base + 0x4);
-			file_handler->read(&buffer.offset, base + 0x8);
-			file_handler->read(&buffer.size, base + 0xC);
-			file_handler->read(&buffer.name_idx, base + 0x10);
+			m_file_handler->read(&buffer.name_hash, base);
+			m_file_handler->read(&buffer.type_hash, base + 0x4);
+			m_file_handler->read(&buffer.offset, base + 0x8);
+			m_file_handler->read(&buffer.size, base + 0xC);
+			m_file_handler->read(&buffer.name_idx, base + 0x10);
 			header_instances.push_back(buffer);
 		}
 
@@ -308,15 +308,15 @@ namespace HunterCheckmate_FileAnalyzer
 			std::unique_ptr<TypedefHeader> buffer = std::make_unique<TypedefHeader>();
 			const uint32_t base = header.typedef_offset + TYPEDEF_SIZE * i + num_previous_members * MEMBER_SIZE;
 
-			file_handler->read(&buffer->type, base);
-			file_handler->read(&buffer->size, base + 0x4);
-			file_handler->read(&buffer->alignment, base + 0x8);
-			file_handler->read(&buffer->name_hash, base + 0xC);
-			file_handler->read(&buffer->name_idx, base + 0x10);
-			file_handler->read(&buffer->flags, base + 0x18);
-			file_handler->read(&buffer->element_type_hash, base + 0x1C);
-			file_handler->read(&buffer->element_length, base + 0x20);
-			file_handler->read(&buffer->member_count, base + 0x24);
+			m_file_handler->read(&buffer->type, base);
+			m_file_handler->read(&buffer->size, base + 0x4);
+			m_file_handler->read(&buffer->alignment, base + 0x8);
+			m_file_handler->read(&buffer->name_hash, base + 0xC);
+			m_file_handler->read(&buffer->name_idx, base + 0x10);
+			m_file_handler->read(&buffer->flags, base + 0x18);
+			m_file_handler->read(&buffer->element_type_hash, base + 0x1C);
+			m_file_handler->read(&buffer->element_length, base + 0x20);
+			m_file_handler->read(&buffer->member_count, base + 0x24);
 
 			num_previous_members += buffer->member_count;
 
@@ -336,12 +336,12 @@ namespace HunterCheckmate_FileAnalyzer
 			{
 				MemberHeader member_header = MemberHeader();
 				const uint32_t member_base = base + typedef_size + member_size * i;
-				file_handler->read(&member_header.name_idx, member_base);
-				file_handler->read(&member_header.type_hash, member_base + 0x8);
-				file_handler->read(&member_header.size, member_base + 0xC);
-				file_handler->read(&member_header.offset, member_base + 0x10);
-				file_handler->read(&member_header.default_type, member_base + 0x14);
-				file_handler->read(&member_header.default_value, member_base + 0x18);
+				m_file_handler->read(&member_header.name_idx, member_base);
+				m_file_handler->read(&member_header.type_hash, member_base + 0x8);
+				m_file_handler->read(&member_header.size, member_base + 0xC);
+				m_file_handler->read(&member_header.offset, member_base + 0x10);
+				m_file_handler->read(&member_header.default_type, member_base + 0x14);
+				m_file_handler->read(&member_header.default_value, member_base + 0x18);
 				typedefHeader.member_headers.push_back(member_header);
 			}
 			break;
@@ -361,7 +361,7 @@ namespace HunterCheckmate_FileAnalyzer
 		{
 			uint8_t buffer;
 			const uint32_t base = header.nametable_offset + sizeof(uint8_t) * i;
-			file_handler->read(&buffer, base, sizeof(buffer));
+			m_file_handler->read(&buffer, base, sizeof(buffer));
 			header_nametable.size.at(i) = buffer;
 		}
 
@@ -371,7 +371,7 @@ namespace HunterCheckmate_FileAnalyzer
 			std::vector<char> buffer(header_nametable.size.at(i) + 1);
 			const uint32_t base = header.nametable_offset + header.nametable_count + current_offset;
 
-			file_handler->read(buffer.data(), base, buffer.size());
+			m_file_handler->read(buffer.data(), base, buffer.size());
 			current_offset += header_nametable.size.at(i) + 1;
 
 			header_nametable.name.at(i).push_back(*buffer.data());
@@ -390,7 +390,7 @@ namespace HunterCheckmate_FileAnalyzer
 		for (auto it = header_instances.begin(); it != header_instances.end(); ++it)
 		{
 			const uint32_t idx = it - header_instances.begin();
-			std::unique_ptr<Instance> instance = std::make_unique<Instance>(&header_typedef, file_handler, &*it, &header_typedef.at(idx));
+			std::unique_ptr<Instance> instance = std::make_unique<Instance>(&header_typedef, m_file_handler, &*it, &header_typedef.at(idx));
 			instance->PopulateMembers();
 			instances.push_back(*instance);
 		}

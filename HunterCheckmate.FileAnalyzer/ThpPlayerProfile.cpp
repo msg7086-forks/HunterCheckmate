@@ -17,22 +17,13 @@ namespace HunterCheckmate_FileAnalyzer
 		this->furthest_vital_organ_shot = furthest_vital_organ_shot;
 	}
 
-	ThpPlayerProfile::ThpPlayerProfile(std::shared_ptr<FileHandler> file_handler, std::string *file_path, std::ifstream *ifstream) : AdfFile(file_handler)
-	{
-		this->file_path = file_path;
-		this->ifstream = ifstream;
-	}
-
-	ThpPlayerProfile::~ThpPlayerProfile()
-	{
-		delete ifstream;
-		delete ofstream;
-	}
+	ThpPlayerProfile::ThpPlayerProfile(std::shared_ptr<FileHandler> file_handler, fs::path file_path)
+		: AdfFile(std::move(file_handler)),
+		  m_json_path(file_path),
+		  m_json_fstream(file_path.generic_string()) {}
 
 	bool ThpPlayerProfile::SerializeJson()
 	{
-		this->ofstream = new std::ofstream(this->file_path->c_str(), std::ios::in | std::ios::out);
-
 		this->equipment_back_pack = GetEquipmentBackPack();
 		this->inventory_slot = GetInventorySlot();
 

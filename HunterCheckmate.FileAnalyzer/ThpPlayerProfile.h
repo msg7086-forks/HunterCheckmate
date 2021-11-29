@@ -1,6 +1,10 @@
 #pragma once
 #include "AdfFile.h"
 #include <boost/json.hpp>
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
+namespace json = boost::json;
 
 namespace HunterCheckmate_FileAnalyzer
 {
@@ -26,15 +30,14 @@ namespace HunterCheckmate_FileAnalyzer
 	class ThpPlayerProfile : public AdfFile
 	{
 	private:
-		std::string *file_path;
-		std::ifstream *ifstream;
-		std::ofstream *ofstream;
+		fs::path m_json_path;
+		fs::fstream m_json_fstream;
 
 		std::vector<uint32_t> equipment_back_pack;
 		std::vector < std::vector<uint32_t>> inventory_slot;
 	public:
-		ThpPlayerProfile(std::shared_ptr<FileHandler> file_handler, std::string *file_path, std::ifstream *ifstream);
-		~ThpPlayerProfile();
+		ThpPlayerProfile(std::shared_ptr<FileHandler> file_handler, fs::path file_path);
+		~ThpPlayerProfile() = default;
 		
 		bool SerializeJson();
 		bool DeserializeJson();

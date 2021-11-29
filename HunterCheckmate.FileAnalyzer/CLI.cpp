@@ -1,9 +1,5 @@
 #include "CLI.h"
 
-#include <iostream>
-#include "FileHandler.h"
-#include "AnimalPopulation.h"
-
 namespace HunterCheckmate_FileAnalyzer
 {
 	/* Function used to check that 'opt1' and 'opt2' are not specified
@@ -38,20 +34,21 @@ namespace HunterCheckmate_FileAnalyzer
 
 	void CLI::PrintGroupInformation()
 	{
-		const std::string animal = m_vm["output-group"].as<std::string>();
+		std::string animal = m_vm["output-group"].as<std::string>();
+		const AnimalType animal_type = ResolveAnimalType(animal);
 
 		if (m_inputFileName.generic_string().find("animal_population_") != std::string::npos)
 		{
 			std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, m_inputFilePath);
-			uint8_t reserve_id = static_cast<uint8_t>(m_inputFilePath.generic_string().back()) - static_cast<uint8_t>('0');
-			std::unique_ptr<AnimalPopulation> adf = std::make_unique<AnimalPopulation>(file_handler, reserve_id);
+			std::shared_ptr<ReserveData> reserve_data = std::make_shared<ReserveData>(static_cast<uint8_t>(std::stoi(std::string(1, m_inputFileName.generic_string().back()))));
+			const std::unique_ptr<AnimalPopulation> adf = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
 
 			if (adf->Deserialize())
 			{
 				adf->GenerateMap();
-				std::vector<AnimalGroupData> groups = adf->animals.at(animal);
+				std::vector<AnimalGroup> groups = adf->m_animals.at(animal_type);
 				auto it_beg = groups.begin();
-				auto it_end = groups.end();
+				const auto it_end = groups.end();
 				for (; it_beg != it_end; ++it_beg) std::cout << *it_beg;
 			}
 			else PrintUnrecognizedFile();
@@ -63,25 +60,27 @@ namespace HunterCheckmate_FileAnalyzer
 		if (m_inputFileName.generic_string().find("animal_population_") != std::string::npos)
 		{
 			std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, m_inputFilePath);
-			uint8_t reserve_id = static_cast<uint8_t>(m_inputFilePath.generic_string().back()) - static_cast<uint8_t>('0');
-			std::unique_ptr<AnimalPopulation> adf = std::make_unique<AnimalPopulation>(file_handler, reserve_id);
+			std::shared_ptr<ReserveData> reserve_data = std::make_shared<ReserveData>(static_cast<uint8_t>(std::stoi(std::string(1,m_inputFileName.generic_string().back()))));
+			const std::unique_ptr<AnimalPopulation> adf = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
+
 			if (adf->Deserialize())
 			{
 				std::string in_name;
 				std::string in_group_idx;
 				std::string in_animal_idx;
 
-				std::cout << "Which animal do you want to replace?" << std::endl;
+				std::cout << "Which animal do you want to replace?\n";
 				std::cout << "Name: ";				std::cin >> in_name;
 				std::cout << "Group Index: ";		std::cin >> in_group_idx;
 				std::cout << "Animal Index: ";		std::cin >> in_animal_idx;
 
 				const uint32_t group_idx = std::stoul(in_group_idx);
 				const uint32_t animal_idx = std::stoul(in_animal_idx);
+				const AnimalType animal_type = ResolveAnimalType(in_name);
 
-				if (!adf->IsValidAnimal(in_name, group_idx, animal_idx))
+				if (!adf->IsValidAnimal(animal_type, group_idx, animal_idx))
 				{
-					std::cout << "\nYou have entered an invalid animal name, group index or animal index!" << std::endl;
+					std::cout << "\nYou have entered an invalid animal name, group index or animal index!\n";
 				}
 				else
 				{
@@ -98,23 +97,101 @@ namespace HunterCheckmate_FileAnalyzer
 					std::cout << "Is Great One: "; std::cin >> is_great_one;
 					std::cout << "Fur Type: "; std::cin >> visual_variation_seed;
 
-					AnimalData* animal_data = adf->GenerateAnimalData(in_name, gender, weight, score, is_great_one, visual_variation_seed);
-					if (animal_data != nullptr)
+					std::shared_ptr<Animal> animal = Animal::Create(animal_type, gender, weight, score, is_great_one, visual_variation_seed);
+
+					if (animal->m_valid)
 					{
-						if (adf->ReplaceAnimal(animal_data, in_name, group_idx, animal_idx))
+						if (adf->ReplaceAnimal(animal, animal_type, group_idx, animal_idx))
 						{
-							std::cout << std::endl << "Success! Good luck hunting down your new animal!" << std::endl;
+							std::cout << std::endl << "Success! Good luck hunting down your new animal!\n";
 						}
 						else
 						{
-							std::cout << std::endl << "Something went wrong..." << std::endl;
+							std::cout << std::endl << "Something went wrong...\n";
 						}
-
-						delete animal_data;
 					}
 				}
 			}
 		}
+	}
+
+	void CLI::InteractiveJson()
+	{
+		m_inputJsonPath = fs::path(m_vm["json"].as<std::string>());
+		m_inputJsonPath = m_inputJsonPath.filename();
+		if (m_inputFileName.generic_string().find("thp_player_profile_adf") != std::string::npos)
+		{
+			std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, m_inputFilePath);
+			std::unique_ptr<ThpPlayerProfile> adf = std::make_unique<ThpPlayerProfile>(file_handler, fs::path());
+
+			if (adf->Deserialize())
+			{
+				
+			}
+		}
+	}
+
+	AnimalType CLI::ResolveAnimalType(std::string& name)
+	{
+		bs::to_lower(name);
+		if (name.find("boar") != std::string::npos) return AT_WildBoar;
+		if (name.find("fallow") != std::string::npos) return AT_FallowDeer;
+		if (name.find("eu") != std::string::npos && name.find("bison") != std::string::npos) return AT_EuroBison;
+		if (name.find("roe") != std::string::npos) return AT_RoeDeer;
+		if (name.find("red") != std::string::npos && name.find("fox") != std::string::npos) return AT_RedFox;
+		if (name.find("goose") != std::string::npos) return AT_CanadaGoose;
+		if (name.find("red") != std::string::npos && name.find("deer") != std::string::npos) return AT_RedDeer;
+		if (name.find("eu") != std::string::npos && name.find("rabbit") != std::string::npos) return AT_EuroRabbit;
+		if (name.find("moose") != std::string::npos) return AT_Moose;
+		if (name.find("jack") != std::string::npos && name.find("rabbit") != std::string::npos) return AT_Jackrabbit;
+		if (name.find("mallard") != std::string::npos) return AT_Mallard;
+		if (name.find("black") != std::string::npos && name.find("bear") != std::string::npos) return AT_BlackBear;
+		if (name.find("roosevelt") != std::string::npos) return AT_RooseveltElk;
+		if (name.find("coyote") != std::string::npos) return AT_Coyote;
+		if (name.find("blacktail") != std::string::npos) return AT_BlacktailDeer;
+		if (name.find("whitetail") != std::string::npos) return AT_WhitetailDeer;
+		if (name.find("musk") != std::string::npos) return AT_MuskDeer;
+		if (name.find("reindeer") != std::string::npos) return AT_Reindeer;
+		if (name.find("lynx") != std::string::npos) return AT_EurasianLynx;
+		if (name.find("brown") != std::string::npos && name.find("bear") != std::string::npos) return AT_BrownBear;
+		if (name.find("wildebeest") != std::string::npos) return AT_BlueWildebeest;
+		if (name.find("jackal") != std::string::npos) return AT_SideStripedJackal;
+		if (name.find("gemsbok") != std::string::npos) return AT_Gemsbok;
+		if (name.find("kudu") != std::string::npos) return AT_LesserKudu;
+		if (name.find("hare") != std::string::npos) return AT_ScrubHare;
+		if (name.find("lion") != std::string::npos) return AT_Lion;
+		if (name.find("warthog") != std::string::npos) return AT_Warthog;
+		if (name.find("cape") != std::string::npos) return AT_CapeBuffalo;
+		if (name.find("springbok") != std::string::npos) return AT_Springbok;
+		if (name.find("water") != std::string::npos) return AT_WaterBuffalo;
+		if (name.find("puma") != std::string::npos) return AT_Puma;
+		if (name.find("blackbuck") != std::string::npos) return AT_Blackbuck;
+		if (name.find("cinnamon") != std::string::npos) return AT_CinnamonTeal;
+		if (name.find("mule") != std::string::npos) return AT_MuleDeer;
+		if (name.find("axis") != std::string::npos) return AT_AxisDeer;
+		if (name.find("harlequin") != std::string::npos || name.find("duck") != std::string::npos) return AT_HarlequinDuck;
+		if (name.find("caribou") != std::string::npos) return	AT_Caribou;
+		if (name.find("grizzly") != std::string::npos) return	AT_GrizzlyBear;
+		if (name.find("gray") != std::string::npos && name.find("wolf") != std::string::npos) return AT_GrayWolf;
+		if (name.find("plains") != std::string::npos) return AT_PlainsBison;
+		if (name.find("south") != std::string::npos && name.find("ibex") != std::string::npos) return AT_SoutheasternSpanishIbex;
+		if (name.find("iberian") != std::string::npos && name.find("wolf") != std::string::npos) return AT_IberianWolf;
+		if (name.find("muflon") != std::string::npos) return AT_IberianMuflon;
+		if (name.find("beceite") != std::string::npos) return AT_BeceiteIbex;
+		if (name.find("eu") != std::string::npos && name.find("hare") != std::string::npos) return AT_EuroHare;
+		if (name.find("ronda") != std::string::npos) return AT_RondaIbex;
+		if (name.find("gredos") != std::string::npos) return AT_GredosIbex;
+		if (name.find("pronghorn") != std::string::npos) return AT_Pronghorn;
+		if (name.find("mountain") != std::string::npos && name.find("lion") != std::string::npos) return AT_MountainLion;
+		if (name.find("mountain") != std::string::npos && name.find("goat") != std::string::npos) return AT_MountainGoat;
+		if (name.find("bighorn") != std::string::npos) return AT_BighornSheep;
+		if (name.find("turkey") != std::string::npos) return AT_Turkey;
+		if (name.find("rocky") != std::string::npos) return AT_RockyMountainElk;
+		if (name.find("sika") != std::string::npos) return AT_SikaDeer;
+		if (name.find("chamois") != std::string::npos) return AT_Chamois;
+		if (name.find("pig") != std::string::npos) return AT_FeralPig;
+		if (name.find("feral") != std::string::npos && name.find("goat") != std::string::npos) return AT_FeralGoat;
+		return AT_None;
 	}
 
 	CLI::CLI(int argc, char* argv[])
@@ -125,9 +202,10 @@ namespace HunterCheckmate_FileAnalyzer
 			("input-file,i", po::value<std::string>(), "input file path (population or loadout)")
 			("output-console,c", "output whole file contents on console")
 			("output-file,f", "output whole file contents into .txt file")
-			("output-group,g",po::value<std::string>(), "output group informations for an animal on console")
+			("output-group,g", po::value<std::string>(), "output group informations for an animal on console")
 			("replace-custom,r", "replace an animal with a new one")
-			("replace-preset,p", "replace an animal with one from the presets");
+			("replace-preset,p", "replace an animal with one from the presets")
+			("json,j", po::value<std::string>(), "get inventory info and load/save loadout");
 		po::store(po::parse_command_line(argc, argv, m_desc), m_vm);
 		po::notify(m_vm);
 		option_dependency(m_vm, "output-console", "input-file");
@@ -135,6 +213,7 @@ namespace HunterCheckmate_FileAnalyzer
 		option_dependency(m_vm, "output-group", "input-file");
 		option_dependency(m_vm, "replace-custom", "input-file");
 		option_dependency(m_vm, "replace-presets", "input-file");
+		option_dependency(m_vm, "json", "input-file");
 	}
 
 	int CLI::run()
@@ -145,6 +224,7 @@ namespace HunterCheckmate_FileAnalyzer
 		if (m_vm.count("help"))					PrintHelp();
 		else if (m_vm.count("output-group"))	PrintGroupInformation();
 		else if (m_vm.count("replace-custom"))	InteractiveReplaceAnimal();
+		else if (m_vm.count("json"))			InteractiveJson();
 		else std::cout << "Use --help option to display information\n";
 
 		return 0;
