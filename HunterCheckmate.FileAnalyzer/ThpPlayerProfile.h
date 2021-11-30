@@ -29,19 +29,18 @@ namespace HunterCheckmate_FileAnalyzer
 	
 	class ThpPlayerProfile : public AdfFile
 	{
-	private:
-		fs::path m_json_path;
-		fs::fstream m_json_fstream;
-
 		std::vector<uint32_t> equipment_back_pack;
 		std::vector < std::vector<uint32_t>> inventory_slot;
 	public:
-		ThpPlayerProfile(std::shared_ptr<FileHandler> file_handler, fs::path file_path);
+		std::shared_ptr<FileHandler> m_json_handler;
+
+		ThpPlayerProfile(std::shared_ptr<FileHandler> file_handler, std::shared_ptr<FileHandler> json_handler);
 		~ThpPlayerProfile() = default;
 		
 		bool SerializeJson();
 		bool DeserializeJson();
-		
+		uint8_t GetAlreadyConverted();
+
 		uint8_t GetIsSaveGameAvailable() const;
 		uint8_t GetGender() const;
 		uint32_t GetSkinToneHash() const;

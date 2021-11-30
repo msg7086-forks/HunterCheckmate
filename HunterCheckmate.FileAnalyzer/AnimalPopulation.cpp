@@ -2,28 +2,25 @@
 
 namespace HunterCheckmate_FileAnalyzer
 {
-	AnimalPopulation::AnimalPopulation(std::shared_ptr<FileHandler> file_handler, uint8_t reserve_id)
-		: AdfFile(std::move(file_handler)), m_reserve_data(std::make_shared<ReserveData>(reserve_id)) {}
-
 	AnimalPopulation::AnimalPopulation(std::shared_ptr<FileHandler> file_handler, std::shared_ptr<ReserveData> reserve_data)
 		: AdfFile(std::move(file_handler)), m_reserve_data(std::move(reserve_data)) {}
 
-	uint32_t AnimalPopulation::ResolveNameHash(uint32_t name_hash)
+	uint32_t AnimalPopulation::ResolveNameHashToIdx(uint32_t name_hash)
 	{
-		auto it = this->instances.at(0).members.at(1).sub_members.begin();
-		for (; it != this->instances.at(0).members.at(1).sub_members.end(); ++it)
+		auto it = instances.at(0).members.at(1).sub_members.begin();
+		for (; it != instances.at(0).members.at(1).sub_members.end(); ++it)
 		{
-			const uint32_t idx = it - this->instances.at(0).members.at(1).sub_members.begin();
+			const uint32_t idx = it - instances.at(0).members.at(1).sub_members.begin();
 			const uint32_t it_hash = *reinterpret_cast<uint32_t*>(it->sub_members.at(0).data.data());
 			if (it_hash == name_hash) return idx;
 		}
-		return 0;
+		return UINT32_MAX;
 	}
 
 	uint32_t AnimalPopulation::GetAnimalOffset(AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx)
 	{
 		if (!m_initialized) return 0;
-		return this->instances.at(0).members.at(1).sub_members.at(ResolveNameHash(this->m_reserve_data->GetNameHash(animal_type)))
+		return instances.at(0).members.at(1).sub_members.at(ResolveNameHashToIdx(m_reserve_data->GetNameHash(animal_type)))
 			.sub_members.at(1).sub_members.at(group_idx).sub_members.at(2)
 			.sub_members.at(animal_idx).offset;
 	}
@@ -32,12 +29,12 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!m_initialized) return false;
 
-		const uint32_t name_idx = ResolveNameHash(this->m_reserve_data->GetNameHash(animal_type));
+		const uint32_t name_idx = ResolveNameHashToIdx(m_reserve_data->GetNameHash(animal_type));
 		if (name_idx == UINT32_MAX) return false;
-		if (group_idx >= this->instances.at(0).members.at(1).sub_members.at(name_idx)
+		if (group_idx >= instances.at(0).members.at(1).sub_members.at(name_idx)
 			.sub_members.at(1).sub_members.size()) return false;
 
-		if (animal_idx >= this->instances.at(0).members.at(1).sub_members.at(name_idx)
+		if (animal_idx >= instances.at(0).members.at(1).sub_members.at(name_idx)
 			.sub_members.at(1).sub_members.at(group_idx).sub_members.at(2).sub_members.size()) return false;
 
 		return true;
@@ -47,7 +44,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!m_initialized) return 0;
 
-		std::vector<char> data = this->instances.at(0).members.at(1).sub_members.at(ResolveNameHash(this->m_reserve_data->GetNameHash(animal_type)))
+		std::vector<char> data = instances.at(0).members.at(1).sub_members.at(ResolveNameHashToIdx(m_reserve_data->GetNameHash(animal_type)))
 			.sub_members.at(1).sub_members.at(group_idx).sub_members.at(2).sub_members.at(animal_idx).sub_members.at(0).data;
 		return *reinterpret_cast<int8_t*>(data.data());
 	}
@@ -56,7 +53,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!m_initialized) return 0;
 
-		std::vector<char> data = this->instances.at(0).members.at(1).sub_members.at(ResolveNameHash(this->m_reserve_data->GetNameHash(animal_type)))
+		std::vector<char> data = instances.at(0).members.at(1).sub_members.at(ResolveNameHashToIdx(m_reserve_data->GetNameHash(animal_type)))
 			.sub_members.at(1).sub_members.at(group_idx).sub_members.at(2).sub_members.at(animal_idx).sub_members.at(1).data;
 		return *reinterpret_cast<float*>(data.data());
 	}
@@ -65,7 +62,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!m_initialized) return 0;
 
-		std::vector<char> data = this->instances.at(0).members.at(1).sub_members.at(ResolveNameHash(this->m_reserve_data->GetNameHash(animal_type)))
+		std::vector<char> data = instances.at(0).members.at(1).sub_members.at(ResolveNameHashToIdx(m_reserve_data->GetNameHash(animal_type)))
 			.sub_members.at(1).sub_members.at(group_idx).sub_members.at(2).sub_members.at(animal_idx).sub_members.at(2).data;
 		return *reinterpret_cast<float*>(data.data());
 	}
@@ -74,7 +71,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!m_initialized) return 0;
 
-		std::vector<char> data = this->instances.at(0).members.at(1).sub_members.at(ResolveNameHash(this->m_reserve_data->GetNameHash(animal_type)))
+		std::vector<char> data = instances.at(0).members.at(1).sub_members.at(ResolveNameHashToIdx(m_reserve_data->GetNameHash(animal_type)))
 			.sub_members.at(1).sub_members.at(group_idx).sub_members.at(2).sub_members.at(animal_idx).sub_members.at(3).data;
 		return *reinterpret_cast<bool*>(data.data());
 	}
@@ -83,7 +80,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!m_initialized) return 0;
 
-		std::vector<char> data = this->instances.at(0).members.at(1).sub_members.at(ResolveNameHash(this->m_reserve_data->GetNameHash(animal_type)))
+		std::vector<char> data = instances.at(0).members.at(1).sub_members.at(ResolveNameHashToIdx(m_reserve_data->GetNameHash(animal_type)))
 			.sub_members.at(1).sub_members.at(group_idx).sub_members.at(2).sub_members.at(animal_idx).sub_members.at(4).data;
 		return *reinterpret_cast<uint32_t*>(data.data());
 	}
@@ -92,7 +89,7 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		if (!m_initialized) return 0;
 
-		std::vector<char> data = this->instances.at(0).members.at(1).sub_members.at(ResolveNameHash(this->m_reserve_data->GetNameHash(animal_type)))
+		std::vector<char> data = instances.at(0).members.at(1).sub_members.at(ResolveNameHashToIdx(m_reserve_data->GetNameHash(animal_type)))
 			.sub_members.at(1).sub_members.at(group_idx).sub_members.at(0).data;
 		return *reinterpret_cast<int32_t*>(data.data());
 	}
@@ -100,73 +97,27 @@ namespace HunterCheckmate_FileAnalyzer
 	uint32_t AnimalPopulation::GetNumberOfGroups(AnimalType animal_type)
 	{
 		if (!m_initialized) return 0;
-		return this->instances.at(0).members.at(1).sub_members.at(ResolveNameHash(this->m_reserve_data->GetNameHash(animal_type)))
+		return instances.at(0).members.at(1).sub_members.at(ResolveNameHashToIdx(m_reserve_data->GetNameHash(animal_type)))
 			.sub_members.at(1).sub_members.size();
 	}
 
 	uint32_t AnimalPopulation::GetGroupSize(AnimalType animal_type, uint32_t group_idx)
 	{
-		if (!m_initialized) return 0;
-		return this->instances.at(0).members.at(1).sub_members.at(ResolveNameHash(this->m_reserve_data->GetNameHash(animal_type)))
+		if (!m_initialized) return UINT32_MAX;
+		return instances.at(0).members.at(1).sub_members.at(ResolveNameHashToIdx(m_reserve_data->GetNameHash(animal_type)))
 			.sub_members.at(1).sub_members.at(group_idx).sub_members.at(2)
 			.sub_members.size();
 	}
 
-/*
- 	void AnimalPopulation::PrintNameHashes()
+	bool AnimalPopulation::ReplaceAnimal(const std::shared_ptr<Animal>& animal_data, uint32_t group_idx, uint32_t animal_idx)
 	{
-		if (m_initialized)
-		{
-			uint32_t size = this->instances.at(0).members.at(1).sub_members.size();
-
-			for (uint32_t i = 0; i < size; i++)
-			{
-				std::cout << "NameHash: " << *reinterpret_cast<uint32_t*>(this->instances.at(0).members.at(1).sub_members.at(i).sub_members.at(0).data.data()) << "\n";
-			}
-		}
-	}
-*/
-
-	bool AnimalPopulation::ReplaceAnimal(std::vector<char> *animal_info, AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx)
-	{
-		const uint32_t offset = this->GetAnimalOffset(animal_type, group_idx, animal_idx);
-		if (offset != 0)
-		{
-			this->m_file_handler->write(animal_info, offset, animal_info->size());
-			return true;
-		}
-		return false;
-	}
-
-	bool AnimalPopulation::ReplaceAnimal(std::vector<char> *animal_info, uint32_t offset)
-	{
-		this->m_file_handler->write(animal_info, offset, animal_info->size());
-		return true;
-	}
-
-	bool AnimalPopulation::ReplaceAnimal(Animal* animal_data, AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx)
-	{
-		const uint32_t offset = this->GetAnimalOffset(animal_type, group_idx, animal_idx);
+		const uint32_t offset = GetAnimalOffset(animal_data->m_animal_type, group_idx, animal_idx);
 		std::vector<char> data = animal_data->GetBytes();
-		this->m_file_handler->write(&data, offset, data.size());
+		m_file_handler->write(&data, offset, data.size());
 		return true;
 	}
 
-	bool AnimalPopulation::ReplaceAnimal(std::shared_ptr<Animal> animal_data, AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx)
-	{
-		const uint32_t offset = this->GetAnimalOffset(animal_type, group_idx, animal_idx);
-		std::vector<char> data = animal_data->GetBytes();
-		this->m_file_handler->write(&data, offset, data.size());
-		return true;
-	}
-
-	bool AnimalPopulation::ReplaceAnimal(Animal *animal_data, uint32_t offset)
-	{
-		std::vector<char> data = animal_data->GetBytes();
-		this->m_file_handler->write(&data, offset, data.size());
-		return true;
-	}
-
+	// TODO: maybe optimize
 	void AnimalPopulation::GenerateMap()
 	{
 		if (m_initialized)
@@ -185,6 +136,7 @@ namespace HunterCheckmate_FileAnalyzer
 				for (uint32_t j = 0; j < number_of_groups; j++)
 				{
 					std::vector<Animal> _animals;
+					std::string animal_name;
 
 					uint32_t group_size = GetGroupSize(it_begin->first, j);
 					total_number_of_animals += group_size;
@@ -205,6 +157,7 @@ namespace HunterCheckmate_FileAnalyzer
 
 						std::shared_ptr<Animal> animal_data = Animal::Create(animal_type, str_gender, 
 							std::to_string(weight), std::to_string(score), std::to_string(is_great_one), std::to_string(visual_variation_seed));
+						animal_name = animal_data->m_name;
 
 						if (animal_data->m_valid)
 						{
@@ -212,7 +165,7 @@ namespace HunterCheckmate_FileAnalyzer
 						}
 					}
 
-					animal_groups.emplace_back(AnimalGroup(animal_type, j, spawn_area_id, _animals));
+					animal_groups.emplace_back(AnimalGroup(animal_type, animal_name, j, spawn_area_id, _animals));
 				}
 
 				m_animals.emplace(animal_type, animal_groups);
@@ -220,6 +173,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	}
 
+	// DONT USE, INDEX OUT OF BONDS POSSIBLE
 	std::ostream& operator<<(std::ostream& out, const AnimalPopulation& data)
 	{
 		auto it_beg = data.m_animals.begin();
@@ -227,7 +181,7 @@ namespace HunterCheckmate_FileAnalyzer
 
 		for(;it_beg != it_end; ++it_beg)
 		{
-			out << "========== " << it_beg->first << " Groups [ #" << it_beg->second.size() << " ] ==========\n";
+			out << "========== " << it_beg->second.at(0).m_name << " Groups [ #" << it_beg->second.size() << " ] ==========\n";
 
 			auto it_beg2 = it_beg->second.begin();
 			auto it_end2 = it_beg->second.end();
@@ -255,4 +209,19 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 		return out;
 	}
+
+	/*
+		void AnimalPopulation::PrintNameHashes()
+		{
+			if (m_initialized)
+			{
+				uint32_t size = instances.at(0).members.at(1).sub_members.size();
+
+				for (uint32_t i = 0; i < size; i++)
+				{
+					std::cout << "NameHash: " << *reinterpret_cast<uint32_t*>(instances.at(0).members.at(1).sub_members.at(i).sub_members.at(0).data.data()) << "\n";
+				}
+			}
+		}
+	*/
 }

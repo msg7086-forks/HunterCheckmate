@@ -2,7 +2,7 @@
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <iostream>
+#include <boost/json.hpp>
 #include "FileHandler.h"
 #include "AnimalPopulation.h"
 #include "ThpPlayerProfile.h"
@@ -10,6 +10,7 @@
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 namespace bs = boost::algorithm;
+namespace json = boost::json;
 
 namespace HunterCheckmate_FileAnalyzer
 {
@@ -28,10 +29,11 @@ namespace HunterCheckmate_FileAnalyzer
 
 		static inline void PrintUnrecognizedFile();
 		inline void PrintHelp() const;
+		inline static AnimalType ResolveAnimalType(std::string& name);
 		inline void PrintGroupInformation();
 		inline void InteractiveReplaceAnimal();
 		inline void InteractiveJson();
-		static AnimalType ResolveAnimalType(std::string& name);
+		inline void JsonTest();
 	public:
 		CLI(int argc, char* argv[]);
 		~CLI() = default;

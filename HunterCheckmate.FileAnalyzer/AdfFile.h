@@ -4,44 +4,6 @@
 
 namespace HunterCheckmate_FileAnalyzer
 {
-	// in little endian
-	struct AnimalData2
-	{
-		std::vector<char> *whitetail_great_one_0;
-		std::vector<char> *whitetail_great_one_1;
-
-		AnimalData2()
-		{
-			whitetail_great_one_0 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x4B','\x78','\xCA','\x42',
-					'\xAA','\x1F','\x94','\x43',
-					'\x01','\x00','\x00','\x00',
-					'\x16','\x37','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-
-			whitetail_great_one_1 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x7E','\xD6','\x42',
-					'\x42','\xE0','\x0A','\x44',
-					'\x01','\x00','\x00','\x00',
-					'\x16','\x37','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-		}
-
-		~AnimalData2()
-		{
-			delete whitetail_great_one_0;
-			delete whitetail_great_one_1;
-		}
-	};
-
 	enum class Type : uint32_t
 	{
 		Primitive = 0,

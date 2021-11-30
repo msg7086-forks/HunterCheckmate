@@ -23,7 +23,8 @@ namespace HunterCheckmate_FileAnalyzer
 		fs::fstream fstream;
 	public:
 		FileHandler() = default;
-		FileHandler(Endian endian, const fs::path file_path);
+		FileHandler(Endian endian, const fs::path& file_path);
+		FileHandler(const fs::path& file_path);
 		~FileHandler() = default;
 
 		template<class T>
@@ -43,5 +44,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 
 		void write(std::vector<char>* data, uint32_t offset, uint32_t size = 0);
+
+		void write_json(const std::string& data);
 	};
 }

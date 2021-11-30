@@ -9,11 +9,12 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 	public:
 		AnimalType m_animal_type;
+		std::string m_name;
 		uint32_t m_size;
 		uint32_t m_index;
 		uint32_t m_spawn_area_id;
 		std::vector<Animal> m_animals;
-		AnimalGroup(AnimalType animal_type , uint32_t index, uint32_t spawn_area_id, std::vector<Animal> animals);
+		AnimalGroup(AnimalType animal_type, std::string& name, uint32_t index, uint32_t spawn_area_id, std::vector<Animal> animals);
 		~AnimalGroup() = default;
 		friend std::ostream& operator<<(std::ostream& out, const AnimalGroup& data);
 	};

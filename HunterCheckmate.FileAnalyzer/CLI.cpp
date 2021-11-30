@@ -32,105 +32,6 @@ namespace HunterCheckmate_FileAnalyzer
 		std::cout << m_desc << "\n";
 	}
 
-	void CLI::PrintGroupInformation()
-	{
-		std::string animal = m_vm["output-group"].as<std::string>();
-		const AnimalType animal_type = ResolveAnimalType(animal);
-
-		if (m_inputFileName.generic_string().find("animal_population_") != std::string::npos)
-		{
-			std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, m_inputFilePath);
-			std::shared_ptr<ReserveData> reserve_data = std::make_shared<ReserveData>(static_cast<uint8_t>(std::stoi(std::string(1, m_inputFileName.generic_string().back()))));
-			const std::unique_ptr<AnimalPopulation> adf = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
-
-			if (adf->Deserialize())
-			{
-				adf->GenerateMap();
-				std::vector<AnimalGroup> groups = adf->m_animals.at(animal_type);
-				auto it_beg = groups.begin();
-				const auto it_end = groups.end();
-				for (; it_beg != it_end; ++it_beg) std::cout << *it_beg;
-			}
-			else PrintUnrecognizedFile();
-		}
-	}
-
-	void CLI::InteractiveReplaceAnimal()
-	{
-		if (m_inputFileName.generic_string().find("animal_population_") != std::string::npos)
-		{
-			std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, m_inputFilePath);
-			std::shared_ptr<ReserveData> reserve_data = std::make_shared<ReserveData>(static_cast<uint8_t>(std::stoi(std::string(1,m_inputFileName.generic_string().back()))));
-			const std::unique_ptr<AnimalPopulation> adf = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
-
-			if (adf->Deserialize())
-			{
-				std::string in_name;
-				std::string in_group_idx;
-				std::string in_animal_idx;
-
-				std::cout << "Which animal do you want to replace?\n";
-				std::cout << "Name: ";				std::cin >> in_name;
-				std::cout << "Group Index: ";		std::cin >> in_group_idx;
-				std::cout << "Animal Index: ";		std::cin >> in_animal_idx;
-
-				const uint32_t group_idx = std::stoul(in_group_idx);
-				const uint32_t animal_idx = std::stoul(in_animal_idx);
-				const AnimalType animal_type = ResolveAnimalType(in_name);
-
-				if (!adf->IsValidAnimal(animal_type, group_idx, animal_idx))
-				{
-					std::cout << "\nYou have entered an invalid animal name, group index or animal index!\n";
-				}
-				else
-				{
-					std::string gender;
-					std::string weight;
-					std::string score;
-					std::string is_great_one;
-					std::string visual_variation_seed;
-
-					std::cout << "\nAnimal found! Please enter the data of the " << in_name << ".\n";
-					std::cout << "Gender: "; std::cin >> gender;
-					std::cout << "Weight: "; std::cin >> weight;
-					std::cout << "Score: "; std::cin >> score;
-					std::cout << "Is Great One: "; std::cin >> is_great_one;
-					std::cout << "Fur Type: "; std::cin >> visual_variation_seed;
-
-					std::shared_ptr<Animal> animal = Animal::Create(animal_type, gender, weight, score, is_great_one, visual_variation_seed);
-
-					if (animal->m_valid)
-					{
-						if (adf->ReplaceAnimal(animal, animal_type, group_idx, animal_idx))
-						{
-							std::cout << std::endl << "Success! Good luck hunting down your new animal!\n";
-						}
-						else
-						{
-							std::cout << std::endl << "Something went wrong...\n";
-						}
-					}
-				}
-			}
-		}
-	}
-
-	void CLI::InteractiveJson()
-	{
-		m_inputJsonPath = fs::path(m_vm["json"].as<std::string>());
-		m_inputJsonPath = m_inputJsonPath.filename();
-		if (m_inputFileName.generic_string().find("thp_player_profile_adf") != std::string::npos)
-		{
-			std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, m_inputFilePath);
-			std::unique_ptr<ThpPlayerProfile> adf = std::make_unique<ThpPlayerProfile>(file_handler, fs::path());
-
-			if (adf->Deserialize())
-			{
-				
-			}
-		}
-	}
-
 	AnimalType CLI::ResolveAnimalType(std::string& name)
 	{
 		bs::to_lower(name);
@@ -192,6 +93,137 @@ namespace HunterCheckmate_FileAnalyzer
 		if (name.find("pig") != std::string::npos) return AT_FeralPig;
 		if (name.find("feral") != std::string::npos && name.find("goat") != std::string::npos) return AT_FeralGoat;
 		return AT_None;
+	}
+
+	void CLI::PrintGroupInformation()
+	{
+		std::string animal = m_vm["output-group"].as<std::string>();
+
+		if (m_inputFileName.generic_string().find("animal_population_") != std::string::npos)
+		{
+			std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, m_inputFilePath);
+			std::shared_ptr<ReserveData> reserve_data = std::make_shared<ReserveData>(static_cast<uint8_t>(std::stoi(std::string(1, m_inputFileName.generic_string().back()))));
+			const std::unique_ptr<AnimalPopulation> adf = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
+
+			if (adf->Deserialize())
+			{
+				adf->GenerateMap();
+
+				if (animal == "all")
+				{
+					// Index out of bounds possible
+					std::cout << *adf;
+				}
+				else
+				{
+					const AnimalType animal_type = ResolveAnimalType(animal);
+					std::vector<AnimalGroup> groups = adf->m_animals.at(animal_type);
+					std::cout << "Printing all " << groups.at(0).m_name;
+					auto it_beg = groups.begin();
+					const auto it_end = groups.end();
+					for (; it_beg != it_end; ++it_beg) std::cout << *it_beg;
+				}
+			}
+			else PrintUnrecognizedFile();
+		}
+	}
+
+	void CLI::InteractiveReplaceAnimal()
+	{
+		if (m_inputFileName.generic_string().find("animal_population_") != std::string::npos)
+		{
+			std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, m_inputFilePath);
+			std::shared_ptr<ReserveData> reserve_data = std::make_shared<ReserveData>(static_cast<uint8_t>(std::stoi(std::string(1,m_inputFileName.generic_string().back()))));
+			const std::unique_ptr<AnimalPopulation> adf = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
+
+			if (adf->Deserialize())
+			{
+				std::string in_name;
+				std::string in_group_idx;
+				std::string in_animal_idx;
+
+				std::cout << "Which animal do you want to replace?\n";
+				std::cout << "Name: ";				std::cin >> in_name;
+				std::cout << "Group Index: ";		std::cin >> in_group_idx;
+				std::cout << "Animal Index: ";		std::cin >> in_animal_idx;
+
+				const uint32_t group_idx = std::stoul(in_group_idx);
+				const uint32_t animal_idx = std::stoul(in_animal_idx);
+				const AnimalType animal_type = ResolveAnimalType(in_name);
+
+				if (!adf->IsValidAnimal(animal_type, group_idx, animal_idx))
+				{
+					std::cout << "\nYou have entered an invalid animal name, group index or animal index!\n";
+				}
+				else
+				{
+					std::string gender;
+					std::string weight;
+					std::string score;
+					std::string is_great_one;
+					std::string visual_variation_seed;
+
+					std::cout << "\nAnimal found! Please enter the data of the " << in_name << ".\n";
+					std::cout << "Gender: "; std::cin >> gender;
+					std::cout << "Weight: "; std::cin >> weight;
+					std::cout << "Score: "; std::cin >> score;
+					std::cout << "Is Great One: "; std::cin >> is_great_one;
+					std::cout << "Fur Type (no data): "; std::cin >> visual_variation_seed;
+
+					const std::shared_ptr<Animal> animal = Animal::Create(animal_type, gender, weight, score, is_great_one, visual_variation_seed);
+
+					if (animal->IsValid())
+					{
+						if (adf->ReplaceAnimal(animal, group_idx, animal_idx))
+						{
+							std::cout << std::endl << "Success! Good luck hunting down your new animal!\n";
+						}
+						else
+						{
+							std::cout << std::endl << "Something went wrong...\n";
+						}
+					}
+				}
+			}
+		}
+	}
+
+	void CLI::InteractiveJson()
+	{
+		m_inputJsonPath = fs::path(m_vm["json"].as<std::string>());
+		m_inputJsonName = m_inputJsonPath.filename();
+
+		if (m_inputFileName.generic_string().find("thp_player_profile_adf") != std::string::npos
+			&& m_inputJsonName.generic_string().find(".json") != std::string::npos)
+		{
+			std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, m_inputFilePath);
+			std::shared_ptr<FileHandler> json_handler = std::make_shared<FileHandler>(m_inputJsonPath);
+			std::unique_ptr<ThpPlayerProfile> adf = std::make_unique<ThpPlayerProfile>(file_handler, json_handler);
+
+			//second file handler????
+			std::shared_ptr<FileHandler> json_file_handler = std::make_shared<FileHandler>(Endian::Little, m_inputJsonPath);
+
+			if (adf->Deserialize())
+			{
+				adf->SerializeJson();
+			}
+		}
+	}
+
+	void CLI::JsonTest()
+	{
+		m_inputJsonPath = fs::path(m_vm["json"].as<std::string>());
+		m_inputJsonName = m_inputJsonPath.filename();
+		std::unique_ptr<FileHandler> json_handler = std::make_unique<FileHandler>(m_inputJsonPath);
+
+		json::object obj;
+
+		obj["testint"] = 420;
+
+		std::string s = json::serialize(obj);
+
+		json_handler->write_json(s);
+
 	}
 
 	CLI::CLI(int argc, char* argv[])
