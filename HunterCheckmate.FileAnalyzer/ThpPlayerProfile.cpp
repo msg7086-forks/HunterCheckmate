@@ -17,25 +17,56 @@ namespace HunterCheckmate_FileAnalyzer
 		this->furthest_vital_organ_shot = furthest_vital_organ_shot;
 	}
 
-	ThpPlayerProfile::ThpPlayerProfile(Utility* utility, std::string *file_path, std::ifstream *ifstream) : AdfFile(utility)
-	{
-		this->file_path = file_path;
-		this->ifstream = ifstream;
-	}
-
-	ThpPlayerProfile::~ThpPlayerProfile()
-	{
-		delete ifstream;
-		delete ofstream;
-	}
+	ThpPlayerProfile::ThpPlayerProfile(std::shared_ptr<FileHandler> file_handler, std::shared_ptr<FileHandler> json_handler)
+		: AdfFile(std::move(file_handler)), m_json_handler(std::move(json_handler)) {}
 
 	bool ThpPlayerProfile::SerializeJson()
 	{
-		this->ofstream = new std::ofstream(this->file_path->c_str(), std::ios::in | std::ios::out);
-
 		this->equipment_back_pack = GetEquipmentBackPack();
 		this->inventory_slot = GetInventorySlot();
 
+		json::object loadouts;
+
+		json::object json_equipment_back_pack;
+		json::array arr_eq;
+		auto it_beg_eq = equipment_back_pack.begin();
+		auto it_end_eq = equipment_back_pack.end();
+		for (; it_beg_eq != it_end_eq; ++it_beg_eq)
+			arr_eq.emplace_back(*it_beg_eq);
+
+		json::object json_inventory_slots;
+		json::object json_inventory_slot;
+		auto it_beg_in = inventory_slot.begin();
+		auto it_end_in = inventory_slot.end();
+
+		std::string slotname = "slot";
+		int slotcounter = 1;
+		for (; it_beg_in != it_end_in; ++it_beg_in)
+		{
+			auto it_beg_in_deep = it_beg_in->begin();
+			auto it_end_in_deep = it_beg_in->end();
+			std::string sub_slotname = "subslot";
+			int sub_slotcounter = 1;
+			for(; it_beg_in_deep != it_end_in_deep; ++it_beg_in_deep)
+			{
+				sub_slotname = sub_slotname + std::to_string(sub_slotcounter);
+				json_inventory_slot.emplace(sub_slotname, *it_beg_in_deep);
+				sub_slotcounter++;
+			}
+
+			slotname = slotname + std::to_string(slotcounter);
+			json_inventory_slots.emplace(slotname, json_inventory_slot);
+			slotcounter++;
+		}
+
+		json::object json_backpack_inventory;
+		json_backpack_inventory.emplace("equipment_back_pack", arr_eq);
+		json_backpack_inventory.emplace("invetory_slot", json_inventory_slots);
+		loadouts.emplace("loadout1", json_backpack_inventory);
+
+		std::string yeyeye = json::serialize(loadouts);
+
+		m_json_handler->write_json(yeyeye);
 		
 		return true;
 	}
@@ -44,6 +75,12 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 
 		return true;
+	}
+
+	uint8_t ThpPlayerProfile::GetAlreadyConverted()
+	{
+		std::vector<char> data = instances.at(0).members.at(0).data;
+		return *reinterpret_cast<uint8_t*>(data.data());
 	}
 
 	uint8_t ThpPlayerProfile::GetIsSaveGameAvailable() const
@@ -352,4 +389,5 @@ namespace HunterCheckmate_FileAnalyzer
 
 	// GetShownHuntClubOptIn()
 	// GetHuntClubHash()
+	// GetApexConnectAccountDismissed()
 }

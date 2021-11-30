@@ -2,138 +2,145 @@
 
 namespace HunterCheckmate_FileAnalyzer
 {
-	ReserveData::ReserveData(uint8_t id)
+	ReserveData::ReserveData(const uint8_t id)
+		: m_id(id)
 	{
-		this->id = id;
+		m_animals_hash = std::map<AnimalType, uint32_t>();
+
 		switch (id)
 		{
 			// Hirschfelden
 		case 0:
 			{
-			this->animal_names = std::map<std::string, uint32_t>();
-			animal_names.emplace("wild_boar", 147581770);
-			animal_names.emplace("fallow_deer", 798672823);
-			animal_names.emplace("euro_bison", 1056739115);
-			animal_names.emplace("roe_deer", 2052964502);
-			animal_names.emplace("red_fox", 2105558160);
-			animal_names.emplace("canada_goose", 3321523293);
-			animal_names.emplace("red_deer", 3635849363);
-			animal_names.emplace("euro_rabbit", 442307937);
+			m_animals_hash.emplace(AT_WildBoar, 147581770);
+			m_animals_hash.emplace(AT_EuroRabbit, 442307937);
+			m_animals_hash.emplace(AT_FallowDeer, 798672823);
+			m_animals_hash.emplace(AT_EuroBison, 1056739115);
+			m_animals_hash.emplace(AT_RoeDeer, 2052964502);
+			m_animals_hash.emplace(AT_RedFox, 2105558160);
+			m_animals_hash.emplace(AT_CanadaGoose, 3321523293);
+			m_animals_hash.emplace(AT_RedDeer, 3635849363);
 			break;
 			}
 			// Layton
 		case 1:
 			{
-			this->animal_names = std::map<std::string, uint32_t >();
-			animal_names.emplace("moose", 155298792);
-			animal_names.emplace("jackrabbit", 1227103483);
-			animal_names.emplace("mallard", 1905502510);
-			animal_names.emplace("black_bear", 2434390669);
-			animal_names.emplace("roosevelt_elk", 2492964089);
-			animal_names.emplace("coyote", 3041812107);
-			animal_names.emplace("blacktail_deer", 3616431897);
-			animal_names.emplace("whitetail_deer", 3845994887);
+			m_animals_hash.emplace(AT_Moose, 155298792);
+			m_animals_hash.emplace(AT_Jackrabbit, 1227103483);
+			m_animals_hash.emplace(AT_Mallard, 1905502510);
+			m_animals_hash.emplace(AT_BlackBear, 2434390669);
+			m_animals_hash.emplace(AT_RooseveltElk, 2492964089);
+			m_animals_hash.emplace(AT_Coyote, 3041812107);
+			m_animals_hash.emplace(AT_BlacktailDeer, 3616431897);
+			m_animals_hash.emplace(AT_WhitetailDeer, 3845994887);
 			break;
 			}
 			// Medved
 		case 2:
 			{
-			this->animal_names = std::map<std::string, uint32_t>();
-			animal_names.emplace("musk_deer", 74472795);
-			animal_names.emplace("moose", 155298792);
-			animal_names.emplace("wild_boar", 1570854601);
-			animal_names.emplace("reindeer", 1779251800);
-			animal_names.emplace("eurasian_lynx", 1814015872);
-			animal_names.emplace("brown_bear", 1923623595);
+			m_animals_hash.emplace(AT_MuskDeer, 74472795);
+			m_animals_hash.emplace(AT_Moose, 155298792);
+			m_animals_hash.emplace(AT_WildBoar, 1570854601);
+			m_animals_hash.emplace(AT_Reindeer, 1779251800);
+			m_animals_hash.emplace(AT_EurasianLynx, 1814015872);
+			m_animals_hash.emplace(AT_BrownBear, 1923623595);
 			break;
 			}
 			// Vurhonga
 		case 3:
 			{
-			this->animal_names = std::map<std::string, uint32_t>();
-			animal_names.emplace("blue_wildebeest", 183848642);
-			animal_names.emplace("side_striped_jackal", 802991936);
-			animal_names.emplace("gemsbok", 1148301097);
-			animal_names.emplace("lesser_kudu", 1955191955);
-			animal_names.emplace("scrub_hare", 1961213070);
-			animal_names.emplace("lion", 2188838277);
-			animal_names.emplace("warthog", 3080620210);
-			animal_names.emplace("cape_buffalo", 3311120975);
-			animal_names.emplace("springbok", 4064523038);
+			m_animals_hash.emplace(AT_BlueWildebeest, 183848642);
+			m_animals_hash.emplace(AT_SideStripedJackal, 802991936);
+			m_animals_hash.emplace(AT_Gemsbok, 1148301097);
+			m_animals_hash.emplace(AT_LesserKudu, 1955191955);
+			m_animals_hash.emplace(AT_ScrubHare, 1961213070);
+			m_animals_hash.emplace(AT_Lion, 2188838277);
+			m_animals_hash.emplace(AT_Warthog, 3080620210);
+			m_animals_hash.emplace(AT_CapeBuffalo, 3311120975);
+			m_animals_hash.emplace(AT_Springbok, 4064523038);
 			break;
 			}
 			// Parque
 		case 4:
 			{
-			this->animal_names = std::map<std::string, uint32_t>();
-			animal_names.emplace("red_deer", 429398428);
-			animal_names.emplace("water_buffalo", 743631237);
-			animal_names.emplace("puma", 769204555);
-			animal_names.emplace("blackbuck", 1729971715);
-			animal_names.emplace("cinnamon_teal", 1756552882);
-			animal_names.emplace("mule_deer", 2953920016);
-			animal_names.emplace("axis_deer", 3406669569);
+			m_animals_hash.emplace(AT_RedDeer, 429398428);
+			m_animals_hash.emplace(AT_WaterBuffalo, 743631237);
+			m_animals_hash.emplace(AT_Puma, 769204555);
+			m_animals_hash.emplace(AT_Blackbuck, 1729971715);
+			m_animals_hash.emplace(AT_CinnamonTeal, 1756552882);
+			m_animals_hash.emplace(AT_MuleDeer, 2953920016);
+			m_animals_hash.emplace(AT_AxisDeer, 3406669569);
 			break;
 			}
 			// Yukon
-/*		case 6:
+		case 6:
 			{
-			this->animal_names = std::map<std::string, uint32_t>();
-			animal_names.emplace("harlequin_duck");
-			animal_names.emplace("moose");
-			animal_names.emplace("red_fox");
-			animal_names.emplace("caribou");
-			animal_names.emplace("grizzly_bear");
-			animal_names.emplace("gray_wolf");
-			animal_names.emplace("plains_bison");
+			m_animals_hash.emplace(AT_HarlequinDuck, 1256214699);
+			m_animals_hash.emplace(AT_Moose, 1812162018);
+			m_animals_hash.emplace(AT_RedFox, 2233970641);
+			m_animals_hash.emplace(AT_Caribou, 2777511015);
+			m_animals_hash.emplace(AT_GrizzlyBear, 3501209982);
+			m_animals_hash.emplace(AT_GrayWolf, 3512596996);
+			m_animals_hash.emplace(AT_PlainsBison, 3653899466);
 			break;
 			}
 			// Cuatro
 		case 8:
 			{
-				// TODO
+			m_animals_hash.emplace(AT_SoutheasternSpanishIbex, 29543097);
+			m_animals_hash.emplace(AT_IberianWolf, 293462162);
+			m_animals_hash.emplace(AT_RedDeer, 429398428);
+			m_animals_hash.emplace(AT_IberianMuflon, 1027204131);
+			m_animals_hash.emplace(AT_WildBoar, 1570854601);
+			m_animals_hash.emplace(AT_BeceiteIbex, 1851402074);
+			m_animals_hash.emplace(AT_EuroHare, 2281707277);
+			m_animals_hash.emplace(AT_RoeDeer, 2611909699);
+			m_animals_hash.emplace(AT_RondaIbex, 2990876619);
+			m_animals_hash.emplace(AT_GredosIbex, 4191307686);
 			break;
 			}
 			// Silve Ridge
 		case 9:
 			{
-			this->animal_names = std::map<std::string, uint32_t>();
-			animal_names.emplace("pronghorn");
-			animal_names.emplace("mountain_lion");
-			animal_names.emplace("mountain_goat");
-			animal_names.emplace("bighorn_sheep");
-			animal_names.emplace("turkey");
-			animal_names.emplace("black_bear");
-			animal_names.emplace("mule_deer");
-			animal_names.emplace("rocky_mountain_elk");
-			animal_names.emplace("plains_bison");
+			m_animals_hash.emplace(AT_Pronghorn, 758166478);
+			m_animals_hash.emplace(AT_MountainLion, 769204555);
+			m_animals_hash.emplace(AT_MountainGoat, 1115891555);
+			m_animals_hash.emplace(AT_BighornSheep, 1257210256);
+			m_animals_hash.emplace(AT_Turkey, 2179039330);
+			m_animals_hash.emplace(AT_BlackBear, 2434390669);
+			m_animals_hash.emplace(AT_MuleDeer, 2953920016);
+			m_animals_hash.emplace(AT_RockyMountainElk, 3114263951);
+			m_animals_hash.emplace(AT_PlainsBison, 3653899466);
 			break;
 			}
 			// Te Awora
 		case 10:
 			{
-				// TODO
-			break;
-			}*/
-		default:
-			{
-			this->animal_names = std::map<std::string, uint32_t>();
+			m_animals_hash.emplace(AT_RedDeer, 429398428);
+			m_animals_hash.emplace(AT_SikaDeer, 442307937);
+			m_animals_hash.emplace(AT_Chamois, 762792036);
+			m_animals_hash.emplace(AT_EuroRabbit, 798672823);
+			m_animals_hash.emplace(AT_FeralPig, 966940268);
+			m_animals_hash.emplace(AT_FeralGoat, 2179039330);
+			m_animals_hash.emplace(AT_Turkey, 3127869685);
+			m_animals_hash.emplace(AT_FallowDeer, 3245885585);
 			break;
 			}
+		default:
+			m_id = INT8_MAX;
+			break;
 		}
+
+		m_valid = Verify();
 	}
 
 	bool ReserveData::Verify() const
 	{
-		return this->id <= 8 && !this->animal_names.empty();
+		return m_id < INT8_MAX && !m_animals_hash.empty();
 	}
 
-	uint32_t ReserveData::GetNameHash(const std::string &name) const
+	uint32_t ReserveData::GetNameHash(AnimalType animal_type)
 	{
-		for (const auto& animal_name : animal_names)
-		{
-			if (animal_name.first.find(name) != std::string::npos) return animal_name.second;
-		}
-		return 0;
+		return m_animals_hash.at(animal_type);
 	}
 }

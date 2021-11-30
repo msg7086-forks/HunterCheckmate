@@ -1,47 +1,9 @@
 #pragma once
-#include "Utility.h"
-#include "AnimalData.h"
+#include "FileHandler.h"
+#include "Animal.h"
 
 namespace HunterCheckmate_FileAnalyzer
 {
-	// in little endian
-	struct AnimalData2
-	{
-		std::vector<char> *whitetail_great_one_0;
-		std::vector<char> *whitetail_great_one_1;
-
-		AnimalData2()
-		{
-			whitetail_great_one_0 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x4B','\x78','\xCA','\x42',
-					'\xAA','\x1F','\x94','\x43',
-					'\x01','\x00','\x00','\x00',
-					'\x16','\x37','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-
-			whitetail_great_one_1 = new std::vector<char>({
-					'\x01','\x00','\x00','\x00',
-					'\x00','\x7E','\xD6','\x42',
-					'\x42','\xE0','\x0A','\x44',
-					'\x01','\x00','\x00','\x00',
-					'\x16','\x37','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00',
-					'\x00','\x00','\x00','\x00'
-				});
-		}
-
-		~AnimalData2()
-		{
-			delete whitetail_great_one_0;
-			delete whitetail_great_one_1;
-		}
-	};
-
 	enum class Type : uint32_t
 	{
 		Primitive = 0,
@@ -112,6 +74,10 @@ namespace HunterCheckmate_FileAnalyzer
 
 		AdfHeader() = default;
 		~AdfHeader() = default;
+		AdfHeader(AdfHeader& other) = default;
+		AdfHeader& operator=(const AdfHeader& other) = default;
+		AdfHeader(AdfHeader&& other) = default;
+		AdfHeader& operator=(AdfHeader&& other) = default;
 	};
 
 	struct InstanceHeader
@@ -192,13 +158,13 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 	public:
 		std::vector<TypedefHeader> *header_typedefs = nullptr;
-		Utility *utility = nullptr;
+		std::shared_ptr<FileHandler> m_file_handler = nullptr;
 		InstanceHeader *header_instance = nullptr;
 		TypedefHeader *header_typedef = nullptr;
 		std::vector<Member> members;
 
 		Instance() = default;
-		Instance(std::vector<TypedefHeader> *header_typedefs, Utility *utility, InstanceHeader *header_instance, TypedefHeader *header_typedef);
+		Instance(std::vector<TypedefHeader> *header_typedefs, std::shared_ptr<FileHandler> file_handler, InstanceHeader *header_instance, TypedefHeader *header_typedef);
 		~Instance() = default;
 
 		void PopulatePrimitive(Member *member, MemberHeader *header_member, uint32_t offset, Primitive primitive) const;
@@ -211,10 +177,18 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 	private:
 		bool SigMatch() const;
+		bool DeserializeHeader();
+		bool DeserializeInstanceHeader();
+		bool DeserializeTypedefHeader();
+		bool DeserializeMemberHeader(TypedefHeader & typedefHeader, uint32_t base, uint32_t typedef_size, uint32_t member_size) const;
+		bool DeserializeNametableHeader();
+		bool DeserializeInstances();
+
 	protected:
-		const uint32_t sig = 0x41444620;
-		bool initialized = false;
-		Utility *utility;
+		uint32_t m_sig;
+		bool m_valid;
+		bool m_initialized;
+		std::shared_ptr<FileHandler> m_file_handler;
 	public:
 		AdfHeader header;
 		std::vector<InstanceHeader> header_instances;
@@ -223,8 +197,9 @@ namespace HunterCheckmate_FileAnalyzer
 		NametableHeader header_nametable;
 		std::vector<Instance> instances;
 		
-		AdfFile(Utility *utility);
-		~AdfFile();
+		AdfFile(std::shared_ptr<FileHandler> file_handler);
+		~AdfFile() = default;
+
 		bool Deserialize();
 	};
 }
