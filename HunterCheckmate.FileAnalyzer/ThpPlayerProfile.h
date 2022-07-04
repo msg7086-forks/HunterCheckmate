@@ -36,11 +36,12 @@ namespace HunterCheckmate_FileAnalyzer
 
 		ThpPlayerProfile(std::shared_ptr<FileHandler> file_handler, std::shared_ptr<FileHandler> json_handler);
 		~ThpPlayerProfile() = default;
-		
+
+		void Test();
 		bool SerializeJson();
 		bool DeserializeJson();
-		uint8_t GetAlreadyConverted();
 
+		uint8_t GetAlreadyConverted();
 		uint8_t GetIsSaveGameAvailable() const;
 		uint8_t GetGender() const;
 		uint32_t GetSkinToneHash() const;

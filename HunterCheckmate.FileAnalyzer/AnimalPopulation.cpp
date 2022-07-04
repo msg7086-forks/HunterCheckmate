@@ -153,10 +153,10 @@ namespace HunterCheckmate_FileAnalyzer
 						std::string str_gender;
 						if (i_gender == 1) str_gender = "male";
 						else if (i_gender == 2) str_gender = "female";
-						else str_gender = "none";
+						else str_gender = "foomale";
 
 						std::shared_ptr<Animal> animal_data = Animal::Create(animal_type, str_gender, 
-							std::to_string(weight), std::to_string(score), std::to_string(is_great_one), std::to_string(visual_variation_seed));
+							std::to_string(weight), std::to_string(score), std::to_string(is_great_one), std::to_string(visual_variation_seed), std::to_string(k));
 						animal_name = animal_data->m_name;
 
 						if (animal_data->m_valid)
@@ -201,7 +201,7 @@ namespace HunterCheckmate_FileAnalyzer
 						<< " | " << std::setw(7) << it_beg3->m_weight
 						<< " | " << std::setw(8) << it_beg3->m_score
 						<< " | " << std::setw(1) << static_cast<int>(it_beg3->m_is_great_one)
-						<< " | " << std::setw(5) << it_beg3->m_visual_variation_seed
+						<< " | " << std::setw(5) << it_beg3->m_fur_type
 						<< " ]\n";
 				}
 				out << "\n\n";

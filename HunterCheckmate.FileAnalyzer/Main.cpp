@@ -1,9 +1,12 @@
 #include "CLI.h"
 
-// TODO: - add -rep -preset presets
-// TODO: - add preset cli (print available presets upon asking user which animal presets to print)
-// 
-// TODO: - make exception class for e.g. if (!initialized) return 0 in AdfFile.cpp;
+#ifdef _WIN32
+#define _WIN32_WINNT 0x0A00
+#endif
+
+#include <boost/interprocess/managed_shared_memory.hpp>
+
+namespace shm = boost::interprocess;
 
 int main(int argc, char *argv[])
 {
@@ -12,6 +15,18 @@ int main(int argc, char *argv[])
 	using namespace HunterCheckmate_FileAnalyzer;
 	const std::unique_ptr<CLI> cli = std::make_unique<CLI>(argc, argv);
 	cli->run();
+
+	struct shm_remove
+	{
+		shm_remove() { shm::shared_memory_object::remove("MySHM"); }
+		~shm_remove() { shm::shared_memory_object::remove("MySHM"); }
+	} remover;
+
+	//Construct managed shared memory
+	shm::managed_shared_memory segment(shm::create_only, "MySHM", 0x128);
+
+	//Create an object of MyType initialized to {0.0, 0}
+	int* instance = segment.construct<int>("GIBINT") (420);
 
 	return 0;
 }

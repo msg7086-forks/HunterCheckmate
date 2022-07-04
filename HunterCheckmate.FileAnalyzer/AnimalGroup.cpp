@@ -2,7 +2,7 @@
 
 namespace HunterCheckmate_FileAnalyzer
 {
-	AnimalGroup::AnimalGroup(AnimalType animal_type, std::string& name, uint32_t index, uint32_t spawn_area_id, std::vector<Animal> animals)
+	AnimalGroup::AnimalGroup(AnimalType animal_type, std::string& name, uint32_t index, int32_t spawn_area_id, std::vector<Animal> animals)
 		: m_animal_type(animal_type), m_name(name), m_index(index), m_spawn_area_id(spawn_area_id), m_animals(std::move(animals))
 	{
 		m_size = m_animals.size();

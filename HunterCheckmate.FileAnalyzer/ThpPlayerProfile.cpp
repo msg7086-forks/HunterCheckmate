@@ -20,6 +20,24 @@ namespace HunterCheckmate_FileAnalyzer
 	ThpPlayerProfile::ThpPlayerProfile(std::shared_ptr<FileHandler> file_handler, std::shared_ptr<FileHandler> json_handler)
 		: AdfFile(std::move(file_handler)), m_json_handler(std::move(json_handler)) {}
 
+	void ThpPlayerProfile::Test()
+	{
+		// 0x00007730 swap 0x00007738
+		inventory_slot = GetInventorySlot();
+
+		uint32_t fst = inventory_slot.at(9).at(0);
+		uint32_t snd = inventory_slot.at(10).at(0);
+
+		std::vector<char> buffer_fst(sizeof(uint32_t));
+		std::memcpy(buffer_fst.data(), &fst, sizeof(fst));
+
+		std::vector<char> buffer_snd(sizeof(uint32_t));
+		std::memcpy(buffer_snd.data(), &snd, sizeof(snd));
+
+		m_file_handler->write(&buffer_fst, 0x00007738, buffer_fst.size());
+		m_file_handler->write(&buffer_snd, 0x00007730, buffer_snd.size());
+	}
+
 	bool ThpPlayerProfile::SerializeJson()
 	{
 		this->equipment_back_pack = GetEquipmentBackPack();

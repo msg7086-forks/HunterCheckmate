@@ -33,7 +33,6 @@ namespace HunterCheckmate_FileAnalyzer
 		inline void PrintGroupInformation();
 		inline void InteractiveReplaceAnimal();
 		inline void InteractiveJson();
-		inline void JsonTest();
 	public:
 		CLI(int argc, char* argv[]);
 		~CLI() = default;
