@@ -28,7 +28,7 @@ namespace HunterCheckmate_FileAnalyzer
 		~FileHandler() = default;
 
 		template<class T>
-		void read(T* data, uint32_t offset, uint32_t size = 0)
+		void read(T* data, uint32_t offset, size_t size = 0)
 		{
 			if(fstream.is_open())
 			{
@@ -43,7 +43,7 @@ namespace HunterCheckmate_FileAnalyzer
 			}
 		}
 
-		void write(std::vector<char>* data, uint32_t offset, uint32_t size = 0);
+		void write(std::vector<char>* data, uint32_t offset, size_t size = 0);
 
 		void write_json(const std::string& data);
 	};

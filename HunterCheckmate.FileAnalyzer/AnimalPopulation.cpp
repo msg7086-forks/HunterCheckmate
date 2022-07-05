@@ -109,16 +109,16 @@ namespace HunterCheckmate_FileAnalyzer
 			.sub_members.size();
 	}
 
-	bool AnimalPopulation::ReplaceAnimal(const std::shared_ptr<Animal>& animal_data, uint32_t group_idx, uint32_t animal_idx)
+	bool AnimalPopulation::ReplaceAnimal(const std::shared_ptr<Animal>& animal, uint32_t group_idx, uint32_t animal_idx)
 	{
-		const uint32_t offset = GetAnimalOffset(animal_data->m_animal_type, group_idx, animal_idx);
-		std::vector<char> data = animal_data->GetBytes();
+		const uint32_t offset = GetAnimalOffset(animal->m_animal_type, group_idx, animal_idx);
+		std::vector<char> data = animal->GetByteStream();
 		m_file_handler->write(&data, offset, data.size());
 		return true;
 	}
 
 	// TODO: maybe optimize
-	void AnimalPopulation::GenerateMap()
+	void AnimalPopulation::MapAnimals()
 	{
 		if (m_initialized)
 		{
@@ -144,19 +144,14 @@ namespace HunterCheckmate_FileAnalyzer
 
 					for (uint32_t k = 0; k < group_size; k++)
 					{
-						const uint8_t i_gender = GetGender(it_begin->first, j, k);
+						const uint8_t gender_id = GetGender(it_begin->first, j, k);
 						float weight = GetWeight(it_begin->first, j, k);
 						float score = GetScore(it_begin->first, j, k);
 						bool is_great_one = IsGreatOne(it_begin->first, j, k);
 						uint32_t visual_variation_seed = GetVisualVariationSeed(it_begin->first, j, k);
 
-						std::string str_gender;
-						if (i_gender == 1) str_gender = "male";
-						else if (i_gender == 2) str_gender = "female";
-						else str_gender = "foomale";
-
-						std::shared_ptr<Animal> animal_data = Animal::Create(animal_type, str_gender, 
-							std::to_string(weight), std::to_string(score), std::to_string(is_great_one), std::to_string(visual_variation_seed), std::to_string(k));
+						std::shared_ptr<Animal> animal_data = Animal::Create(animal_type, gender_id,
+							weight, score, is_great_one, visual_variation_seed, k);
 						animal_name = animal_data->m_name;
 
 						if (animal_data->m_valid)
@@ -173,55 +168,23 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	}
 
-	// DONT USE, INDEX OUT OF BONDS POSSIBLE
 	std::ostream& operator<<(std::ostream& out, const AnimalPopulation& data)
 	{
 		auto it_beg = data.m_animals.begin();
-		auto it_end = data.m_animals.end();
-
-		for(;it_beg != it_end; ++it_beg)
+		for(;it_beg != data.m_animals.end(); ++it_beg)
 		{
 			out << "========== " << it_beg->second.at(0).m_name << " Groups [ #" << it_beg->second.size() << " ] ==========\n";
 
 			auto it_beg2 = it_beg->second.begin();
-			auto it_end2 = it_beg->second.end();
-			for (;it_beg2 != it_end2; ++it_beg2)
+			uint32_t size = 0;
+			for (;it_beg2 != it_beg->second.end(); ++it_beg2)
 			{
-				out << "           "
-					<< " [ "	<< it_beg2->m_index
-					<< " | #"	<< std::setw(2) << it_beg2->m_size
-					<< " | "	<< std::setw(0) << it_beg2->m_spawn_area_id
-					<< " ]\n";
-				auto it_beg3 = it_beg2->m_animals.begin();
-				auto it_end3 = it_beg2->m_animals.end();
-				for (;it_beg3 != it_end3; ++it_beg3)
-				{
-					out << " [ " << std::setw(2) << it_beg3->m_idx
-						<< " | " << std::setw(6) << it_beg3->m_str_gender
-						<< " | " << std::setw(7) << it_beg3->m_weight
-						<< " | " << std::setw(8) << it_beg3->m_score
-						<< " | " << std::setw(1) << static_cast<int>(it_beg3->m_is_great_one)
-						<< " | " << std::setw(5) << it_beg3->m_fur_type
-						<< " ]\n";
-				}
-				out << "\n\n";
+				out << *it_beg2;
+				size += it_beg2->m_size;
 			}
+
+			out << "Total amount of animals : " << size << "\n\n";
 		}
 		return out;
 	}
-
-	/*
-		void AnimalPopulation::PrintNameHashes()
-		{
-			if (m_initialized)
-			{
-				uint32_t size = instances.at(0).members.at(1).sub_members.size();
-
-				for (uint32_t i = 0; i < size; i++)
-				{
-					std::cout << "NameHash: " << *reinterpret_cast<uint32_t*>(instances.at(0).members.at(1).sub_members.at(i).sub_members.at(0).data.data()) << "\n";
-				}
-			}
-		}
-	*/
 }

@@ -11,7 +11,7 @@ namespace HunterCheckmate_FileAnalyzer
 		: endian(Endian::Big), file_path(file_path), fstream(file_path.generic_string()) {}
 
 
-	void FileHandler::write(std::vector<char>* data, uint32_t offset, uint32_t size)
+	void FileHandler::write(std::vector<char>* data, uint32_t offset, size_t size)
 	{
 		if (fstream.is_open())
 		{

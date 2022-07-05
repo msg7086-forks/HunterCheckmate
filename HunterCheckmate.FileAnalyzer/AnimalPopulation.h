@@ -27,8 +27,8 @@ namespace HunterCheckmate_FileAnalyzer
 		~AnimalPopulation() = default;
 		
 		bool IsValidAnimal(AnimalType animal_type, uint32_t group_idx, uint32_t animal_idx);
-		bool ReplaceAnimal(const std::shared_ptr<Animal>& animal_data, uint32_t group_idx, uint32_t animal_idx);
-		void GenerateMap();
+		bool ReplaceAnimal(const std::shared_ptr<Animal>& animal, uint32_t group_idx, uint32_t animal_idx);
+		void MapAnimals();
 
 		friend std::ostream& operator<<(std::ostream& out, const AnimalPopulation& data);
 	};
