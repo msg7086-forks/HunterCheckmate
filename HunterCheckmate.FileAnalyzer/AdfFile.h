@@ -186,8 +186,6 @@ namespace HunterCheckmate_FileAnalyzer
 
 	protected:
 		uint32_t m_sig;
-		bool m_valid;
-		bool m_initialized;
 		std::shared_ptr<FileHandler> m_file_handler;
 	public:
 		AdfHeader header;
@@ -196,6 +194,8 @@ namespace HunterCheckmate_FileAnalyzer
 		std::vector<StrhashHeader> header_strhash;
 		NametableHeader header_nametable;
 		std::vector<Instance> instances;
+		bool m_valid;
+		bool m_initialized;
 		
 		AdfFile(std::shared_ptr<FileHandler> file_handler);
 		~AdfFile() = default;

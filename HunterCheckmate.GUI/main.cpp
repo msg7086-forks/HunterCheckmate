@@ -5,9 +5,11 @@
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
+#include "imgui_stdlib.h"
 #include <d3d11.h>
 #include <tchar.h>
 #include <iostream>
+#include "CLI.h"
 
 // Data
 static ID3D11Device*            g_pd3dDevice = NULL;
@@ -94,6 +96,19 @@ int main(int, char**)
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+	using namespace HunterCheckmate_FileAnalyzer;
+
+	bool keep_open = true;
+	boost::filesystem::path tmp_path = boost::filesystem::initial_path<boost::filesystem::path>();
+	tmp_path = "C:\\Users\\oleSQL\\Documents\\thehunter working\\pop";
+	std::string str_input_file_path = "C:\\Users\\oleSQL\\Documents\\thehunter working\\pop\\decomp_animal_population_0";
+	boost::filesystem::path input_file_path = "C:\\Users\\oleSQL\\Documents\\thehunter working\\pop\\decomp_animal_population_0";
+	boost::filesystem::path input_file_name = "decomp_animal_population_0";
+	std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, input_file_path);
+	std::shared_ptr<ReserveData> reserve_data = std::make_shared<ReserveData>(static_cast<uint8_t>(std::stoi(std::string(1, input_file_name.generic_string().back()))));
+	std::unique_ptr<AnimalPopulation> animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
+
+	std::string animal = "";
     // Main loop
     bool done = false;
     while (!done)
@@ -116,9 +131,6 @@ int main(int, char**)
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-		ImGui::BeginMainMenuBar();
-		ImGui::EndMainMenuBar();
-
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | 
 										ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 		const ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -126,78 +138,208 @@ int main(int, char**)
 		ImVec2 window_pos = viewport->WorkPos;
 		ImVec2 window_size = viewport->WorkSize;
 
-		window_size.x = window_size.x / 2.f;
-
 		ImGui::SetNextWindowPos(window_pos);
 		ImGui::SetNextWindowSize(window_size);
 		ImGui::SetNextWindowViewport(viewport->ID);
+
+		//if (ImGui::BeginMainMenuBar())
+		//{
+		//	if (ImGui::BeginMenu("Settings"))
+		//	{
+		//		if (ImGui::Button("Select default save file directory"))
+		//		{
+		//			ImGui::OpenPopup("directory_popup");
+		//			keep_open = true;
+		//		}
+
+		//		ImVec2 pos = viewport->GetCenter();
+		//		ImVec2 size;
+		//		size.x = (viewport->WorkSize.x) / 2.f;
+		//		size.y = (viewport->WorkSize.y) / 2.f;
+		//		pos.x = pos.x - (size.x / 2.f);
+		//		pos.y = pos.y - (size.y / 2.f);
+		//		ImGui::SetNextWindowPos(pos);
+		//		ImGui::SetNextWindowSize(size);
+		//		if (ImGui::BeginPopup("directory_popup") && keep_open == true)
+		//		{
+		//			namespace fs = boost::filesystem;
+
+		//			ImGui::Text("Current Directory: %s", tmp_path.string().c_str());
+
+		//			if (ImGui::Button("Back"))
+		//			{
+		//				tmp_path = tmp_path.parent_path();
+		//			}
+
+		//			ImGui::BeginGroup();
+		//				
+		//			fs::directory_iterator it_start(tmp_path);
+		//			fs::directory_iterator end_iter;
+		//			for (it_start; it_start != end_iter; ++it_start)
+		//			{
+		//				if (fs::is_directory(it_start->status()))
+		//				{
+		//					if (ImGui::Button(it_start->path().filename().string().c_str()))
+		//					{
+		//						tmp_path = it_start->path();
+
+		//					}
+		//				}
+		//				else if (fs::is_regular_file(it_start->status()))
+		//				{
+		//					ImGui::Text(it_start->path().filename().string().c_str());
+		//				}
+		//				else
+		//				{
+		//					//std::cout << dir_itr->path().filename() << " [other]\n";
+		//				}
+		//			}
+
+		//			ImGui::EndGroup();
+
+		//			ImGui::Separator();
+
+		//			ImGui::Button("Save");
+		//			ImGui::SameLine();
+		//			if (ImGui::Button("Exit"))
+		//			{
+		//				keep_open = false;
+		//			}
+
+		//			ImGui::EndPopup();
+		//		}
+		//		ImGui::EndMenu();
+		//	}
+		//	ImGui::EndMainMenuBar();
+		//}
+
 
 		ImGui::Begin("HunterCheckmate", NULL, window_flags);
+		ImGui::BeginChild("file_path", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y / 7.5f), true);
+
 		ImGui::Text("Enter the location of your decompiled population file:");
-		struct Funcs
-		{
-			static int MyResizeCallback(ImGuiInputTextCallbackData* data)
-			{
-				if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
-				{
-					ImVector<char>* my_str = (ImVector<char>*)data->UserData;
-					IM_ASSERT(my_str->begin() == data->Buf);
-					my_str->resize(data->BufSize); // NB: On resizing calls, generally data->BufSize == data->BufTextLen + 1
-					data->Buf = my_str->begin();
-				}
-				return 0;
-			}
 
-			// Note: Because ImGui:: is a namespace you would typically add your own function into the namespace.
-			// For example, you code may declare a function 'ImGui::InputText(const char* label, MyString* my_str)'
-			static bool MyInputTextMultiline(const char* label, ImVector<char>* my_str, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0)
-			{
-				IM_ASSERT((flags & ImGuiInputTextFlags_CallbackResize) == 0);
-				return ImGui::InputTextMultiline(label, my_str->begin(), (size_t)my_str->size(), size, flags | ImGuiInputTextFlags_CallbackResize, Funcs::MyResizeCallback, (void*)my_str);
-			}
+		ImGui::InputText(" ", &str_input_file_path);
+		ImGui::Text("Folder entered: %s", str_input_file_path.c_str());
+		input_file_path = str_input_file_path;
+		input_file_name = input_file_path.filename();
 
-			static bool MyInputTextSingleLine(const char* label, ImVector<char>* my_str, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0)
-			{
-				IM_ASSERT((flags & ImGuiInputTextFlags_CallbackResize) == 0);
-				return ImGui::InputText(label, my_str->begin(), (size_t)my_str->size(), flags | ImGuiInputTextFlags_CallbackResize, Funcs::MyResizeCallback, (void*)my_str);
-			}
-		};
 
-		// For this demo we are using ImVector as a string container.
-		// Note that because we need to store a terminating zero character, our size/capacity are 1 more
-		// than usually reported by a typical string class.
-		static ImVector<char> my_str;
-		if (my_str.empty())
-			my_str.push_back(0);
-		Funcs::MyInputTextSingleLine("##MyStr", &my_str, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight()*1.5f));
-		ImGui::Text("Folder entered: %s", my_str.Data);
-		std::string pop_path = std::string(my_str.Data);
 		if (ImGui::Button("Analyze"))
 		{
-			// do the lifting
+			animal = "";
+			file_handler = std::make_shared<FileHandler>(Endian::Little, input_file_path);
+			reserve_data = std::make_shared<ReserveData>(static_cast<uint8_t>(std::stoi(std::string(1, input_file_name.generic_string().back()))));
+			animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
+			if (animal_population->Deserialize())
+			{
+				animal_population->MapAnimals();
+				std::cout << "[DEBUG] Successfully analyzed population file!\n";
+			}
 		}
-		ImGui::End();
 
+		ImGui::EndChild();
 
-		window_pos.x = window_pos.x + window_size.x;
-		ImGui::SetNextWindowPos(window_pos);
-		ImGui::SetNextWindowSize(window_size);
-		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::BeginChild("info", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), true);
 
-		ImGui::Begin("Henlo", NULL, window_flags);
-		ImFont* font_current = ImGui::GetFont();
-		if (ImGui::BeginCombo("Set Gender", "male"))
+		ImGui::BeginChild("sort", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y / 20.f), false);
+
+		// idx, weight, score
+		std::vector<bool> sort = { true, false, false };
+		ImGui::Text("Sort by ");
+		ImGui::SameLine();
+		if (ImGui::Button("Index"))
 		{
-			if (ImGui::Selectable("male", false))
-			{
-				// gender = "male";
-			}
-			if (ImGui::Selectable("female", false))
-			{
-				// gender = "female";
-			}
-			ImGui::EndCombo();
+			sort = { true, false, false };
 		}
+		ImGui::SameLine();
+		if (ImGui::Button("Score"))
+		{
+			sort = { false, true, false };
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Weight"))
+		{
+			sort = { false, false, true };
+		}
+		ImGui::SameLine();
+		ImGui::Text("Show");
+
+
+		if (animal_population->m_initialized && animal_population->m_valid)
+		{
+			auto it_group = animal_population->m_animals.begin();
+			for (; it_group != animal_population->m_animals.end(); ++it_group)
+			{
+				std::string show_animal = it_group->second.at(0).m_name;
+				std::vector<AnimalGroup> groups;
+				ImGui::SameLine();
+				if (ImGui::Button(show_animal.c_str()))
+				{
+					animal = show_animal;
+				}
+			}
+		}
+
+		ImGui::EndChild();
+		
+		if (animal_population->m_initialized && animal_population->m_valid) 
+		{
+			if (animal != "")
+			{
+				const AnimalType animal_type = Animal::ResolveAnimalType(animal);
+				std::vector<AnimalGroup> groups = animal_population->m_animals.at(animal_type);
+				auto it_beg = groups.begin();
+				uint32_t total_animals = 0;
+
+				for (; it_beg != groups.end(); ++it_beg)
+				{
+					float max_weight = 0.f;
+					float max_score = 0.f;
+					auto it_animal_beg = it_beg->m_animals.begin();
+					for (; it_animal_beg != it_beg->m_animals.end(); ++it_animal_beg)
+					{
+						if (it_animal_beg->m_weight > max_weight)
+						{
+							max_weight = it_animal_beg->m_weight;
+						}
+						if (it_animal_beg->m_score > max_score)
+						{
+							max_score = it_animal_beg->m_score;
+						}
+					}
+
+					std::ostringstream group_info;
+					group_info << "[ " << std::setw(3) << it_beg->m_index
+						<< " | #" << std::setw(2) << it_beg->m_size
+						<< " | " << std::setw(12) << it_beg->m_spawn_area_id
+						<< " | " << std::setw(8) << max_weight
+						<< " | " << std::setw(8) << max_score
+						<< " ]";
+					if (ImGui::CollapsingHeader(group_info.str().c_str(), ImGuiTreeNodeFlags_None))
+					{
+						auto it_animal_beg = it_beg->m_animals.begin();
+						for (; it_animal_beg != it_beg->m_animals.end(); ++it_animal_beg)
+						{
+							std::ostringstream animal_info;
+							animal_info << "[ " << std::setw(2) << it_animal_beg->m_idx
+								<< " | " << std::setw(6) << it_animal_beg->m_gender
+								<< " | " << std::setw(8) << it_animal_beg->m_weight
+								<< " | " << std::setw(8) << it_animal_beg->m_score
+								<< " | " << std::setw(1) << static_cast<int>(it_animal_beg->m_is_great_one)
+								<< " | " << std::setw(15) << it_animal_beg->m_fur_type
+								<< " | " << std::setw(2) << static_cast<unsigned int>(it_animal_beg->m_fur_type_id)
+								<< " | " << std::setw(10) << it_animal_beg->m_visual_variation_seed
+								<< " ]";
+							ImGui::Text(animal_info.str().c_str());
+						}
+					}
+				}
+			}
+		}
+
+		ImGui::EndChild();
+
 		ImGui::End();
 
         ImGui::ShowDemoWindow();
