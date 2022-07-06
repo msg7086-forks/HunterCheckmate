@@ -5,7 +5,7 @@ namespace HunterCheckmate_FileAnalyzer
 	Animal::Animal(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
 	{
 		m_animal_type = animal_type;
-		m_name = {};
+		m_name = "Unknown";
 		SetGender(gender);
 		SetWeight(weight);
 		SetScore(score);
@@ -205,6 +205,16 @@ namespace HunterCheckmate_FileAnalyzer
 		data.insert(data.end(), this->is_great_one_bytes.begin(), this->is_great_one_bytes.end());
 		data.insert(data.end(), this->visual_variation_seed_bytes.begin(), this->visual_variation_seed_bytes.end());
 		return data;
+	}
+
+	float Animal::GetMaxWeight()
+	{
+		return 0.0f;
+	}
+
+	float Animal::GetMaxScore()
+	{
+		return 0.0f;
 	}
 
 	AnimalType Animal::ResolveAnimalType(std::string& name)

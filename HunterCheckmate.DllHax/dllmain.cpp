@@ -1,7 +1,4 @@
-#include "Windows.h"
-#include <iostream>
-#include <thread>
-#include <boost/interprocess/managed_shared_memory.hpp>
+#include "pch.h"
 
 [[noreturn]] void WINAPI Hax(HMODULE hModule)
 {

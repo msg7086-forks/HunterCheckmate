@@ -34,7 +34,6 @@ namespace HunterCheckmate_FileAnalyzer
 		std::string ResolveFurTypeId(const uint32_t fur_type_id);
 		static std::string ResolveFurTypeId(const AnimalType animal_type, const uint32_t fur_type_id);
 
-
 		bool VerifyGender() const;
 		virtual bool VerifyWeight() const;
 		virtual bool VerifyScore() const;
@@ -76,6 +75,9 @@ namespace HunterCheckmate_FileAnalyzer
 		static uint32_t CreateVisualVariationSeed(const AnimalType animal_type, const std::string& str_gender, const std::string& fur_type);
 
 		std::vector<char> GetByteStream();
+		virtual float GetMaxWeight();
+		virtual float GetMaxScore();
+
 		bool IsValid() const;
 
 		friend std::ostream& operator<<(std::ostream& out, const Animal& data);
