@@ -142,11 +142,18 @@ namespace HunterCheckmate_FileAnalyzer
 					total_number_of_animals += group_size;
 					uint32_t spawn_area_id = GetSpawnAreaId(it_begin->first, j);
 
+					float max_weight = 0.f;
+					float max_score = 0.f;
+
 					for (uint32_t k = 0; k < group_size; k++)
 					{
 						const uint8_t gender_id = GetGender(it_begin->first, j, k);
 						float weight = GetWeight(it_begin->first, j, k);
+						if (weight > max_weight)
+							max_weight = weight;
 						float score = GetScore(it_begin->first, j, k);
+						if (score > max_score)
+							max_score = score;
 						bool is_great_one = IsGreatOne(it_begin->first, j, k);
 						uint32_t visual_variation_seed = GetVisualVariationSeed(it_begin->first, j, k);
 
@@ -160,7 +167,7 @@ namespace HunterCheckmate_FileAnalyzer
 						}
 					}
 
-					animal_groups.emplace_back(AnimalGroup(animal_type, animal_name, j, spawn_area_id, _animals));
+					animal_groups.emplace_back(AnimalGroup(animal_type, animal_name, j, spawn_area_id, _animals, max_weight, max_score));
 				}
 
 				m_animals.emplace(animal_type, animal_groups);
@@ -186,5 +193,26 @@ namespace HunterCheckmate_FileAnalyzer
 			out << "Total amount of animals : " << size << "\n\n";
 		}
 		return out;
+	}
+
+	bool AnimalPopulation::cmpHighestWeight(AnimalGroup& a, AnimalGroup& b)
+	{
+		return (a.m_max_weight > b.m_max_weight);
+	}
+	bool AnimalPopulation::cmpLowestWeight(AnimalGroup& a, AnimalGroup& b)
+	{
+		return (a.m_max_weight < b.m_max_weight);
+	}
+	bool AnimalPopulation::cmpHighestScore(AnimalGroup& a, AnimalGroup& b)
+	{
+		return (a.m_max_score > b.m_max_score);
+	}
+	bool AnimalPopulation::cmpLowestScore(AnimalGroup& a, AnimalGroup& b)
+	{
+		return (a.m_max_score < b.m_max_score);
+	}
+	bool AnimalPopulation::cmpIdx(AnimalGroup& a, AnimalGroup& b) 
+	{
+		return (a.m_index < b.m_index);
 	}
 }

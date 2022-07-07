@@ -31,5 +31,11 @@ namespace HunterCheckmate_FileAnalyzer
 		void MapAnimals();
 
 		friend std::ostream& operator<<(std::ostream& out, const AnimalPopulation& data);
+
+		static bool cmpHighestWeight(AnimalGroup& a, AnimalGroup& b);
+		static bool cmpLowestWeight(AnimalGroup& a, AnimalGroup& b);
+		static bool cmpHighestScore(AnimalGroup& a, AnimalGroup& b);
+		static bool cmpLowestScore(AnimalGroup& a, AnimalGroup& b);
+		static bool cmpIdx(AnimalGroup& a, AnimalGroup& b);
 	};
 }

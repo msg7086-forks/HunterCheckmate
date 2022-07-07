@@ -9,7 +9,9 @@
 #include <d3d11.h>
 #include <tchar.h>
 #include <iostream>
-#include "CLI.h"
+#include "FileHandler.h"
+#include "AnimalPopulation.h"
+#include "ThpPlayerProfile.h"
 
 // Data
 static ID3D11Device*            g_pd3dDevice = NULL;
@@ -109,6 +111,10 @@ int main(int, char**)
 	std::unique_ptr<AnimalPopulation> animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
 
 	std::string animal = "";
+	//bool collapsed = true;
+	// idx, weight, score
+	std::vector<bool> sort = { true, false, false, false, false };
+
     // Main loop
     bool done = false;
     while (!done)
@@ -142,85 +148,12 @@ int main(int, char**)
 		ImGui::SetNextWindowSize(window_size);
 		ImGui::SetNextWindowViewport(viewport->ID);
 
-		//if (ImGui::BeginMainMenuBar())
-		//{
-		//	if (ImGui::BeginMenu("Settings"))
-		//	{
-		//		if (ImGui::Button("Select default save file directory"))
-		//		{
-		//			ImGui::OpenPopup("directory_popup");
-		//			keep_open = true;
-		//		}
-
-		//		ImVec2 pos = viewport->GetCenter();
-		//		ImVec2 size;
-		//		size.x = (viewport->WorkSize.x) / 2.f;
-		//		size.y = (viewport->WorkSize.y) / 2.f;
-		//		pos.x = pos.x - (size.x / 2.f);
-		//		pos.y = pos.y - (size.y / 2.f);
-		//		ImGui::SetNextWindowPos(pos);
-		//		ImGui::SetNextWindowSize(size);
-		//		if (ImGui::BeginPopup("directory_popup") && keep_open == true)
-		//		{
-		//			namespace fs = boost::filesystem;
-
-		//			ImGui::Text("Current Directory: %s", tmp_path.string().c_str());
-
-		//			if (ImGui::Button("Back"))
-		//			{
-		//				tmp_path = tmp_path.parent_path();
-		//			}
-
-		//			ImGui::BeginGroup();
-		//				
-		//			fs::directory_iterator it_start(tmp_path);
-		//			fs::directory_iterator end_iter;
-		//			for (it_start; it_start != end_iter; ++it_start)
-		//			{
-		//				if (fs::is_directory(it_start->status()))
-		//				{
-		//					if (ImGui::Button(it_start->path().filename().string().c_str()))
-		//					{
-		//						tmp_path = it_start->path();
-
-		//					}
-		//				}
-		//				else if (fs::is_regular_file(it_start->status()))
-		//				{
-		//					ImGui::Text(it_start->path().filename().string().c_str());
-		//				}
-		//				else
-		//				{
-		//					//std::cout << dir_itr->path().filename() << " [other]\n";
-		//				}
-		//			}
-
-		//			ImGui::EndGroup();
-
-		//			ImGui::Separator();
-
-		//			ImGui::Button("Save");
-		//			ImGui::SameLine();
-		//			if (ImGui::Button("Exit"))
-		//			{
-		//				keep_open = false;
-		//			}
-
-		//			ImGui::EndPopup();
-		//		}
-		//		ImGui::EndMenu();
-		//	}
-		//	ImGui::EndMainMenuBar();
-		//}
-
-
 		ImGui::Begin("HunterCheckmate", NULL, window_flags);
-		ImGui::BeginChild("file_path", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y / 7.5f), true);
+		ImGui::BeginChild("file_path", ImVec2(ImGui::GetContentRegionAvail().x, 80.f), true);
 
 		ImGui::Text("Enter the location of your decompiled population file:");
 
 		ImGui::InputText(" ", &str_input_file_path);
-		ImGui::Text("Folder entered: %s", str_input_file_path.c_str());
 		input_file_path = str_input_file_path;
 		input_file_name = input_file_path.filename();
 
@@ -242,27 +175,8 @@ int main(int, char**)
 
 		ImGui::BeginChild("info", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), true);
 
-		ImGui::BeginChild("sort", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y / 20.f), false);
+		ImGui::BeginChild("sort", ImVec2(ImGui::GetContentRegionAvail().x, 80.f), false);
 
-		// idx, weight, score
-		std::vector<bool> sort = { true, false, false };
-		ImGui::Text("Sort by ");
-		ImGui::SameLine();
-		if (ImGui::Button("Index"))
-		{
-			sort = { true, false, false };
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Score"))
-		{
-			sort = { false, true, false };
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Weight"))
-		{
-			sort = { false, false, true };
-		}
-		ImGui::SameLine();
 		ImGui::Text("Show");
 
 
@@ -281,6 +195,46 @@ int main(int, char**)
 			}
 		}
 
+		ImGui::Text("Sort by ");
+		ImGui::SameLine();
+		if (ImGui::Button("Index"))
+		{
+			sort = { true, false, false, false, false };
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Score Down"))
+		{
+			sort = { false, true, false , false, false};
+		}		
+		ImGui::SameLine();
+		if (ImGui::Button("Score Up"))
+		{
+			sort = { false, false, true, false, false };
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Weight Down"))
+		{
+			sort = { false, false, false, true, false };
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Weight Up"))
+		{
+			sort = { false, false, false, false, true };
+		}
+
+
+		//if (ImGui::Button("Show|Hide"))
+		//{
+		//	if (collapsed)
+		//	{
+		//		collapsed = false;
+		//	}
+		//	else
+		//	{
+		//		collapsed = true;
+		//	}
+		//}
+
 		ImGui::EndChild();
 		
 		if (animal_population->m_initialized && animal_population->m_valid) 
@@ -289,34 +243,51 @@ int main(int, char**)
 			{
 				const AnimalType animal_type = Animal::ResolveAnimalType(animal);
 				std::vector<AnimalGroup> groups = animal_population->m_animals.at(animal_type);
-				auto it_beg = groups.begin();
 				uint32_t total_animals = 0;
 
+				if (sort.at(0))
+					std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpIdx);
+				else if (sort.at(1))
+					std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpHighestScore);
+				else if (sort.at(2))
+					std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpLowestScore);
+				else if (sort.at(3))
+					std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpHighestWeight);
+				else if (sort.at(4))
+					std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpLowestWeight);
+
+				auto it_beg = groups.begin();
 				for (; it_beg != groups.end(); ++it_beg)
 				{
-					float max_weight = 0.f;
-					float max_score = 0.f;
-					auto it_animal_beg = it_beg->m_animals.begin();
-					for (; it_animal_beg != it_beg->m_animals.end(); ++it_animal_beg)
-					{
-						if (it_animal_beg->m_weight > max_weight)
-						{
-							max_weight = it_animal_beg->m_weight;
-						}
-						if (it_animal_beg->m_score > max_score)
-						{
-							max_score = it_animal_beg->m_score;
-						}
-					}
-
 					std::ostringstream group_info;
 					group_info << "[ " << std::setw(3) << it_beg->m_index
 						<< " | #" << std::setw(2) << it_beg->m_size
 						<< " | " << std::setw(12) << it_beg->m_spawn_area_id
-						<< " | " << std::setw(8) << max_weight
-						<< " | " << std::setw(8) << max_score
+						<< " | " << std::setw(8) << it_beg->m_max_weight
+						<< " | " << std::setw(8) << it_beg->m_max_score
 						<< " ]";
-					if (ImGui::CollapsingHeader(group_info.str().c_str(), ImGuiTreeNodeFlags_None))
+
+					//if (collapsed == false)
+					//{
+					//	ImGui::SetNextItemOpen(true, ImGuiCond_Always);
+					//}
+					//else
+					//{
+					//	ImGui::SetNextItemOpen(false, ImGuiCond_Always);
+					//}
+
+					if (sort.at(0))
+						std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpIdx);
+					else if (sort.at(1))
+						std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpHighestScore);
+					else if (sort.at(2))
+						std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpLowestScore);
+					else if (sort.at(3))
+						std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpHighestWeight);
+					else if (sort.at(4))
+						std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpLowestWeight);
+
+					if (ImGui::TreeNode((void*)&it_beg->m_spawn_area_id, group_info.str().c_str()))
 					{
 						auto it_animal_beg = it_beg->m_animals.begin();
 						for (; it_animal_beg != it_beg->m_animals.end(); ++it_animal_beg)
@@ -333,7 +304,9 @@ int main(int, char**)
 								<< " ]";
 							ImGui::Text(animal_info.str().c_str());
 						}
+						ImGui::TreePop();
 					}
+
 				}
 			}
 		}
