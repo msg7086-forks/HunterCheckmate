@@ -12,6 +12,7 @@
 #include "FileHandler.h"
 #include "AnimalPopulation.h"
 #include "ThpPlayerProfile.h"
+#include <boost/lexical_cast.hpp>
 
 // Data
 static ID3D11Device*            g_pd3dDevice = NULL;
@@ -111,9 +112,16 @@ int main(int, char**)
 	std::unique_ptr<AnimalPopulation> animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
 
 	std::string animal = "";
-	//bool collapsed = true;
 	// idx, weight, score
 	std::vector<bool> sort = { true, false, false, false, false };
+
+	int edit_animal_idx;
+	std::string edit_animal_gender;
+	float edit_animal_weight;
+	float edit_animal_score;
+	std::string edit_animal_str_igo;
+	std::string edit_animal_str_vvs;
+	bool is_editing = false;
 
     // Main loop
     bool done = false;
@@ -223,18 +231,6 @@ int main(int, char**)
 		}
 
 
-		//if (ImGui::Button("Show|Hide"))
-		//{
-		//	if (collapsed)
-		//	{
-		//		collapsed = false;
-		//	}
-		//	else
-		//	{
-		//		collapsed = true;
-		//	}
-		//}
-
 		ImGui::EndChild();
 		
 		if (animal_population->m_initialized && animal_population->m_valid) 
@@ -267,15 +263,6 @@ int main(int, char**)
 						<< " | " << std::setw(8) << it_beg->m_max_score
 						<< " ]";
 
-					//if (collapsed == false)
-					//{
-					//	ImGui::SetNextItemOpen(true, ImGuiCond_Always);
-					//}
-					//else
-					//{
-					//	ImGui::SetNextItemOpen(false, ImGuiCond_Always);
-					//}
-
 					if (sort.at(0))
 						std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpIdx);
 					else if (sort.at(1))
@@ -287,7 +274,7 @@ int main(int, char**)
 					else if (sort.at(4))
 						std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpLowestWeight);
 
-					if (ImGui::TreeNode((void*)&it_beg->m_spawn_area_id, group_info.str().c_str()))
+					if (ImGui::TreeNode((void*)(uintptr_t)&it_beg->m_spawn_area_id, group_info.str().c_str()))
 					{
 						auto it_animal_beg = it_beg->m_animals.begin();
 						for (; it_animal_beg != it_beg->m_animals.end(); ++it_animal_beg)
@@ -302,7 +289,58 @@ int main(int, char**)
 								<< " | " << std::setw(2) << static_cast<unsigned int>(it_animal_beg->m_fur_type_id)
 								<< " | " << std::setw(10) << it_animal_beg->m_visual_variation_seed
 								<< " ]";
-							ImGui::Text(animal_info.str().c_str());
+
+							ImGui::Selectable(animal_info.str().c_str());
+							if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+							{
+								ImGui::Text("This a popup for \"%s\"!", animal_info.str().c_str());
+
+								if (is_editing == false)
+								{
+									edit_animal_idx = static_cast<int>(it_animal_beg->m_idx);
+									edit_animal_gender = it_animal_beg->m_gender;
+									edit_animal_weight = it_animal_beg->m_weight;
+									edit_animal_score = it_animal_beg->m_score;
+									edit_animal_str_igo = std::to_string(it_animal_beg->m_is_great_one);
+									edit_animal_str_vvs = std::to_string(it_animal_beg->m_visual_variation_seed);
+									is_editing = true;
+								}
+
+								ImGui::InputFloat("Weight", &edit_animal_weight);
+								ImGui::InputFloat("Score", &edit_animal_score);
+								ImGui::InputText("IGO", &edit_animal_str_igo);
+								ImGui::InputText("VVS", &edit_animal_str_vvs);
+
+								if (ImGui::Button("Save"))
+								{
+									uint32_t edit_animal_vvs = std::stoul(edit_animal_str_vvs);
+									const std::shared_ptr<Animal> animal = 
+										Animal::Create(animal_type, Animal::ResolveGender(edit_animal_gender), 
+													   edit_animal_weight, edit_animal_score, boost::lexical_cast<bool>(edit_animal_str_igo),
+													   edit_animal_vvs, edit_animal_idx);
+									if (animal->IsValid()) 
+									{
+										animal_population->ReplaceAnimal(animal, it_beg->m_index, it_animal_beg->m_idx);
+									}
+									file_handler = std::make_shared<FileHandler>(Endian::Little, input_file_path);
+									reserve_data = std::make_shared<ReserveData>(static_cast<uint8_t>(std::stoi(std::string(1, input_file_name.generic_string().back()))));
+									animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
+									if (animal_population->Deserialize())
+									{
+										animal_population->MapAnimals();
+									}
+									ImGui::CloseCurrentPopup();
+									is_editing = false;
+								}
+								ImGui::SameLine();
+								if (ImGui::Button("Exit"))
+								{
+									ImGui::CloseCurrentPopup();
+									is_editing = false;
+								}
+
+								ImGui::EndPopup();
+							}
 						}
 						ImGui::TreePop();
 					}
