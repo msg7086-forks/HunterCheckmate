@@ -2,7 +2,7 @@
 
 namespace HunterCheckmate_FileAnalyzer
 {
-	Animal::Animal(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
+	Animal::Animal(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
 	{
 		m_animal_type = animal_type;
 		m_name = "Unknown";
@@ -14,6 +14,7 @@ namespace HunterCheckmate_FileAnalyzer
 		m_fur_type_id = ResolveVisualVariationSeed(visual_variation_seed);
 		m_fur_type = ResolveFurTypeId(m_fur_type_id);
 		SetIdx(idx);
+		m_grp_idx = grp_idx;
 		m_valid = false;
 		SetGenderBytes();
 		SetWeightBytes();
@@ -22,177 +23,177 @@ namespace HunterCheckmate_FileAnalyzer
 		SetVisualVariationSeedBytes();
 	}
 
-	std::shared_ptr<Animal> Animal::Create(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
+	std::shared_ptr<Animal> Animal::Create(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
 	{
 		switch (animal_type)
 		{
 		case AT_WildBoar:
-			return std::make_shared<WildBoar>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<WildBoar>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_FallowDeer:
-			return std::make_shared<FallowDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<FallowDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_EuroBison:
-			return std::make_shared<EuroBison>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<EuroBison>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RoeDeer:
-			return std::make_shared<RoeDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<RoeDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RedFox:
-			return std::make_shared<RedFox>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<RedFox>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_CanadaGoose:
-			return std::make_shared<CanadaGoose>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<CanadaGoose>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RedDeer:
-			return std::make_shared<RedDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<RedDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_EuroRabbit:
-			return std::make_shared<EuroRabbit>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<EuroRabbit>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Moose:
-			return std::make_shared<Moose>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Moose>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Jackrabbit:
-			return std::make_shared<Jackrabbit>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Jackrabbit>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Mallard:
-			return std::make_shared<Mallard>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Mallard>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_BlackBear:
-			return std::make_shared<BlackBear>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<BlackBear>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RooseveltElk:
-			return std::make_shared<RooseveltElk>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<RooseveltElk>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Coyote:
-			return std::make_shared<Coyote>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Coyote>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_BlacktailDeer:
-			return std::make_shared<BlacktailDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<BlacktailDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_WhitetailDeer:
-			return std::make_shared<WhitetailDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<WhitetailDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_MuskDeer:
-			return std::make_shared<MuskDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<MuskDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Reindeer:
-			return std::make_shared<Reindeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Reindeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_EurasianLynx:
-			return std::make_shared<EurasianLynx>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<EurasianLynx>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_BrownBear:
-			return std::make_shared<BrownBear>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<BrownBear>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_BlueWildebeest:
-			return std::make_shared<BlueWildebeest>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<BlueWildebeest>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_SideStripedJackal:
-			return std::make_shared<SideStripedJackal>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<SideStripedJackal>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Gemsbok:
-			return std::make_shared<Gemsbok>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Gemsbok>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_LesserKudu:
-			return std::make_shared<LesserKudu>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<LesserKudu>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_ScrubHare:
-			return std::make_shared<ScrubHare>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<ScrubHare>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Lion:
-			return std::make_shared<Lion>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Lion>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Warthog:
-			return std::make_shared<Warthog>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Warthog>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_CapeBuffalo:
-			return std::make_shared<CapeBuffalo>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<CapeBuffalo>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Springbok:
-			return std::make_shared<Springbok>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Springbok>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_WaterBuffalo:
-			return std::make_shared<WaterBuffalo>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<WaterBuffalo>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Puma:
-			return std::make_shared<Puma>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Puma>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Blackbuck:
-			return std::make_shared<Blackbuck>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Blackbuck>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_CinnamonTeal:
-			return std::make_shared<CinnamonTeal>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<CinnamonTeal>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_MuleDeer:
-			return std::make_shared<MuleDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<MuleDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_AxisDeer:
-			return std::make_shared<AxisDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<AxisDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_HarlequinDuck:
-			return std::make_shared<HarlequinDuck>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<HarlequinDuck>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Caribou:
-			return std::make_shared<Caribou>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Caribou>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_GrizzlyBear:
-			return std::make_shared<GrizzlyBear>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<GrizzlyBear>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_GrayWolf:
-			return std::make_shared<GrayWolf>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<GrayWolf>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_PlainsBison:
-			return std::make_shared<PlainsBison>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<PlainsBison>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_SoutheasternSpanishIbex:
-			return std::make_shared<SoutheasternSpanishIbex>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<SoutheasternSpanishIbex>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_IberianWolf:
-			return std::make_shared<IberianWolf>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<IberianWolf>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_IberianMuflon:
-			return std::make_shared<IberianMuflon>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<IberianMuflon>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_BeceiteIbex:
-			return std::make_shared<BeceiteIbex>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<BeceiteIbex>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_EuroHare:
-			return std::make_shared<EuroHare>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<EuroHare>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RondaIbex:
-			return std::make_shared<RondaIbex>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<RondaIbex>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_GredosIbex:
-			return std::make_shared<GredosIbex>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<GredosIbex>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Pronghorn:
-			return std::make_shared<Pronghorn>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Pronghorn>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_MountainLion:
-			return std::make_shared<MountainLion>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<MountainLion>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_MountainGoat:
-			return std::make_shared<MountainGoat>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<MountainGoat>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_BighornSheep:
-			return std::make_shared<BighornSheep>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<BighornSheep>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_MerriamTurkey:
-			return std::make_shared<MerriamTurkey>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<MerriamTurkey>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RockyMountainElk:
-			return std::make_shared<RockyMountainElk>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<RockyMountainElk>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_SikaDeer:
-			return std::make_shared<SikaDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<SikaDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Chamois:
-			return std::make_shared<Chamois>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Chamois>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_FeralPig:
-			return std::make_shared<FeralPig>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<FeralPig>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_FeralGoat:
-			return std::make_shared<FeralGoat>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<FeralGoat>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_CollaredPeccary:
-			return std::make_shared<CollaredPeccary>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<CollaredPeccary>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_MexicanBobcat:
-			return std::make_shared<MexicanBobcat>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<MexicanBobcat>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RioGrandeTurkey:
-			return std::make_shared<RioGrandeTurkey>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<RioGrandeTurkey>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RingNeckedPheasant:
-			return std::make_shared<RingNeckedPheasant>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<RingNeckedPheasant>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_AntelopeJackrabbit:
-			return std::make_shared<AntelopeJackrabbit>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<AntelopeJackrabbit>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_AmericanAlligator:
-			return std::make_shared<AmericanAlligator>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<AmericanAlligator>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_WildHog:
-			return std::make_shared<WildHog>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<WildHog>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_GrayFox:
-			return std::make_shared<GrayFox>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<GrayFox>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_CommonRaccoon:
-			return std::make_shared<CommonRaccoon>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<CommonRaccoon>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_EasternWildTurkey:
-			return std::make_shared<EasternWildTurkey>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<EasternWildTurkey>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_EasternCottontailRabbit:
-			return std::make_shared<EasternCottontailRabbit>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<EasternCottontailRabbit>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_BobwhiteQuail:
-			return std::make_shared<BobwhiteQuail>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<BobwhiteQuail>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RaccoonDog:
-			return std::make_shared<RaccoonDog>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<RaccoonDog>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_EurasianWigeon:
-			return std::make_shared<EurasianWigeon>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<EurasianWigeon>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_TundraBeanGoose:
-			return std::make_shared<TundraBeanGoose>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<TundraBeanGoose>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_EurasianTeal:
-			return std::make_shared<EurasianTeal>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<EurasianTeal>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_BlackGrouse:
-			return std::make_shared<BlackGrouse>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<BlackGrouse>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Goldeneye:
-			return std::make_shared<Goldeneye>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Goldeneye>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_HazelGrouse:
-			return std::make_shared<HazelGrouse>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<HazelGrouse>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_WesternCapercaillie:
-			return std::make_shared<WesternCapercaillie>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<WesternCapercaillie>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_TuftedDuck:
-			return std::make_shared<TuftedDuck>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<TuftedDuck>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RockPtarmigan:
-			return std::make_shared<RockPtarmigan>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<RockPtarmigan>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_WillowPtarmigan:
-			return std::make_shared<WillowPtarmigan>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<WillowPtarmigan>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_GreylagGoose:
-			return std::make_shared<GreylagGoose>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<GreylagGoose>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_MountainHare:
-			return std::make_shared<MountainHare>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<MountainHare>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_None:
 		default:
-			return std::make_shared<Animal>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx);
+			return std::make_shared<Animal>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		}
 	}
 

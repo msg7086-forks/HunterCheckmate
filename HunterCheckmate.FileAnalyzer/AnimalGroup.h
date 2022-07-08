@@ -16,6 +16,7 @@ namespace HunterCheckmate_FileAnalyzer
 		std::vector<Animal> m_animals;
 		float m_max_weight;
 		float m_max_score;
+		AnimalGroup() = default;
 		AnimalGroup(AnimalType animal_type, std::string& name, uint32_t index, int32_t spawn_area_id, std::vector<Animal> animals);
 		AnimalGroup(AnimalType animal_type, std::string& name, uint32_t index, int32_t spawn_area_id, std::vector<Animal> animals, float max_weight, float max_score);
 		~AnimalGroup() = default;

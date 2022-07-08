@@ -13,6 +13,7 @@
 #include "AnimalPopulation.h"
 #include "ThpPlayerProfile.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 
 // Data
 static ID3D11Device*            g_pd3dDevice = NULL;
@@ -53,10 +54,12 @@ std::string edit_animal_str_igo;
 std::string edit_animal_str_fur_type;
 bool expand_groups = false;
 bool collapse_groups = false;
-bool show_file_selector = false;
 
-bool show_groups = true;
-bool show_animals = false;
+bool show_file_selector = false;
+bool show_all_animals = false;
+std::shared_ptr<AnimalGroup> selected_group;
+AnimalType animal_type;
+std::vector<AnimalGroup> groups;
 
 
 
@@ -511,15 +514,178 @@ void ShowMainWindow()
 
 	ImGui::EndChild();
 
-	ImGui::BeginChild("groups", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), true);
+	//ImGui::BeginChild("groups", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), true);
 
-	if (animal_population->m_initialized && animal_population->m_valid)
+	//if (animal_population->m_initialized && animal_population->m_valid)
+	//{
+	//	ShowGroupInfo();
+	//}
+
+	//ImGui::EndChild();
+
+	ImGui::BeginChild("group_overview", ImVec2(220.f, ImGui::GetContentRegionAvail().y), true);
+	if (animal_population->m_initialized && animal_population->m_valid && animal != "")
 	{
-		ShowGroupInfo();
+		animal_type = Animal::ResolveAnimalType(animal);
+		groups = animal_population->m_animals.at(animal_type);
+
+		if (sort.at(0))
+			std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpIdx);
+		else if (sort.at(1))
+			std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpHighestScore);
+		else if (sort.at(2))
+			std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpLowestScore);
+		else if (sort.at(3))
+			std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpHighestWeight);
+		else if (sort.at(4))
+			std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpLowestWeight);
+
+		if (ImGui::Selectable("All Groups"))
+		{
+			show_all_animals = true;
+		}
+
+		auto it_groups = groups.begin();
+		for (; it_groups != groups.end(); ++it_groups)
+		{
+			std::string desc = "Group [#" + std::to_string(it_groups->m_size) + "]";
+			ImGui::PushID(it_groups->m_index);
+			if (ImGui::Selectable(desc.c_str()))
+			{
+				selected_group = std::make_shared<AnimalGroup>(*it_groups);
+				show_all_animals = false;
+			}
+			ImGui::PopID();
+			ImGui::SameLine();
+			ImGui::Text((boost::format("%.1f") % it_groups->m_max_weight).str().c_str());
+			ImGui::SameLine();
+			ImGui::Text((boost::format("%.1f") % it_groups->m_max_score).str().c_str());
+		}
 	}
+	ImGui::EndChild();
 
+	ImGui::SameLine();
 
-	
+	ImGui::BeginChild("group_animal_overview", ImGui::GetContentRegionAvail(), true);
+	if (animal_population->m_initialized && animal_population->m_valid && animal != "" && (!(selected_group == nullptr) || show_all_animals))
+	{
+		if (ImGui::BeginTable("animal_table", 10, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable |
+							  ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersOuter))
+		{
+			ImGui::TableSetupColumn("Grp Idx");
+			ImGui::TableSetupColumn("Idx");
+			ImGui::TableSetupColumn("Gender");
+			ImGui::TableSetupColumn("Weight");
+			ImGui::TableSetupColumn("Score");
+			ImGui::TableSetupColumn("Is GO");
+			ImGui::TableSetupColumn("Fur Type");
+			ImGui::TableSetupColumn("Fur Type Id");
+			ImGui::TableSetupColumn("Visual Variation Seed");
+			ImGui::TableSetupColumn("Operations");
+			ImGui::TableHeadersRow();
+			ImGui::TableNextRow();
+
+			if (!show_all_animals)
+			{
+
+				if (sort.at(0))
+					std::sort(selected_group->m_animals.begin(), selected_group->m_animals.end(), AnimalGroup::cmpIdx);
+				else if (sort.at(1))
+					std::sort(selected_group->m_animals.begin(), selected_group->m_animals.end(), AnimalGroup::cmpHighestScore);
+				else if (sort.at(2))
+					std::sort(selected_group->m_animals.begin(), selected_group->m_animals.end(), AnimalGroup::cmpLowestScore);
+				else if (sort.at(3))
+					std::sort(selected_group->m_animals.begin(), selected_group->m_animals.end(), AnimalGroup::cmpHighestWeight);
+				else if (sort.at(4))
+					std::sort(selected_group->m_animals.begin(), selected_group->m_animals.end(), AnimalGroup::cmpLowestWeight);
+				else if (sort.at(5))
+					std::sort(selected_group->m_animals.begin(), selected_group->m_animals.end(), AnimalGroup::cmpFurTypeA);
+
+				auto it_animals = selected_group->m_animals.begin();
+				for (; it_animals != selected_group->m_animals.end(); ++it_animals)
+				{
+					int idx = std::distance(selected_group->m_animals.begin(), it_animals);
+					ImGui::TableSetColumnIndex(0);
+					ImGui::Text(std::to_string(selected_group->m_index).c_str());
+					ImGui::TableSetColumnIndex(1);
+					ImGui::Text(std::to_string(it_animals->m_idx).c_str());
+					ImGui::TableSetColumnIndex(2);
+					ImGui::Text(it_animals->m_gender.c_str());
+					ImGui::TableSetColumnIndex(3);
+					ImGui::Text(std::to_string(it_animals->m_weight).c_str());
+					ImGui::TableSetColumnIndex(4);
+					ImGui::Text(std::to_string(it_animals->m_score).c_str());
+					ImGui::TableSetColumnIndex(5);
+					ImGui::Text(std::to_string(it_animals->m_is_great_one).c_str());
+					ImGui::TableSetColumnIndex(6);
+					ImGui::Text(it_animals->m_fur_type.c_str());
+					ImGui::TableSetColumnIndex(7);
+					ImGui::Text(std::to_string(it_animals->m_fur_type_id).c_str());
+					ImGui::TableSetColumnIndex(8);
+					ImGui::Text(std::to_string(it_animals->m_visual_variation_seed).c_str());
+					ImGui::TableSetColumnIndex(9);
+
+					if (idx < selected_group->m_size - 1)
+						ImGui::TableNextRow();
+				}
+			}
+			else
+			{
+				AnimalGroup tmp_group;
+				std::vector<Animal> animals;
+				auto it_groups = groups.begin();
+				for (; it_groups != groups.end(); ++it_groups)
+					animals.insert(animals.end(), it_groups->m_animals.begin(), it_groups->m_animals.end());
+
+				tmp_group.m_animals = animals;
+				if (sort.at(0))
+					std::sort(tmp_group.m_animals.begin(), tmp_group.m_animals.end(), AnimalGroup::cmpIdx);
+				else if (sort.at(1))
+					std::sort(tmp_group.m_animals.begin(), tmp_group.m_animals.end(), AnimalGroup::cmpHighestScore);
+				else if (sort.at(2))
+					std::sort(tmp_group.m_animals.begin(), tmp_group.m_animals.end(), AnimalGroup::cmpLowestScore);
+				else if (sort.at(3))
+					std::sort(tmp_group.m_animals.begin(), tmp_group.m_animals.end(), AnimalGroup::cmpHighestWeight);
+				else if (sort.at(4))
+					std::sort(tmp_group.m_animals.begin(), tmp_group.m_animals.end(), AnimalGroup::cmpLowestWeight);
+				else if (sort.at(5))
+					std::sort(tmp_group.m_animals.begin(), tmp_group.m_animals.end(), AnimalGroup::cmpFurTypeA);
+
+				auto it_animals = tmp_group.m_animals.begin();
+				for (; it_animals != tmp_group.m_animals.end(); ++it_animals)
+				{
+					int idx = std::distance(tmp_group.m_animals.begin(), it_animals);
+					ImGui::TableSetColumnIndex(0);
+					ImGui::Text(std::to_string(it_animals->m_grp_idx).c_str());
+					ImGui::TableSetColumnIndex(1);
+					ImGui::Text(std::to_string(it_animals->m_idx).c_str());
+					ImGui::TableSetColumnIndex(2);
+					ImGui::Text(it_animals->m_gender.c_str());
+					ImGui::TableSetColumnIndex(3);
+					ImGui::Text(std::to_string(it_animals->m_weight).c_str());
+					ImGui::TableSetColumnIndex(4);
+					ImGui::Text(std::to_string(it_animals->m_score).c_str());
+					ImGui::TableSetColumnIndex(5);
+					ImGui::Text(std::to_string(it_animals->m_is_great_one).c_str());
+					ImGui::TableSetColumnIndex(6);
+					ImGui::Text(it_animals->m_fur_type.c_str());
+					ImGui::TableSetColumnIndex(7);
+					ImGui::Text(std::to_string(it_animals->m_fur_type_id).c_str());
+					ImGui::TableSetColumnIndex(8);
+					ImGui::Text(std::to_string(it_animals->m_visual_variation_seed).c_str());
+					ImGui::TableSetColumnIndex(9);
+
+					if (idx < animals.size() - 1)
+						ImGui::TableNextRow();
+				}
+
+			}
+
+			
+			
+			ImGui::EndTable();
+		}
+	}
 	ImGui::EndChild();
 
 	ImGui::End();
@@ -660,7 +826,7 @@ void ShowGroupInfo()
 								const std::shared_ptr<Animal> animal =
 									Animal::Create(animal_type, Animal::ResolveGender(edit_animal_gender),
 												   edit_animal_weight, edit_animal_score, boost::lexical_cast<bool>(edit_animal_str_igo),
-												   visual_variation_seed, edit_animal_idx);
+												   visual_variation_seed, edit_animal_idx, it_beg->m_index);
 								if (animal->IsValid())
 								{
 									animal_population->ReplaceAnimal(animal, it_beg->m_index, it_animal_beg->m_idx);

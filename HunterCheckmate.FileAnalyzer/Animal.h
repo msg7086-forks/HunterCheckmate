@@ -59,16 +59,17 @@ namespace HunterCheckmate_FileAnalyzer
 		std::string m_fur_type;
 		uint32_t m_fur_type_id;
 		uint32_t m_idx;
+		uint32_t m_grp_idx;
 		bool m_valid;
 
-		Animal(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx);
+		Animal(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx);
 		virtual ~Animal() = default;
 		Animal(const Animal& src) = default;
 		Animal(Animal&& src) = default;
 		Animal& operator=(const Animal& rhs) = default;
 		Animal& operator=(Animal&& rhs) = default;
 
-		static std::shared_ptr<Animal> Create(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx);
+		static std::shared_ptr<Animal> Create(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx);
 
 		static AnimalType ResolveAnimalType(std::string& name);
 		static std::string ResolveGender(const uint8_t gender_id);
@@ -92,8 +93,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class WildBoar : public Animal
 	{
 	public:
-		WildBoar(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		WildBoar(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Wild Boar";
@@ -157,8 +158,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class FallowDeer : public Animal
 	{
 	public:
-		FallowDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		FallowDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Fallow Deer";
@@ -170,8 +171,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class EuroBison : public Animal
 	{
 	public:
-		EuroBison(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		EuroBison(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "European Bison";
@@ -183,8 +184,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class RoeDeer : public Animal
 	{
 	public:
-		RoeDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		RoeDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Roe Deer";
@@ -197,8 +198,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class RedFox : public Animal
 	{
 	public:
-		RedFox(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		RedFox(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Red Fox";
@@ -211,8 +212,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class CanadaGoose : public Animal
 	{
 	public:
-		CanadaGoose(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		CanadaGoose(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Canada Goose";
@@ -224,8 +225,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class RedDeer : public Animal
 	{
 	public:
-		RedDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		RedDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Red Deer";
@@ -289,8 +290,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class EuroRabbit : public Animal
 	{
 	public:
-		EuroRabbit(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		EuroRabbit(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "European Rabbit";
@@ -302,8 +303,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Moose : public Animal
 	{
 	public:
-		Moose(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Moose(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Moose";
@@ -315,8 +316,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Jackrabbit : public Animal
 	{
 	public:
-		Jackrabbit(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Jackrabbit(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Jackrabbit";
@@ -329,8 +330,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Mallard : public Animal
 	{
 	public:
-		Mallard(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Mallard(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Mallard";
@@ -343,8 +344,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class BlackBear : public Animal
 	{
 	public:
-		BlackBear(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		BlackBear(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Black Bear";
@@ -357,8 +358,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class RooseveltElk : public Animal
 	{
 	public:
-		RooseveltElk(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		RooseveltElk(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Roosevelt Elk";
@@ -371,8 +372,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Coyote : public Animal
 	{
 	public:
-		Coyote(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Coyote(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Coyote";
@@ -385,8 +386,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class BlacktailDeer : public Animal
 	{
 	public:
-		BlacktailDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		BlacktailDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Blacktail Deer";
@@ -399,8 +400,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class WhitetailDeer : public Animal
 	{
 	public:
-		WhitetailDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		WhitetailDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Whitetail Deer";
@@ -412,8 +413,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class MuskDeer : public Animal
 	{
 	public:
-		MuskDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		MuskDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Musk Deer";
@@ -426,8 +427,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Reindeer : public Animal
 	{
 	public:
-		Reindeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Reindeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Reindeer";
@@ -440,8 +441,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class EurasianLynx : public Animal
 	{
 	public:
-		EurasianLynx(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		EurasianLynx(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Eurasian Lynx";
@@ -454,8 +455,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class BrownBear : public Animal
 	{
 	public:
-		BrownBear(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		BrownBear(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Brown Bear";
@@ -468,8 +469,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class BlueWildebeest : public Animal
 	{
 	public:
-		BlueWildebeest(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		BlueWildebeest(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Blue Wildebeest";
@@ -482,8 +483,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class SideStripedJackal : public Animal
 	{
 	public:
-		SideStripedJackal(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		SideStripedJackal(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Side-striped Jackal";
@@ -496,8 +497,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Gemsbok : public Animal
 	{
 	public:
-		Gemsbok(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Gemsbok(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Gemsbok";
@@ -510,8 +511,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class LesserKudu : public Animal
 	{
 	public:
-		LesserKudu(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		LesserKudu(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Lesser Kudu";
@@ -524,8 +525,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class ScrubHare : public Animal
 	{
 	public:
-		ScrubHare(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		ScrubHare(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Scrub Hare";
@@ -538,8 +539,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Lion : public Animal
 	{
 	public:
-		Lion(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Lion(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Lion";
@@ -552,8 +553,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Warthog : public Animal
 	{
 	public:
-		Warthog(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Warthog(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Warthog";
@@ -566,8 +567,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class CapeBuffalo : public Animal
 	{
 	public:
-		CapeBuffalo(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		CapeBuffalo(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Cape Buffalo";
@@ -580,8 +581,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Springbok : public Animal
 	{
 	public:
-		Springbok(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Springbok(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Springbok";
@@ -594,8 +595,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class WaterBuffalo : public Animal
 	{
 	public:
-		WaterBuffalo(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		WaterBuffalo(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Water Buffalo";
@@ -608,8 +609,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Puma : public Animal
 	{
 	public:
-		Puma(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Puma(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Puma";
@@ -622,8 +623,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Blackbuck : public Animal
 	{
 	public:
-		Blackbuck(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Blackbuck(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Blackbuck";
@@ -636,8 +637,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class CinnamonTeal : public Animal
 	{
 	public:
-		CinnamonTeal(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		CinnamonTeal(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Cinnamon Teal";
@@ -650,8 +651,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class MuleDeer : public Animal
 	{
 	public:
-		MuleDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		MuleDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Mule Deer";
@@ -664,8 +665,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class AxisDeer : public Animal
 	{
 	public:
-		AxisDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		AxisDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Axis Deer";
@@ -678,8 +679,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class HarlequinDuck : public Animal
 	{
 	public:
-		HarlequinDuck(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		HarlequinDuck(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Harlequin Duck";
@@ -692,8 +693,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Caribou : public Animal
 	{
 	public:
-		Caribou(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Caribou(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Caribou";
@@ -706,8 +707,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class GrizzlyBear : public Animal
 	{
 	public:
-		GrizzlyBear(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		GrizzlyBear(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Grizzly Bear";
@@ -720,8 +721,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class GrayWolf : public Animal
 	{
 	public:
-		GrayWolf(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		GrayWolf(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Gray Wolf";
@@ -734,8 +735,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class PlainsBison : public Animal
 	{
 	public:
-		PlainsBison(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		PlainsBison(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Plains Bison";
@@ -748,8 +749,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class SoutheasternSpanishIbex : public Animal
 	{
 	public:
-		SoutheasternSpanishIbex(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		SoutheasternSpanishIbex(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Southeastern Spanish Ibex";
@@ -762,8 +763,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class IberianWolf : public Animal
 	{
 	public:
-		IberianWolf(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		IberianWolf(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Iberian Wolf";
@@ -776,8 +777,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class IberianMuflon : public Animal
 	{
 	public:
-		IberianMuflon(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		IberianMuflon(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Iberian Muflon";
@@ -790,8 +791,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class BeceiteIbex : public Animal
 	{
 	public:
-		BeceiteIbex(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		BeceiteIbex(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Beceite Ibex";
@@ -804,8 +805,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class EuroHare : public Animal
 	{
 	public:
-		EuroHare(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		EuroHare(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "European Hare";
@@ -818,8 +819,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class RondaIbex : public Animal
 	{
 	public:
-		RondaIbex(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		RondaIbex(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Ronda Ibex";
@@ -832,8 +833,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class GredosIbex : public Animal
 	{
 	public:
-		GredosIbex(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		GredosIbex(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Gredos Ibex";
@@ -846,8 +847,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Pronghorn : public Animal
 	{
 	public:
-		Pronghorn(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Pronghorn(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Pronghorn";
@@ -860,8 +861,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class MountainLion : public Animal
 	{
 	public:
-		MountainLion(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		MountainLion(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Mountain Lion";
@@ -874,8 +875,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class MountainGoat : public Animal
 	{
 	public:
-		MountainGoat(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		MountainGoat(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Mountain Goat";
@@ -888,8 +889,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class BighornSheep : public Animal
 	{
 	public:
-		BighornSheep(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		BighornSheep(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Bighorn Sheep";
@@ -902,8 +903,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class MerriamTurkey : public Animal
 	{
 	public:
-		MerriamTurkey(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		MerriamTurkey(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Merriam Turkey";
@@ -916,8 +917,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class RockyMountainElk : public Animal
 	{
 	public:
-		RockyMountainElk(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		RockyMountainElk(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Rocky Mountain Elk";
@@ -930,8 +931,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class SikaDeer : public Animal
 	{
 	public:
-		SikaDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		SikaDeer(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Sika Deer";
@@ -944,8 +945,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Chamois : public Animal
 	{
 	public:
-		Chamois(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Chamois(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Chamois";
@@ -958,8 +959,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class FeralPig : public Animal
 	{
 	public:
-		FeralPig(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		FeralPig(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Feral Pig";
@@ -972,8 +973,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class FeralGoat : public Animal
 	{
 	public:
-		FeralGoat(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		FeralGoat(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Feral Goat";
@@ -986,8 +987,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class CollaredPeccary : public Animal
 	{
 	public:
-		CollaredPeccary(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		CollaredPeccary(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Collared Peccary";
@@ -1000,8 +1001,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class MexicanBobcat : public Animal
 	{
 	public:
-		MexicanBobcat(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		MexicanBobcat(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Mexican Bobcat";
@@ -1014,8 +1015,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class RioGrandeTurkey : public Animal
 	{
 	public:
-		RioGrandeTurkey(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		RioGrandeTurkey(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Rio Grande Turkey";
@@ -1028,8 +1029,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class RingNeckedPheasant : public Animal
 	{
 	public:
-		RingNeckedPheasant(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		RingNeckedPheasant(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Ring-necked Pheasant";
@@ -1042,8 +1043,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class AntelopeJackrabbit : public Animal
 	{
 	public:
-		AntelopeJackrabbit(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		AntelopeJackrabbit(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Antelope Jackrabbit";
@@ -1056,8 +1057,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class AmericanAlligator : public Animal
 	{
 	public:
-		AmericanAlligator(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		AmericanAlligator(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "American Alligator";
@@ -1070,8 +1071,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class WildHog : public Animal
 	{
 	public:
-		WildHog(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		WildHog(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Wild Hog";
@@ -1084,8 +1085,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class GrayFox : public Animal
 	{
 	public:
-		GrayFox(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		GrayFox(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Gray Fox";
@@ -1098,8 +1099,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class CommonRaccoon : public Animal
 	{
 	public:
-		CommonRaccoon(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		CommonRaccoon(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Common Raccoon";
@@ -1112,8 +1113,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class EasternWildTurkey : public Animal
 	{
 	public:
-		EasternWildTurkey(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		EasternWildTurkey(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Eastern Wild Turkey";
@@ -1126,8 +1127,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class EasternCottontailRabbit : public Animal
 	{
 	public:
-		EasternCottontailRabbit(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		EasternCottontailRabbit(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Eastern Cottontail Rabbit";
@@ -1140,8 +1141,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class BobwhiteQuail : public Animal
 	{
 	public:
-		BobwhiteQuail(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		BobwhiteQuail(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Bobwhite Quail";
@@ -1154,8 +1155,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class RaccoonDog : public Animal
 	{
 	public:
-		RaccoonDog(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		RaccoonDog(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Raccoon Dog";
@@ -1168,8 +1169,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class EurasianWigeon : public Animal
 	{
 	public:
-		EurasianWigeon(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		EurasianWigeon(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Eurasian Wigeon";
@@ -1182,8 +1183,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class TundraBeanGoose : public Animal
 	{
 	public:
-		TundraBeanGoose(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		TundraBeanGoose(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Tundra Bean Goose";
@@ -1196,8 +1197,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class EurasianTeal : public Animal
 	{
 	public:
-		EurasianTeal(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		EurasianTeal(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Eurasian Teal";
@@ -1210,8 +1211,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class BlackGrouse : public Animal
 	{
 	public:
-		BlackGrouse(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		BlackGrouse(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Black Grouse";
@@ -1224,8 +1225,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class Goldeneye : public Animal
 	{
 	public:
-		Goldeneye(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		Goldeneye(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Goldeneye";
@@ -1238,8 +1239,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class HazelGrouse : public Animal
 	{
 	public:
-		HazelGrouse(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		HazelGrouse(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Hazel Grouse";
@@ -1252,8 +1253,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class WesternCapercaillie : public Animal
 	{
 	public:
-		WesternCapercaillie(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		WesternCapercaillie(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Western Capercaillie";
@@ -1266,8 +1267,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class TuftedDuck : public Animal
 	{
 	public:
-		TuftedDuck(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		TuftedDuck(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Tufted Duck";
@@ -1280,8 +1281,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class RockPtarmigan : public Animal
 	{
 	public:
-		RockPtarmigan(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		RockPtarmigan(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Rock Ptarmigan";
@@ -1294,8 +1295,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class WillowPtarmigan : public Animal
 	{
 	public:
-		WillowPtarmigan(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		WillowPtarmigan(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Willow Ptarmigan";
@@ -1308,8 +1309,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class GreylagGoose : public Animal
 	{
 	public:
-		GreylagGoose(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		GreylagGoose(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Gerylag Goose";
@@ -1322,8 +1323,8 @@ namespace HunterCheckmate_FileAnalyzer
 	class MountainHare : public Animal
 	{
 	public:
-		MountainHare(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx)
-			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx)
+		MountainHare(AnimalType animal_type, uint8_t gender, float weight, float score, bool is_great_one, uint32_t visual_variation_seed, uint32_t idx, uint32_t grp_idx)
+			: Animal(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx)
 		{
 
 			m_name = "Mountain Hare";

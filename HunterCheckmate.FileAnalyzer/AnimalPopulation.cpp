@@ -158,7 +158,7 @@ namespace HunterCheckmate_FileAnalyzer
 						uint32_t visual_variation_seed = GetVisualVariationSeed(it_begin->first, j, k);
 
 						std::shared_ptr<Animal> animal_data = Animal::Create(animal_type, gender_id,
-							weight, score, is_great_one, visual_variation_seed, k);
+							weight, score, is_great_one, visual_variation_seed, k, j);
 						animal_name = animal_data->m_name;
 
 						if (animal_data->m_valid)

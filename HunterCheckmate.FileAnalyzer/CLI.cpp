@@ -114,7 +114,7 @@ namespace HunterCheckmate_FileAnalyzer
 
 					uint32_t visual_variation_seed = Animal::CreateVisualVariationSeed(animal_type, gender, fur_type);
 
-					const std::shared_ptr<Animal> animal = Animal::Create(animal_type, Animal::ResolveGender(gender), std::stof(weight), std::stof(score), boost::lexical_cast<bool>(is_great_one), visual_variation_seed, animal_idx);
+					const std::shared_ptr<Animal> animal = Animal::Create(animal_type, Animal::ResolveGender(gender), std::stof(weight), std::stof(score), boost::lexical_cast<bool>(is_great_one), visual_variation_seed, animal_idx, group_idx);
 
 					if (animal->IsValid())
 					{
