@@ -217,6 +217,16 @@ namespace HunterCheckmate_FileAnalyzer
 		return 0.0f;
 	}
 
+	float Animal::GetMinWeight()
+	{
+		return 0.f;
+	}
+
+	float Animal::GetMinScore()
+	{
+		return 0.f;
+	}
+	
 	AnimalType Animal::ResolveAnimalType(std::string& name)
 	{
 		bs::to_lower(name);
@@ -12903,15 +12913,29 @@ namespace HunterCheckmate_FileAnalyzer
 
 	uint32_t Animal::CreateVisualVariationSeed(const AnimalType animal_type, const std::string& str_gender, const std::string& fur_type) 
 	{
+		auto start_time = std::chrono::system_clock::now();
 		uint32_t fur_type_id = 0;
 		for (fur_type_id; fur_type_id <= 20; fur_type_id++)
 			if (ResolveFurTypeId(animal_type, fur_type_id) == fur_type)
 				break;
 
-		uint32_t visual_variation_seed = 1000000000;
+		bool checked_inf = false;
+		uint32_t visual_variation_seed = 100000;
 		for (visual_variation_seed; visual_variation_seed <= MAXUINT32; visual_variation_seed++)
+		{
 			if (ResolveVisualVariationSeed(animal_type, str_gender, visual_variation_seed) == fur_type_id)
 				break;
+			auto loop_time = std::chrono::system_clock::now();
+			auto total = loop_time - start_time;
+			if (std::chrono::duration_cast<std::chrono::seconds>(total).count() > 1 && checked_inf == false)
+			{
+				fur_type_id += 1;
+				for (fur_type_id; fur_type_id <= 20; fur_type_id++)
+					if (ResolveFurTypeId(animal_type, fur_type_id) == fur_type)
+						break;
+				checked_inf = true;
+			}
+		}
 
 		return visual_variation_seed;
 	}

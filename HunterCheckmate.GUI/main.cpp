@@ -27,6 +27,39 @@ void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+static void ShowFileSelector(bool* p_open);
+static void ShowMainWindow();
+static void ShowGroupInfo();
+
+
+using namespace HunterCheckmate_FileAnalyzer;
+
+bool keep_open = true;
+std::string str_input_file_path = "C:/Users/oleSQL/Documents/thehunter working/pop/decomp_animal_population_0";
+boost::filesystem::path input_file_path = "C:/Users/oleSQL/Documents/thehunter working/pop/decomp_animal_population_0";
+std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, input_file_path);
+std::shared_ptr<ReserveData> reserve_data = std::make_shared<ReserveData>(ReserveData::ResolveFileNameToInt(input_file_path.filename().generic_string()));
+std::unique_ptr<AnimalPopulation> animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
+
+std::string animal = "";
+// idx, weight, score
+std::vector<bool> sort = { true, false, false, false, false, false };
+
+int edit_animal_idx;
+std::string edit_animal_gender;
+float edit_animal_weight;
+float edit_animal_score;
+std::string edit_animal_str_igo;
+std::string edit_animal_str_fur_type;
+bool expand_groups = false;
+bool collapse_groups = false;
+bool show_file_selector = false;
+
+bool show_groups = true;
+bool show_animals = false;
+
+
+
 // Main code
 int main(int, char**)
 {
@@ -99,29 +132,6 @@ int main(int, char**)
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	using namespace HunterCheckmate_FileAnalyzer;
-
-	bool keep_open = true;
-	boost::filesystem::path tmp_path = boost::filesystem::initial_path<boost::filesystem::path>();
-	tmp_path = "C:\\Users\\oleSQL\\Documents\\thehunter working\\pop";
-	std::string str_input_file_path = "C:\\Users\\oleSQL\\Documents\\thehunter working\\pop\\decomp_animal_population_0";
-	boost::filesystem::path input_file_path = "C:\\Users\\oleSQL\\Documents\\thehunter working\\pop\\decomp_animal_population_0";
-	boost::filesystem::path input_file_name = "decomp_animal_population_0";
-	std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, input_file_path);
-	std::shared_ptr<ReserveData> reserve_data = std::make_shared<ReserveData>(static_cast<uint8_t>(std::stoi(std::string(1, input_file_name.generic_string().back()))));
-	std::unique_ptr<AnimalPopulation> animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
-
-	std::string animal = "";
-	// idx, weight, score
-	std::vector<bool> sort = { true, false, false, false, false };
-
-	int edit_animal_idx;
-	std::string edit_animal_gender;
-	float edit_animal_weight;
-	float edit_animal_score;
-	std::string edit_animal_str_igo;
-	std::string edit_animal_str_vvs;
-	bool is_editing = false;
 
     // Main loop
     bool done = false;
@@ -145,213 +155,9 @@ int main(int, char**)
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | 
-										ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		if (show_file_selector) ShowFileSelector(&show_file_selector);
 
-		ImVec2 window_pos = viewport->WorkPos;
-		ImVec2 window_size = viewport->WorkSize;
-
-		ImGui::SetNextWindowPos(window_pos);
-		ImGui::SetNextWindowSize(window_size);
-		ImGui::SetNextWindowViewport(viewport->ID);
-
-		ImGui::Begin("HunterCheckmate", NULL, window_flags);
-		ImGui::BeginChild("file_path", ImVec2(ImGui::GetContentRegionAvail().x, 80.f), true);
-
-		ImGui::Text("Enter the location of your decompiled population file:");
-
-		ImGui::InputText(" ", &str_input_file_path);
-		input_file_path = str_input_file_path;
-		input_file_name = input_file_path.filename();
-
-
-		if (ImGui::Button("Analyze"))
-		{
-			animal = "";
-			file_handler = std::make_shared<FileHandler>(Endian::Little, input_file_path);
-			reserve_data = std::make_shared<ReserveData>(static_cast<uint8_t>(std::stoi(std::string(1, input_file_name.generic_string().back()))));
-			animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
-			if (animal_population->Deserialize())
-			{
-				animal_population->MapAnimals();
-				std::cout << "[DEBUG] Successfully analyzed population file!\n";
-			}
-		}
-
-		ImGui::EndChild();
-
-		ImGui::BeginChild("info", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), true);
-
-		ImGui::BeginChild("sort", ImVec2(ImGui::GetContentRegionAvail().x, 80.f), false);
-
-		ImGui::Text("Show");
-
-
-		if (animal_population->m_initialized && animal_population->m_valid)
-		{
-			auto it_group = animal_population->m_animals.begin();
-			for (; it_group != animal_population->m_animals.end(); ++it_group)
-			{
-				std::string show_animal = it_group->second.at(0).m_name;
-				std::vector<AnimalGroup> groups;
-				ImGui::SameLine();
-				if (ImGui::Button(show_animal.c_str()))
-				{
-					animal = show_animal;
-				}
-			}
-		}
-
-		ImGui::Text("Sort by ");
-		ImGui::SameLine();
-		if (ImGui::Button("Index"))
-		{
-			sort = { true, false, false, false, false };
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Score Down"))
-		{
-			sort = { false, true, false , false, false};
-		}		
-		ImGui::SameLine();
-		if (ImGui::Button("Score Up"))
-		{
-			sort = { false, false, true, false, false };
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Weight Down"))
-		{
-			sort = { false, false, false, true, false };
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Weight Up"))
-		{
-			sort = { false, false, false, false, true };
-		}
-
-
-		ImGui::EndChild();
-		
-		if (animal_population->m_initialized && animal_population->m_valid) 
-		{
-			if (animal != "")
-			{
-				const AnimalType animal_type = Animal::ResolveAnimalType(animal);
-				std::vector<AnimalGroup> groups = animal_population->m_animals.at(animal_type);
-				uint32_t total_animals = 0;
-
-				if (sort.at(0))
-					std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpIdx);
-				else if (sort.at(1))
-					std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpHighestScore);
-				else if (sort.at(2))
-					std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpLowestScore);
-				else if (sort.at(3))
-					std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpHighestWeight);
-				else if (sort.at(4))
-					std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpLowestWeight);
-
-				auto it_beg = groups.begin();
-				for (; it_beg != groups.end(); ++it_beg)
-				{
-					std::ostringstream group_info;
-					group_info << "[ " << std::setw(3) << it_beg->m_index
-						<< " | #" << std::setw(2) << it_beg->m_size
-						<< " | " << std::setw(12) << it_beg->m_spawn_area_id
-						<< " | " << std::setw(8) << it_beg->m_max_weight
-						<< " | " << std::setw(8) << it_beg->m_max_score
-						<< " ]";
-
-					if (sort.at(0))
-						std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpIdx);
-					else if (sort.at(1))
-						std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpHighestScore);
-					else if (sort.at(2))
-						std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpLowestScore);
-					else if (sort.at(3))
-						std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpHighestWeight);
-					else if (sort.at(4))
-						std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpLowestWeight);
-
-					if (ImGui::TreeNode((void*)(uintptr_t)&it_beg->m_spawn_area_id, group_info.str().c_str()))
-					{
-						auto it_animal_beg = it_beg->m_animals.begin();
-						for (; it_animal_beg != it_beg->m_animals.end(); ++it_animal_beg)
-						{
-							std::ostringstream animal_info;
-							animal_info << "[ " << std::setw(2) << it_animal_beg->m_idx
-								<< " | " << std::setw(6) << it_animal_beg->m_gender
-								<< " | " << std::setw(8) << it_animal_beg->m_weight
-								<< " | " << std::setw(8) << it_animal_beg->m_score
-								<< " | " << std::setw(1) << static_cast<int>(it_animal_beg->m_is_great_one)
-								<< " | " << std::setw(15) << it_animal_beg->m_fur_type
-								<< " | " << std::setw(2) << static_cast<unsigned int>(it_animal_beg->m_fur_type_id)
-								<< " | " << std::setw(10) << it_animal_beg->m_visual_variation_seed
-								<< " ]";
-
-							ImGui::Selectable(animal_info.str().c_str());
-							if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
-							{
-								ImGui::Text("This a popup for \"%s\"!", animal_info.str().c_str());
-
-								if (is_editing == false)
-								{
-									edit_animal_idx = static_cast<int>(it_animal_beg->m_idx);
-									edit_animal_gender = it_animal_beg->m_gender;
-									edit_animal_weight = it_animal_beg->m_weight;
-									edit_animal_score = it_animal_beg->m_score;
-									edit_animal_str_igo = std::to_string(it_animal_beg->m_is_great_one);
-									edit_animal_str_vvs = std::to_string(it_animal_beg->m_visual_variation_seed);
-									is_editing = true;
-								}
-
-								ImGui::InputFloat("Weight", &edit_animal_weight);
-								ImGui::InputFloat("Score", &edit_animal_score);
-								ImGui::InputText("IGO", &edit_animal_str_igo);
-								ImGui::InputText("VVS", &edit_animal_str_vvs);
-
-								if (ImGui::Button("Save"))
-								{
-									uint32_t edit_animal_vvs = std::stoul(edit_animal_str_vvs);
-									const std::shared_ptr<Animal> animal = 
-										Animal::Create(animal_type, Animal::ResolveGender(edit_animal_gender), 
-													   edit_animal_weight, edit_animal_score, boost::lexical_cast<bool>(edit_animal_str_igo),
-													   edit_animal_vvs, edit_animal_idx);
-									if (animal->IsValid()) 
-									{
-										animal_population->ReplaceAnimal(animal, it_beg->m_index, it_animal_beg->m_idx);
-									}
-									file_handler = std::make_shared<FileHandler>(Endian::Little, input_file_path);
-									reserve_data = std::make_shared<ReserveData>(static_cast<uint8_t>(std::stoi(std::string(1, input_file_name.generic_string().back()))));
-									animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
-									if (animal_population->Deserialize())
-									{
-										animal_population->MapAnimals();
-									}
-									ImGui::CloseCurrentPopup();
-									is_editing = false;
-								}
-								ImGui::SameLine();
-								if (ImGui::Button("Exit"))
-								{
-									ImGui::CloseCurrentPopup();
-									is_editing = false;
-								}
-
-								ImGui::EndPopup();
-							}
-						}
-						ImGui::TreePop();
-					}
-
-				}
-			}
-		}
-
-		ImGui::EndChild();
-
-		ImGui::End();
+		ShowMainWindow();
 
         ImGui::ShowDemoWindow();
 
@@ -484,4 +290,412 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         break;
     }
     return ::DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void ShowFileSelector(bool* p_open)
+{
+	ImGuiViewport* vp = ImGui::GetMainViewport();
+	ImVec2 size = ImVec2(vp->WorkSize.x / 2.f, vp->WorkSize.y / 2.f);
+	ImVec2 pos = ImVec2(vp->GetCenter().x - (size.x / 2.f), vp->GetCenter().y - (size.y / 2.f));
+	ImGui::SetNextWindowPos(pos);
+	ImGui::SetNextWindowSize(size);
+	ImGui::SetNextWindowViewport(vp->ID);
+
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoNavFocus;
+
+	if (ImGui::Begin("File Selector", p_open, window_flags))
+	{
+		ImGui::BeginChild("file_path", ImVec2(ImGui::GetContentRegionAvail().x, 80.f), true);
+		ImGui::Text("Enter the location of your decompiled population file:");
+		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+		ImGui::InputText(" ", &str_input_file_path);
+		input_file_path = str_input_file_path;
+		ImGui::EndChild();
+
+		ImGui::BeginChild("file_browser", ImVec2(ImGui::GetContentRegionAvail().x, 200.f), true);
+		if (ImGui::Button(".."))
+		{
+			str_input_file_path = input_file_path.parent_path().generic_string();
+			input_file_path = input_file_path.parent_path();
+		}
+		if (boost::filesystem::exists(input_file_path))
+		{
+			if (boost::filesystem::is_directory(input_file_path))
+			{
+				for (boost::filesystem::directory_entry& x : boost::filesystem::directory_iterator(input_file_path))
+				{
+					if (boost::filesystem::is_directory(x.path()))
+					{
+						if (ImGui::Button(x.path().filename().generic_string().c_str()))
+						{
+							str_input_file_path = x.path().generic_string();
+							input_file_path = x.path();
+
+						}
+					}
+					else
+					{
+						if (ImGui::Selectable(x.path().filename().generic_string().c_str()))
+						{
+							str_input_file_path = x.path().generic_string();
+							input_file_path = x.path();
+						}
+					}
+				}
+			}
+			else
+			{
+				for (boost::filesystem::directory_entry& x : boost::filesystem::directory_iterator(input_file_path.parent_path()))
+				{
+					if (boost::filesystem::is_directory(x.path()))
+					{
+						if (ImGui::Button(x.path().filename().generic_string().c_str()))
+						{
+							str_input_file_path = x.path().generic_string();
+							input_file_path = x.path();
+
+						}
+					}
+					else
+					{
+						if (ImGui::Selectable(x.path().filename().generic_string().c_str()))
+						{
+							str_input_file_path = x.path().generic_string();
+							input_file_path = x.path();
+						}
+					}
+				}
+			}
+		}
+		ImGui::EndChild();
+
+		ImGui::BeginChild("file_actions", ImGui::GetContentRegionAvail(), true);
+		if (ImGui::Button("Analyze"))
+		{
+			animal = "";
+			file_handler = std::make_shared<FileHandler>(Endian::Little, input_file_path);
+			reserve_data = std::make_shared<ReserveData>(ReserveData::ResolveFileNameToInt(input_file_path.filename().generic_string()));
+			animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
+			if (animal_population->Deserialize())
+			{
+				animal_population->MapAnimals();
+				std::cout << "[DEBUG] Successfully analyzed population file!\n";
+				show_file_selector = false;
+			}
+			else
+			{
+				ImGui::OpenPopup("file_failed_loading");
+
+			}
+		}
+		size = ImVec2(180, 60);
+		pos = ImVec2(vp->GetCenter().x - (size.x / 2.f), vp->GetCenter().y - (size.y / 2.f));
+		ImGui::SetNextWindowPos(pos);
+		ImGui::SetNextWindowSize(size);
+		ImGui::SetNextWindowViewport(vp->ID);
+		window_flags |= ImGuiWindowFlags_NoTitleBar;
+		if (ImGui::BeginPopupModal("file_failed_loading", (bool*)0, window_flags))
+		{
+			ImGui::Text("Invalid file selected!");
+			if (ImGui::Button("Ok"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+		ImGui::EndChild();
+
+		ImGui::End();
+	}
+}
+
+void ShowMainWindow()
+{
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	const ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+	ImVec2 window_pos = viewport->WorkPos;
+	ImVec2 window_size = viewport->WorkSize;
+
+	ImGui::SetNextWindowPos(window_pos);
+	ImGui::SetNextWindowSize(window_size);
+	ImGui::SetNextWindowViewport(viewport->ID);
+
+	ImGui::Begin("HunterCheckmate", NULL, window_flags);
+
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			ImGui::MenuItem("Load", NULL, &show_file_selector);
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Settings"))
+		{
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
+	ImGui::BeginChild("sort", ImVec2(ImGui::GetContentRegionAvail().x, 90.f), true);
+	if (ImGui::BeginTabBar("animal_selection", ImGuiTabBarFlags_FittingPolicyResizeDown))
+	{
+		if (animal_population->m_initialized && animal_population->m_valid)
+		{
+			auto it_group = animal_population->m_animals.begin();
+			for (; it_group != animal_population->m_animals.end(); ++it_group)
+			{
+				std::string show_animal = it_group->second.at(0).m_name;
+				if (ImGui::BeginTabItem(show_animal.c_str()))
+				{
+					animal = show_animal;
+					ImGui::EndTabItem();
+				}
+			}
+		}
+		ImGui::EndTabBar();
+	}
+
+	ImGui::Text("Sort by ");
+	ImGui::SameLine();
+	if (ImGui::Button("Index"))
+	{
+		sort = { true, false, false, false, false, false };
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Score Down"))
+	{
+		sort = { false, true, false , false, false, false };
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Score Up"))
+	{
+		sort = { false, false, true, false, false, false };
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Weight Down"))
+	{
+		sort = { false, false, false, true, false, false };
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Weight Up"))
+	{
+		sort = { false, false, false, false, true, false };
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Fur Type"))
+	{
+		sort = { false, false, false, false, false, true };
+	}
+	ImGui::SameLine();
+	ImGui::Text("Settings");
+	ImGui::SameLine();
+	if (ImGui::Button("Expand Groups"))
+	{
+		if (expand_groups == false)
+		{
+			expand_groups = true;
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Collapse Groups"))
+	{
+		if (collapse_groups == false)
+		{
+			collapse_groups = true;
+		}
+	}
+
+	ImGui::EndChild();
+
+	ImGui::BeginChild("groups", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), true);
+
+	if (animal_population->m_initialized && animal_population->m_valid)
+	{
+		ShowGroupInfo();
+	}
+
+
+	
+	ImGui::EndChild();
+
+	ImGui::End();
+}
+
+void ShowGroupInfo()
+{
+	if (animal != "")
+	{
+		const AnimalType animal_type = Animal::ResolveAnimalType(animal);
+		std::vector<AnimalGroup> groups = animal_population->m_animals.at(animal_type);
+		uint32_t total_animals = 0;
+
+		if (sort.at(0))
+			std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpIdx);
+		else if (sort.at(1))
+			std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpHighestScore);
+		else if (sort.at(2))
+			std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpLowestScore);
+		else if (sort.at(3))
+			std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpHighestWeight);
+		else if (sort.at(4))
+			std::sort(groups.begin(), groups.end(), AnimalPopulation::cmpLowestWeight);
+
+		auto it_beg = groups.begin();
+		for (; it_beg != groups.end(); ++it_beg)
+		{
+			std::ostringstream group_info;
+			group_info << "[ " << std::setw(3) << it_beg->m_index
+				<< " | #" << std::setw(2) << it_beg->m_size
+				<< " | " << std::setw(12) << it_beg->m_spawn_area_id
+				<< " | " << std::setw(8) << it_beg->m_max_weight
+				<< " | " << std::setw(8) << it_beg->m_max_score
+				<< " ]";
+
+			if (sort.at(0))
+				std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpIdx);
+			else if (sort.at(1))
+				std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpHighestScore);
+			else if (sort.at(2))
+				std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpLowestScore);
+			else if (sort.at(3))
+				std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpHighestWeight);
+			else if (sort.at(4))
+				std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpLowestWeight);
+			else if (sort.at(5))
+				std::sort(it_beg->m_animals.begin(), it_beg->m_animals.end(), AnimalGroup::cmpFurTypeA);
+
+			if (expand_groups == true)
+			{
+				ImGui::SetNextItemOpen(true);
+			}
+			else if (collapse_groups)
+			{
+				ImGui::SetNextItemOpen(false);
+			}
+
+			if (ImGui::CollapsingHeader(group_info.str().c_str()))
+			{
+				if (ImGui::BeginTable("animal_table", 9, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable |
+									  ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersOuter))
+				{
+					ImGui::TableSetupColumn("Idx");
+					ImGui::TableSetupColumn("Gender");
+					ImGui::TableSetupColumn("Weight");
+					ImGui::TableSetupColumn("Score");
+					ImGui::TableSetupColumn("Is GO");
+					ImGui::TableSetupColumn("Fur Type");
+					ImGui::TableSetupColumn("Fur Type Id");
+					ImGui::TableSetupColumn("Visual Variation Seed");
+					ImGui::TableSetupColumn("Operations");
+					ImGui::TableHeadersRow();
+					ImGui::TableNextRow();
+
+					auto it_animal_beg = it_beg->m_animals.begin();
+					for (; it_animal_beg != it_beg->m_animals.end(); ++it_animal_beg)
+					{
+						int idx = std::distance(it_beg->m_animals.begin(), it_animal_beg);
+						ImGui::TableSetColumnIndex(0);
+						ImGui::Text(std::to_string(it_animal_beg->m_idx).c_str());
+						ImGui::TableSetColumnIndex(1);
+						ImGui::Text(it_animal_beg->m_gender.c_str());
+						ImGui::TableSetColumnIndex(2);
+						ImGui::Text(std::to_string(it_animal_beg->m_weight).c_str());
+						ImGui::TableSetColumnIndex(3);
+						ImGui::Text(std::to_string(it_animal_beg->m_score).c_str());
+						ImGui::TableSetColumnIndex(4);
+						ImGui::Text(std::to_string(it_animal_beg->m_is_great_one).c_str());
+						ImGui::TableSetColumnIndex(5);
+						ImGui::Text(it_animal_beg->m_fur_type.c_str());
+						ImGui::TableSetColumnIndex(6);
+						ImGui::Text(std::to_string(it_animal_beg->m_fur_type_id).c_str());
+						ImGui::TableSetColumnIndex(7);
+						ImGui::Text(std::to_string(it_animal_beg->m_visual_variation_seed).c_str());
+						ImGui::TableSetColumnIndex(8);
+
+						ImGui::PushID(it_animal_beg->m_visual_variation_seed);
+						if (ImGui::Button("Edit"))
+						{
+							edit_animal_idx = static_cast<int>(it_animal_beg->m_idx);
+							edit_animal_gender = it_animal_beg->m_gender;
+							edit_animal_weight = it_animal_beg->m_weight;
+							edit_animal_score = it_animal_beg->m_score;
+							edit_animal_str_igo = std::to_string(it_animal_beg->m_is_great_one);
+							edit_animal_str_fur_type = it_animal_beg->m_fur_type;
+						}
+
+						ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+						ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+						if (ImGui::BeginPopupContextItem((const char*)0, ImGuiPopupFlags_MouseButtonLeft))
+						{
+							const char* items[] = { "male", "female" };
+							static int item_current_idx = 0; // Here we store our selection data as an index.
+							const char* combo_preview_value = edit_animal_gender.c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
+							if (ImGui::BeginCombo("Gender", combo_preview_value))
+							{
+								for (int n = 0; n < 2; n++)
+								{
+									const bool is_selected = (item_current_idx == n);
+									if (ImGui::Selectable(items[n], is_selected))
+										item_current_idx = n;
+
+									// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+									if (is_selected)
+										ImGui::SetItemDefaultFocus();
+								}
+								edit_animal_gender = items[item_current_idx];
+								ImGui::EndCombo();
+							}
+							//ImGui::InputText("Gender", &edit_animal_gender);
+							ImGui::InputFloat("Weight", &edit_animal_weight);
+							ImGui::InputFloat("Score", &edit_animal_score);
+							ImGui::InputText("IGO", &edit_animal_str_igo);
+							ImGui::InputText("Fur Type", &edit_animal_str_fur_type);
+							if (ImGui::Button("Save"))
+							{
+								uint32_t visual_variation_seed = Animal::CreateVisualVariationSeed(animal_type, edit_animal_gender, edit_animal_str_fur_type);
+								const std::shared_ptr<Animal> animal =
+									Animal::Create(animal_type, Animal::ResolveGender(edit_animal_gender),
+												   edit_animal_weight, edit_animal_score, boost::lexical_cast<bool>(edit_animal_str_igo),
+												   visual_variation_seed, edit_animal_idx);
+								if (animal->IsValid())
+								{
+									animal_population->ReplaceAnimal(animal, it_beg->m_index, it_animal_beg->m_idx);
+								}
+								file_handler = std::make_shared<FileHandler>(Endian::Little, input_file_path);
+								reserve_data = std::make_shared<ReserveData>(ReserveData::ResolveFileNameToInt(input_file_path.filename().generic_string()));
+								animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
+								if (animal_population->Deserialize())
+								{
+									animal_population->MapAnimals();
+								}
+								ImGui::CloseCurrentPopup();
+							}
+							ImGui::SameLine();
+							if (ImGui::Button("Exit"))
+							{
+								ImGui::CloseCurrentPopup();
+							}
+
+							ImGui::EndPopup();
+						}
+
+						ImGui::PopID();
+
+						if (idx < it_beg->m_size - 1)
+							ImGui::TableNextRow();
+					}
+
+					ImGui::EndTable();
+				}
+			}
+
+		}
+
+		expand_groups = false;
+		collapse_groups = false;
+	}
 }

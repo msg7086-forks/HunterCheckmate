@@ -19,13 +19,13 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 	private:
 		Endian endian;
-		fs::path file_path;
 		fs::fstream fstream;
 	public:
 		FileHandler() = default;
 		FileHandler(Endian endian, const fs::path& file_path);
 		FileHandler(const fs::path& file_path);
 		~FileHandler() = default;
+		fs::path file_path;
 
 		template<class T>
 		void read(T* data, uint32_t offset, size_t size = 0)

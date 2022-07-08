@@ -62,8 +62,13 @@ namespace HunterCheckmate_FileAnalyzer
 		case (Primitive::FLOAT):
 			member->size = sizeof(float);
 			break;
+		case (Primitive::UINT16_T):
+			member->size = sizeof(uint16_t);
 		case (Primitive::UINT8_T):
 			member->size = sizeof(uint8_t);
+			break;
+		case (Primitive::STRING):
+			member->size = sizeof(uint64_t);
 			break;
 		case(Primitive::NONE):
 		default:
@@ -403,5 +408,15 @@ namespace HunterCheckmate_FileAnalyzer
 		if (!m_valid) return false;
 		m_initialized = DeserializeHeader() && DeserializeInstanceHeader() && DeserializeTypedefHeader() && DeserializeNametableHeader() && DeserializeInstances();
 		return m_initialized ;
+	}
+
+	bool AdfFile::Compress()
+	{
+		return true;
+	}
+
+	bool AdfFile::Decompress()
+	{
+		return true;
 	}
 }

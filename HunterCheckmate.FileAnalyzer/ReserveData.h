@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <map>
 #include "AnimalTypeEnum.h"
+#include <cctype>
+#include <string>
 
 namespace HunterCheckmate_FileAnalyzer
 {
@@ -22,5 +24,7 @@ namespace HunterCheckmate_FileAnalyzer
 		ReserveData& operator=(ReserveData&& rhs) = default;
 
 		uint32_t GetNameHash(AnimalType animal_type);
+
+		static uint8_t ResolveFileNameToInt(std::string fn);
 	};
 }

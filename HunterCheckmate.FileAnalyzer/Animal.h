@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <iomanip>
+#include <chrono>
 #include "Windows.h"
 #include <boost/algorithm/string.hpp>
 
@@ -75,7 +76,9 @@ namespace HunterCheckmate_FileAnalyzer
 		static uint32_t CreateVisualVariationSeed(const AnimalType animal_type, const std::string& str_gender, const std::string& fur_type);
 
 		std::vector<char> GetByteStream();
+		virtual float GetMinWeight();
 		virtual float GetMaxWeight();
+		virtual float GetMinScore();
 		virtual float GetMaxScore();
 
 		bool IsValid() const;
@@ -83,6 +86,8 @@ namespace HunterCheckmate_FileAnalyzer
 		friend std::ostream& operator<<(std::ostream& out, const Animal& data);
 	};
 
+
+	// Write max/min weight/score of each from animal_scoring.bin.xlsx
 #pragma region Animals
 	class WildBoar : public Animal
 	{
@@ -95,6 +100,58 @@ namespace HunterCheckmate_FileAnalyzer
 			m_valid = Verify();
 		}
 		~WildBoar() override = default;
+
+		float GetMinWeight()
+		{
+			if (m_gender == "male")
+			{
+				return 32.f;
+			}
+			else if (m_gender == "female")
+			{
+				return 25.f;
+			}
+			return 0.f;
+		}
+
+		float GetMaxWeight()
+		{
+			if (m_gender == "male")
+			{
+				return 240.f;
+			}
+			else if (m_gender == "female")
+			{
+				return 168.f;
+			}
+			return 0.f;
+		}
+
+		float GetMinScore()
+		{
+			if (m_gender == "male")
+			{
+				return 7.f;
+			}
+			else if (m_gender == "female")
+			{
+				return 7.f;
+			}
+			return 0.f;
+		}
+
+		float GetMaxScore()
+		{
+			if (m_gender == "male")
+			{
+				return 159.5f;
+			}
+			else if (m_gender == "female")
+			{
+				return 81.5f;
+			}
+			return 0.f;
+		}
 	};
 
 	class FallowDeer : public Animal
@@ -175,6 +232,58 @@ namespace HunterCheckmate_FileAnalyzer
 			m_valid = Verify();
 		}
 		~RedDeer() override = default;
+
+		float GetMinWeight()
+		{
+			if (m_gender == "male")
+			{
+				return 160.f;
+			}
+			else if (m_gender == "female")
+			{
+				return 120.f;
+			}
+			return 0.f;
+		}
+
+		float GetMaxWeight()
+		{
+			if (m_gender == "male")
+			{
+				return 240.f;
+			}
+			else if (m_gender == "female")
+			{
+				return 170.f;
+			}
+			return 0.f;
+		}
+
+		float GetMinScore()
+		{
+			if (m_gender == "male")
+			{
+				return 44.626953125f;
+			}
+			else if (m_gender == "female")
+			{
+				return 0.f;
+			}
+			return 0.f;
+		}
+
+		float GetMaxScore()
+		{
+			if (m_gender == "male")
+			{
+				return 274.014526367187f;
+			}
+			else if (m_gender == "female")
+			{
+				return 0.f;
+			}
+			return 0.f;
+		}
 	};
 
 	class EuroRabbit : public Animal

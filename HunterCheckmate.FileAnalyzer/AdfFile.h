@@ -21,10 +21,12 @@ namespace HunterCheckmate_FileAnalyzer
 	enum class Primitive : uint32_t
 	{
 		UINT8_T = 0xCA2821D,
+		UINT16_T = 0x86D152BD,
 		UINT32_T = 0x075E4E4F,
 		UINT64_T = 0xA139E01F,
 		SINT32_T = 0x192FE633,
 		FLOAT = 0x7515A207,
+		STRING = 0x8955583E,
 		NONE = 0x0
 	};
 
@@ -201,5 +203,7 @@ namespace HunterCheckmate_FileAnalyzer
 		~AdfFile() = default;
 
 		bool Deserialize();
+		bool Compress();
+		bool Decompress();
 	};
 }

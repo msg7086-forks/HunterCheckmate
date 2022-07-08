@@ -197,4 +197,12 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		return m_animals_hash.at(animal_type);
 	}
+	uint8_t ReserveData::ResolveFileNameToInt(std::string fn)
+	{
+		size_t i = 0;
+		for (; i < fn.length(); i++) { if (isdigit(fn[i])) break;  }
+		fn = fn.substr(i, fn.length() - 1);
+		uint8_t id = std::stoi(fn);
+		return id;
+	}
 }
