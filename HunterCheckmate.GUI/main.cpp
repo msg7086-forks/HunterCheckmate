@@ -162,7 +162,7 @@ int main(int, char**)
 
 		ShowMainWindow();
 
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
 
 
         // Rendering
@@ -523,7 +523,7 @@ void ShowMainWindow()
 
 	//ImGui::EndChild();
 
-	ImGui::BeginChild("group_overview", ImVec2(220.f, ImGui::GetContentRegionAvail().y), true);
+	ImGui::BeginChild("group_overview", ImVec2(300.f, ImGui::GetContentRegionAvail().y), true);
 	if (animal_population->m_initialized && animal_population->m_valid && animal != "")
 	{
 		animal_type = Animal::ResolveAnimalType(animal);
@@ -560,6 +560,8 @@ void ShowMainWindow()
 			ImGui::Text((boost::format("%.1f") % it_groups->m_max_weight).str().c_str());
 			ImGui::SameLine();
 			ImGui::Text((boost::format("%.1f") % it_groups->m_max_score).str().c_str());
+			ImGui::SameLine();
+			ImGui::Text(std::to_string(it_groups->m_spawn_area_id).c_str());
 		}
 	}
 	ImGui::EndChild();
@@ -624,6 +626,79 @@ void ShowMainWindow()
 					ImGui::TableSetColumnIndex(8);
 					ImGui::Text(std::to_string(it_animals->m_visual_variation_seed).c_str());
 					ImGui::TableSetColumnIndex(9);
+					ImGui::PushID(&(it_animals->m_visual_variation_seed));
+					if (ImGui::Button("Edit"))
+					{
+						edit_animal_idx = static_cast<int>(it_animals->m_idx);
+						edit_animal_gender = it_animals->m_gender;
+						edit_animal_weight = it_animals->m_weight;
+						edit_animal_score = it_animals->m_score;
+						edit_animal_str_igo = std::to_string(it_animals->m_is_great_one);
+						edit_animal_str_fur_type = it_animals->m_fur_type;
+						ImGui::OpenPopup("edit_animal");
+					}
+
+					ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+					ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+					if (ImGui::BeginPopupModal("edit_animal", NULL))
+					{
+						const char* items[] = { "male", "female" };
+						static int item_current_idx = 0; // Here we store our selection data as an index.
+						const char* combo_preview_value = edit_animal_gender.c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
+						if (ImGui::BeginCombo("Gender", combo_preview_value))
+						{
+							for (int n = 0; n < 2; n++)
+							{
+								const bool is_selected = (item_current_idx == n);
+								if (ImGui::Selectable(items[n], is_selected))
+									item_current_idx = n;
+
+								// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+								if (is_selected)
+									ImGui::SetItemDefaultFocus();
+							}
+							edit_animal_gender = items[item_current_idx];
+							ImGui::EndCombo();
+						}
+
+						ImGui::InputFloat("Weight", &edit_animal_weight);
+						ImGui::InputFloat("Score", &edit_animal_score);
+						ImGui::InputText("IGO", &edit_animal_str_igo);
+						ImGui::InputText("Fur Type", &edit_animal_str_fur_type);
+						if (ImGui::Button("Save"))
+						{
+							uint32_t visual_variation_seed = Animal::CreateVisualVariationSeed(animal_type, edit_animal_gender, edit_animal_str_fur_type);
+							const std::shared_ptr<Animal> animal =
+								Animal::Create(animal_type, Animal::ResolveGender(edit_animal_gender),
+											   edit_animal_weight, edit_animal_score, boost::lexical_cast<bool>(edit_animal_str_igo),
+											   visual_variation_seed, edit_animal_idx, selected_group->m_index);
+							if (animal->IsValid())
+							{
+								animal_population->ReplaceAnimal(animal, selected_group->m_index, it_animals->m_idx);
+							}
+							animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
+							if (animal_population->Deserialize())
+							{
+								animal_population->MapAnimals();
+								AnimalType tmp_at = selected_group->m_animal_type;
+								uint32_t tmp_idx = selected_group->m_index;
+								selected_group = std::make_shared<AnimalGroup>(animal_population->m_animals.at(tmp_at).at(tmp_idx));
+								it_animals = selected_group->m_animals.begin() + idx;
+							}
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::SameLine();
+						if (ImGui::Button("Exit"))
+						{
+							ImGui::CloseCurrentPopup();
+						}
+
+						ImGui::EndPopup();
+					}
+
+					ImGui::PopID();
+
+
 
 					if (idx < selected_group->m_size - 1)
 						ImGui::TableNextRow();
@@ -674,6 +749,73 @@ void ShowMainWindow()
 					ImGui::TableSetColumnIndex(8);
 					ImGui::Text(std::to_string(it_animals->m_visual_variation_seed).c_str());
 					ImGui::TableSetColumnIndex(9);
+					ImGui::PushID(&(it_animals->m_visual_variation_seed));
+					if (ImGui::Button("Edit"))
+					{
+						edit_animal_idx = static_cast<int>(it_animals->m_idx);
+						edit_animal_gender = it_animals->m_gender;
+						edit_animal_weight = it_animals->m_weight;
+						edit_animal_score = it_animals->m_score;
+						edit_animal_str_igo = std::to_string(it_animals->m_is_great_one);
+						edit_animal_str_fur_type = it_animals->m_fur_type;
+						ImGui::OpenPopup("edit_animal");
+					}
+
+					ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+					ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+					if (ImGui::BeginPopupModal("edit_animal", NULL))
+					{
+						const char* items[] = { "male", "female" };
+						static int item_current_idx = 0; // Here we store our selection data as an index.
+						const char* combo_preview_value = edit_animal_gender.c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
+						if (ImGui::BeginCombo("Gender", combo_preview_value))
+						{
+							for (int n = 0; n < 2; n++)
+							{
+								const bool is_selected = (item_current_idx == n);
+								if (ImGui::Selectable(items[n], is_selected))
+									item_current_idx = n;
+
+								// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+								if (is_selected)
+									ImGui::SetItemDefaultFocus();
+							}
+							edit_animal_gender = items[item_current_idx];
+							ImGui::EndCombo();
+						}
+
+						ImGui::InputFloat("Weight", &edit_animal_weight);
+						ImGui::InputFloat("Score", &edit_animal_score);
+						ImGui::InputText("IGO", &edit_animal_str_igo);
+						ImGui::InputText("Fur Type", &edit_animal_str_fur_type);
+						if (ImGui::Button("Save"))
+						{
+							uint32_t visual_variation_seed = Animal::CreateVisualVariationSeed(animal_type, edit_animal_gender, edit_animal_str_fur_type);
+							const std::shared_ptr<Animal> animal =
+								Animal::Create(animal_type, Animal::ResolveGender(edit_animal_gender),
+											   edit_animal_weight, edit_animal_score, boost::lexical_cast<bool>(edit_animal_str_igo),
+											   visual_variation_seed, edit_animal_idx, it_animals->m_grp_idx);
+							if (animal->IsValid())
+							{
+								animal_population->ReplaceAnimal(animal, it_animals->m_grp_idx, it_animals->m_idx);
+							}
+							animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
+							if (animal_population->Deserialize())
+							{
+								animal_population->MapAnimals();
+							}
+							ImGui::CloseCurrentPopup();
+						}
+						ImGui::SameLine();
+						if (ImGui::Button("Exit"))
+						{
+							ImGui::CloseCurrentPopup();
+						}
+
+						ImGui::EndPopup();
+					}
+
+					ImGui::PopID();
 
 					if (idx < animals.size() - 1)
 						ImGui::TableNextRow();

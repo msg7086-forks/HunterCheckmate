@@ -129,12 +129,12 @@ namespace HunterCheckmate_FileAnalyzer
 			// Rancho Del Arroyo
 		case 11:
 		{
-			m_animals_hash.emplace(AT_RioGrandeTurkey, 0);
-			m_animals_hash.emplace(AT_RingNeckedPheasant, 0);
-			m_animals_hash.emplace(AT_AntelopeJackrabbit, 762792036);
+			m_animals_hash.emplace(AT_RioGrandeTurkey, 371665048);
+			m_animals_hash.emplace(AT_RingNeckedPheasant, 3318792243);
+			m_animals_hash.emplace(AT_AntelopeJackrabbit, 1959650903);
 			m_animals_hash.emplace(AT_Coyote, 3041812107);
-			m_animals_hash.emplace(AT_MexicanBobcat, 0);
-			m_animals_hash.emplace(AT_CollaredPeccary, 0);
+			m_animals_hash.emplace(AT_MexicanBobcat, 179923754);
+			m_animals_hash.emplace(AT_CollaredPeccary, 1797311245);
 			m_animals_hash.emplace(AT_BighornSheep, 1257210256);
 			m_animals_hash.emplace(AT_WhitetailDeer, 3845994887);
 			m_animals_hash.emplace(AT_MuleDeer, 2953920016);
@@ -144,14 +144,14 @@ namespace HunterCheckmate_FileAnalyzer
 		case 12:
 		{
 			// TODO
-			m_animals_hash.emplace(AT_BobwhiteQuail, 0);
-			m_animals_hash.emplace(AT_EasternCottontailRabbit, 0);
-			m_animals_hash.emplace(AT_EasternWildTurkey, 0);
-			m_animals_hash.emplace(AT_GrayFox, 0);
-			m_animals_hash.emplace(AT_CommonRaccoon, 0);
+			m_animals_hash.emplace(AT_BobwhiteQuail, 1679436322);
+			m_animals_hash.emplace(AT_EasternCottontailRabbit, 1207690777);
+			m_animals_hash.emplace(AT_EasternWildTurkey, 1803270983);
+			m_animals_hash.emplace(AT_GrayFox, 2116163067);
+			m_animals_hash.emplace(AT_CommonRaccoon, 1014373606);
 			m_animals_hash.emplace(AT_WhitetailDeer, 3845994887);
-			m_animals_hash.emplace(AT_WildHog, 0);
-			m_animals_hash.emplace(AT_AmericanAlligator, 0);
+			m_animals_hash.emplace(AT_WildHog, 762792036);
+			m_animals_hash.emplace(AT_AmericanAlligator, 3136476066);
 			m_animals_hash.emplace(AT_BlackBear, 2434390669);
 			break;
 		}
@@ -159,21 +159,21 @@ namespace HunterCheckmate_FileAnalyzer
 		case 13:
 		{
 			// TODO
-			m_animals_hash.emplace(AT_EurasianWigeon, 0);
-			m_animals_hash.emplace(AT_TundraBeanGoose, 0);
-			m_animals_hash.emplace(AT_EurasianTeal, 0);
-			m_animals_hash.emplace(AT_BlackGrouse, 0);
-			m_animals_hash.emplace(AT_Goldeneye, 0);
-			m_animals_hash.emplace(AT_HazelGrouse, 0);
-			m_animals_hash.emplace(AT_Mallard, 1905502510);
-			m_animals_hash.emplace(AT_WesternCapercaillie, 0);
-			m_animals_hash.emplace(AT_TuftedDuck, 0);
-			m_animals_hash.emplace(AT_RockPtarmigan, 0);
+			m_animals_hash.emplace(AT_EurasianWigeon, 85987887);
+			m_animals_hash.emplace(AT_TundraBeanGoose, 1391428829);
+			m_animals_hash.emplace(AT_EurasianTeal, 2333697570);
+			m_animals_hash.emplace(AT_BlackGrouse, 1298794856);
+			m_animals_hash.emplace(AT_Goldeneye, 252578829);
+			m_animals_hash.emplace(AT_HazelGrouse, 1827823733);
+			m_animals_hash.emplace(AT_Mallard, 45103783);
+			m_animals_hash.emplace(AT_WesternCapercaillie, 2467404394);
+			m_animals_hash.emplace(AT_TuftedDuck, 1016008671);
+			m_animals_hash.emplace(AT_RockPtarmigan, 51579273);
 			m_animals_hash.emplace(AT_CanadaGoose, 3321523293);
-			m_animals_hash.emplace(AT_WillowPtarmigan, 0);
-			m_animals_hash.emplace(AT_GreylagGoose, 0);
-			m_animals_hash.emplace(AT_MountainHare, 0);
-			m_animals_hash.emplace(AT_RaccoonDog, 0);
+			m_animals_hash.emplace(AT_WillowPtarmigan, 1755902232);
+			m_animals_hash.emplace(AT_GreylagGoose, 3441968927);
+			m_animals_hash.emplace(AT_MountainHare, 532701289);
+			m_animals_hash.emplace(AT_RaccoonDog, 4067348893);
 			m_animals_hash.emplace(AT_EurasianLynx, 1814015872);
 			m_animals_hash.emplace(AT_WhitetailDeer, 3845994887);
 			m_animals_hash.emplace(AT_BrownBear, 1923623595);

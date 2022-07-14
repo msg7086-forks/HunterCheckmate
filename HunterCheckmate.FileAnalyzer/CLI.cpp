@@ -179,18 +179,6 @@ namespace HunterCheckmate_FileAnalyzer
 	{
 		m_inputFilePath = fs::path(m_vm["input-file"].as<std::string>());
 		m_inputFileName = m_inputFilePath.filename();
-		
-		if (true)
-		{
-			std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian::Little, m_inputFilePath);
-			const std::unique_ptr<AdfFile> adf = std::make_unique<AdfFile>(file_handler);
-			if (adf->Deserialize())
-			{
-				return 0;
-			}
-
-			return 0;
-		}
 
 		if (m_vm.count("help"))					PrintHelp();
 		else if (m_vm.count("output-group"))	PrintGroupInformation();
