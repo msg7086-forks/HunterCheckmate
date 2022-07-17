@@ -29,29 +29,43 @@ namespace HunterCheckmate_FileAnalyzer
 		float max_weight_female;
 	};
 
-	static std::map < AnimalType, WeightEntry > WeightDB =
+	struct FurType
+	{
+		uint32_t fur_idx;
+		std::string fur_name;
+		uint32_t fur_probability;
+	};
+
+	struct FurEntry
+	{
+		std::string gender;
+		uint32_t max_probability;
+		std::vector<FurType> fur_types;
+	};
+
+	static std::map < AnimalType, WeightEntry > weight_db =
 	{
 		{ AT_RedDeer, { 160.f, 240.f, 120.f, 170.f } },
 		{ AT_WildBoar, { 32.f, 240.f, 25.f, 168.f } },
 		{ AT_RedFox, { 2.420000076293945f, 15.39999961853027f, 1.980000019073486f, 12.60000038146973f } },
-		{ AT_EuroBison, { 400.f, 920.f, 300.f, 540.f } },
+		{ AT_EuBison, { 400.f, 920.f, 300.f, 540.f } },
 		{ AT_RoeDeer, { 18.f, 35.f, 14.f, 33.f } },
-		{ AT_WhitetailDeer, { 59.f, 100.f, 40.f, 59.f } },
+		{ AT_Whitetail, { 59.f, 100.f, 40.f, 59.f } },
 		{ AT_RooseveltElk, { 300.f, 500.f, 260.f, 285.f } },
-		{ AT_BlacktailDeer, { 50.f, 95.f, 40.f, 59.f } },
+		{ AT_Blacktail, { 50.f, 95.f, 40.f, 59.f } },
 		{ AT_FallowDeer, { 60.f, 100.f, 30.f, 50.f } },
 		{ AT_Coyote, { 16.f, 27.f, 15.f, 20.f } },
 		{ AT_Moose, { 400.f, 620.f, 320.f, 440.f } },
 		{ AT_BlackBear, { 57.f, 290.f, 40.f, 145.f } },
 		{ AT_EurasianLynx, { 18.f, 45.f, 8.f, 21.f } },
-		{ AT_BrownBear, { 195.f, 482.f, 110.f, 340.f } },
-		{ AT_MuskDeer, { 7.f, 17.f, 7.f, 17.f } },
+		{ AT_EurasianBrownBear, { 195.f, 482.f, 110.f, 340.f } },
+		{ AT_SiberianMuskDeer, { 7.f, 17.f, 7.f, 17.f } },
 		{ AT_Reindeer, { 159.f, 182.f, 80.f, 120.f } },
 		{ AT_Jackrabbit, { 1.899999976158142f, 6.829999923706055f, 2.f, 4.599999904632568f } },
 		{ AT_CanadaGoose, { 3.5f, 9.199999809265137f, 3.200000047683716f, 6.800000190734863f } },
 		{ AT_CapeBuffalo, { 600.f, 950.f, 360.f, 530.f } },
 		{ AT_Warthog, { 60.f, 150.f, 45.f, 80.f } },
-		{ AT_SideStripedJackal, { 7.f, 14.f, 6.f, 10.f } },
+		{ AT_SidestripedJackal, { 7.f, 14.f, 6.f, 10.f } },
 		{ AT_Springbok, { 32.f, 42.f, 27.f, 37.f } },
 		{ AT_LesserKudu, { 60.f, 105.f, 50.f, 95.f } },
 		{ AT_ScrubHare, { 1.899999976158142f, 5.099999904632568f, 1.5f, 5.800000190734863f } },
@@ -73,29 +87,29 @@ namespace HunterCheckmate_FileAnalyzer
 		{ AT_BeceiteIbex, { 75.f, 110.f, 35.f, 70.f } },
 		{ AT_RondaIbex, { 45.f, 70.f, 35.f, 70.f } },
 		{ AT_GredosIbex, { 70.f, 102.f, 35.f, 70.f } },
-		{ AT_SoutheasternSpanishIbex, { 35.f, 87.5f, 35.f, 70.f } },
-		{ AT_IberianMuflon, { 40.f, 60.f, 30.f, 40.f } },
+		{ AT_SoutheasternIbex, { 35.f, 87.5f, 35.f, 70.f } },
+		{ AT_IberianMouflon, { 40.f, 60.f, 30.f, 40.f } },
 		{ AT_IberianWolf, { 35.f, 50.f, 30.f, 40.f } },
-		{ AT_EuroHare, { 2.f, 4.f, 2.f, 7.f } },
-		{ AT_MerriamTurkey, { 6.800000190734863f, 11.f, 3.599999904632568f, 5.400000095367432f } },
+		{ AT_EuHare, { 2.f, 4.f, 2.f, 7.f } },
+		{ AT_WildTurkey, { 6.800000190734863f, 11.f, 3.599999904632568f, 5.400000095367432f } },
 		{ AT_BighornSheep, { 70.f, 160.f, 50.f, 100.f } },
-		{ AT_RockyMountainElk, { 280.f, 480.f, 200.f, 250.f } },
+		{ AT_RockymountainElk, { 280.f, 480.f, 200.f, 250.f } },
 		{ AT_MountainGoat, { 60.f, 145.f, 45.f, 105.f } },
-		{ AT_Pronghorn, { 40.f, 65.f, 35.f, 50.f } },
-		{ AT_EuroRabbit, { 1.100000023841858f, 2.599999904632568f, 0.8999999761581421f, 1.700000047683716f } },
+		{ AT_ProngHorn, { 40.f, 65.f, 35.f, 50.f } },
+		{ AT_EuRabbit, { 1.100000023841858f, 2.599999904632568f, 0.8999999761581421f, 1.700000047683716f } },
 		{ AT_FeralPig, { 45.f, 205.f, 32.f, 114.f } },
 		{ AT_FeralGoat, { 44.f, 50.f, 25.f, 35.f } },
 		{ AT_Chamois, { 40.f, 65.f, 35.f, 50.f } },
 		{ AT_SikaDeer, { 30.f, 75.f, 25.f, 42.f } },
 		{ AT_MexicanBobcat, { 18.f, 45.f, 8.f, 21.f } },
 		{ AT_CollaredPeccary, { 16.f, 31.f, 14.f, 27.f } },
-		{ AT_RingNeckedPheasant, { 0.75f, 3.f, 0.5f, 1.25f } },
+		{ AT_Pheasant, { 0.75f, 3.f, 0.5f, 1.25f } },
 		{ AT_RioGrandeTurkey, { 6.800000190734863f, 11.f, 3.599999904632568f, 5.400000095367432f } },
 		{ AT_AntelopeJackrabbit, { 2.700000047683716f, 4.699999809265137f, 2.200000047683716f, 4.099999904632568f } },
 		{ AT_AmericanAlligator, { 200.f, 530.f, 75.f, 145.f } },
-		{ AT_CommonRaccoon, { 4.f, 13.f, 3.f, 6.f } },
+		{ AT_Raccoon, { 4.f, 13.f, 3.f, 6.f } },
 		{ AT_EasternWildTurkey, { 6.800000190734863f, 11.f, 3.599999904632568f, 5.400000095367432f } },
-		{ AT_BobwhiteQuail, { 0.1299999952316284f, 0.25f, 0.1299999952316284f, 0.1749999970197678f } },
+		{ AT_NorthernBobwhiteQuail, { 0.1299999952316284f, 0.25f, 0.1299999952316284f, 0.1749999970197678f } },
 		{ AT_GrayFox, { 3.5f, 6.800000190734863f, 3.099999904632568f, 6.5f } },
 		{ AT_EasternCottontailRabbit, { 0.800000011920929f, 1.799999952316284f, 1.100000023841858f, 2.099999904632568f } },
 		{ AT_RaccoonDog, { 3.f, 10.f, 3.f, 6.5f } },
@@ -113,29 +127,29 @@ namespace HunterCheckmate_FileAnalyzer
 		{ AT_MountainHare, { 2.f, 4.f, 2.f, 6.f } }
 	};
 
-	static std::map < AnimalType, ScoreEntry > ScoreDB = 
+	static std::map < AnimalType, ScoreEntry > score_db = 
 	{
 		{ AT_RedDeer, { 44.626953125f, 274.0145263671875f, 0.f, 0.f } },
 		{ AT_WildBoar, { 7.f, 159.5f, 7.f, 81.5f } },
 		{ AT_RedFox, { 2.420000076293945f, 15.39999961853027f, 1.980000019073486f, 12.60000038146973f } },
-		{ AT_EuroBison, { 7.f, 300.f, 4.f, 150.f } },
+		{ AT_EuBison, { 7.f, 300.f, 4.f, 150.f } },
 		{ AT_RoeDeer, { 29.38578224182129f, 87.69715118408203f, 0.f, 0.f } },
-		{ AT_WhitetailDeer, { 71.18055725097656f, 275.5350952148438f, 0.f, 0.f } },
+		{ AT_Whitetail, { 71.18055725097656f, 275.5350952148438f, 0.f, 0.f } },
 		{ AT_RooseveltElk, { 56.6655387878418f, 416.8609924316406f, 0.f, 0.f } },
-		{ AT_BlacktailDeer, { 48.17201232910156f, 191.9611206054688f, 0.f, 0.f } },
+		{ AT_Blacktail, { 48.17201232910156f, 191.9611206054688f, 0.f, 0.f } },
 		{ AT_FallowDeer, { 15.49038219451904f, 277.9747009277344f, 0.f, 0.f } },
 		{ AT_Coyote, { 35.27391815185547f, 59.52473831176758f, 33.06930160522461f, 44.09239959716797f } },
 		{ AT_Moose, { 32.29645538330078f, 301.9588317871094f, 0.f, 0.f } },
 		{ AT_BlackBear, { 12.81599998474121f, 24.f, 12.f, 17.04000091552734f } },
 		{ AT_EurasianLynx, { 19.50081062316895f, 28.97999954223633f, 15.98999977111816f, 20.55405426025391f } },
-		{ AT_BrownBear, { 18.97043037414551f, 29.f, 16.f, 24.03763389587402f } },
-		{ AT_MuskDeer, { 6.f, 276.f, 0.f, 0.f } },
+		{ AT_EurasianBrownBear, { 18.97043037414551f, 29.f, 16.f, 24.03763389587402f } },
+		{ AT_SiberianMuskDeer, { 6.f, 276.f, 0.f, 0.f } },
 		{ AT_Reindeer, { 73.19405364990234f, 469.9026184082031f, 73.19405364990234f, 158.f } },
 		{ AT_Jackrabbit, { 1.899999976158142f, 6.829999923706055f, 2.f, 4.599999904632568f } },
 		{ AT_CanadaGoose, { 3.5f, 9.199999809265137f, 3.200000047683716f, 6.800000190734863f } },
 		{ AT_CapeBuffalo, { 91.f, 162.5f, 51.f, 114.f } },
 		{ AT_Warthog, { 25.f, 63.f, 15.f, 25.f } },
-		{ AT_SideStripedJackal, { 15.43233966827393f, 30.86467933654785f, 13.22772026062012f, 22.04619979858398f } },
+		{ AT_SidestripedJackal, { 15.43233966827393f, 30.86467933654785f, 13.22772026062012f, 22.04619979858398f } },
 		{ AT_Springbok, { 69.f, 116.5999984741211f, 57.59999847412109f, 82.f } },
 		{ AT_LesserKudu, { 95.3170166015625f, 157.9007110595703f, 0.f, 0.f } },
 		{ AT_ScrubHare, { 1.899999976158142f, 5.099999904632568f, 1.5f, 5.800000190734863f } },
@@ -157,29 +171,29 @@ namespace HunterCheckmate_FileAnalyzer
 		{ AT_BeceiteIbex, { 45.55049514770508f, 207.8642120361328f, 45.55049514770508f, 60.f } },
 		{ AT_RondaIbex, { 58.24422836303711f, 113.5166473388672f, 58.24422836303711f, 70.f } },
 		{ AT_GredosIbex, { 41.25128936767578f, 106.7189559936523f, 41.25128936767578f, 50.f } },
-		{ AT_SoutheasternSpanishIbex, { 38.32047271728516f, 95.38712310791016f, 38.32047271728516f, 60.f } },
-		{ AT_IberianMuflon, { 73.42443084716797f, 191.3599853515625f, 0.f, 0.f } },
+		{ AT_SoutheasternIbex, { 38.32047271728516f, 95.38712310791016f, 38.32047271728516f, 60.f } },
+		{ AT_IberianMouflon, { 73.42443084716797f, 191.3599853515625f, 0.f, 0.f } },
 		{ AT_IberianWolf, { 33.f, 40.f, 30.f, 35.f } },
-		{ AT_EuroHare, { 2.f, 4.f, 2.f, 7.f } },
-		{ AT_MerriamTurkey, { 3.799999952316284f, 4.800000190734863f, 3.f, 4.f } },
+		{ AT_EuHare, { 2.f, 4.f, 2.f, 7.f } },
+		{ AT_WildTurkey, { 3.799999952316284f, 4.800000190734863f, 3.f, 4.f } },
 		{ AT_BighornSheep, { 69.08650970458984f, 175.2475280761719f, 69.08650970458984f, 120.f } },
-		{ AT_RockyMountainElk, { 91.13737487792969f, 524.77685546875f, 0.f, 0.f } },
+		{ AT_RockymountainElk, { 91.13737487792969f, 524.77685546875f, 0.f, 0.f } },
 		{ AT_MountainGoat, { 48.54271697998047f, 115.5292358398438f, 37.02085494995117f, 85.25108337402344f } },
-		{ AT_Pronghorn, { 31.26031303405762f, 105.4471893310547f, 31.26031303405762f, 42.08193969726562f } },
-		{ AT_EuroRabbit, { 1.100000023841858f, 2.599999904632568f, 0.8999999761581421f, 1.700000047683716f } },
+		{ AT_ProngHorn, { 31.26031303405762f, 105.4471893310547f, 31.26031303405762f, 42.08193969726562f } },
+		{ AT_EuRabbit, { 1.100000023841858f, 2.599999904632568f, 0.8999999761581421f, 1.700000047683716f } },
 		{ AT_FeralPig, { 7.f, 159.5f, 7.f, 81.5f } },
 		{ AT_FeralGoat, { 81.96337127685547f, 225.7583923339844f, 55.36909484863281f, 74.4432373046875f } },
 		{ AT_Chamois, { 23.09284210205078f, 61.89008331298828f, 23.08282470703125f, 58.04738235473633f } },
 		{ AT_SikaDeer, { 11.73466205596924f, 219.5238342285156f, 0.f, 0.f } },
 		{ AT_MexicanBobcat, { 19.50081062316895f, 28.97999954223633f, 15.98999977111816f, 20.55405426025391f } },
 		{ AT_CollaredPeccary, { 7.f, 159.5f, 7.f, 81.5f } },
-		{ AT_RingNeckedPheasant, { 7.900000095367432f, 21.89999961853027f, 5.900000095367432f, 7.900000095367432f } },
+		{ AT_Pheasant, { 7.900000095367432f, 21.89999961853027f, 5.900000095367432f, 7.900000095367432f } },
 		{ AT_RioGrandeTurkey, { 3.799999952316284f, 4.800000190734863f, 3.f, 4.f } },
 		{ AT_AntelopeJackrabbit, { 1.899999976158142f, 6.829999923706055f, 2.f, 4.599999904632568f } },
 		{ AT_AmericanAlligator, { 200.f, 530.f, 150.f, 302.f } },
-		{ AT_CommonRaccoon, { 4.f, 13.f, 3.f, 6.f } },
+		{ AT_Raccoon, { 4.f, 13.f, 3.f, 6.f } },
 		{ AT_EasternWildTurkey, { 3.799999952316284f, 4.800000190734863f, 3.f, 4.f } },
-		{ AT_BobwhiteQuail, { 130.f, 250.f, 130.f, 275.f } },
+		{ AT_NorthernBobwhiteQuail, { 130.f, 250.f, 130.f, 275.f } },
 		{ AT_GrayFox, { 3.5f, 6.800000190734863f, 3.099999904632568f, 6.5f } },
 		{ AT_EasternCottontailRabbit, { 0.800000011920929f, 1.799999952316284f, 1.100000023841858f, 2.099999904632568f } },
 		{ AT_RaccoonDog, { 3.f, 10.f, 3.f, 6.5f } },
@@ -195,6 +209,2158 @@ namespace HunterCheckmate_FileAnalyzer
 		{ AT_RockPtarmigan, { 440.f, 740.f, 430.f, 700.f } },
 		{ AT_WillowPtarmigan, { 430.f, 810.f, 430.f, 790.f } },
 		{ AT_MountainHare, { 2.f, 4.f, 2.f, 6.f } }
+	};
+
+	static std::map < AnimalType,  std::vector<FurEntry> > FurDB2 = 
+	{
+		{ AT_Reindeer ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Leucistic", 75 },
+						   { 5, "Piebald", 75 },
+						   { 6, "LightBrown", 37350 },
+						   { 7, "DarkBrown", 37350 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "Tan", 37350 },
+						   { 1, "Brown", 37350 },
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Leucistic", 75 },
+						   { 5, "Piebald", 75 },
+					   }
+			   }
+		   }
+	    },
+
+		{ AT_MexicanBobcat ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 2, "Blue", 200 },
+						   { 3, "Brown", 12500 },
+						   { 5, "Red", 12500 },
+						   { 4, "Melanistic", 50 },
+						   { 6, "Tan", 37350 },
+						   { 0, "Grey", 37350 },
+						   { 1, "Albino", 50 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 2, "Blue", 200 },
+						   { 3, "Brown", 12500 },
+						   { 5, "Red", 12500 },
+						   { 4, "Melanistic", 50 },
+						   { 6, "Tan", 37350 },
+						   { 0, "Grey", 37350 },
+						   { 1, "Albino", 50 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_AxisDeer ,
+		   {
+			   {
+				   "male", 87500,
+					   {
+						   { 1, "Dark", 12500 },
+						   { 2, "Piebald", 200 },
+						   { 3, "Melanistic", 50 },
+						   { 4, "Spotted", 74700 },
+						   { 5, "Albino", 50 },
+					   }
+			   },
+			   {
+				   "female", 87500,
+					   {
+						   { 0, "Orange", 12500 },
+						   { 2, "Piebald", 200 },
+						   { 3, "Melanistic", 50 },
+						   { 4, "Spotted", 74700 },
+						   { 5, "Albino", 50 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_HarlequinDuck ,
+		   {
+			   {
+				   "male", 99800,
+					   {
+						   { 1, "Piebald", 25000 },
+						   { 2, "Melanistic", 50 },
+						   { 3, "Albino", 50 },
+						   { 5, "DarkGrey", 74700 },
+					   }
+			   },
+			   {
+				   "female", 112288,
+					   {
+						   { 0, "Dark", 150 },
+						   { 3, "Albino", 50 },
+						   { 4, "Grey", 38 },
+						   { 5, "DarkGrey", 74700 },
+						   { 6, "DarkBrown", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_BlackBear ,
+		   {
+			   {
+				   "male", 75154,
+					   {
+						   { 10, "GreatOneBlackBearFabledGlacier", 38 },
+						   { 13, "GreatOneBlackBearFabledSpirit", 38 },
+						   { 2, "Brown", 38 },
+						   { 3, "Blonde", 38 },
+						   { 11, "GreatOneBlackBearFabledCream", 38 },
+						   { 12, "GreatOneBlackBearFabledSpotted", 38 },
+						   { 9, "GreatOneBlackBearFabledGlacier", 38 },
+						   { 4, "Cinnamon", 150 },
+						   { 14, "GreatOneBlackBearFabledChestnut", 38 },
+						   { 5, "Dark", 24900 },
+						   { 6, "Black", 24900 },
+						   { 8, "Dusky", 24900 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "Black", 24900 },
+						   { 1, "Dusky", 24900 },
+						   { 2, "Brown", 38 },
+						   { 3, "Blonde", 38 },
+						   { 4, "Cinnamon", 150 },
+						   { 7, "Dark", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_NorthernBobwhiteQuail ,
+		   {
+			   {
+				   "male", 297008,
+					   {
+						   { 2, "Grey", 99000 },
+						   { 3, "Albino", 8 },
+						   { 0, "Brown", 99000 },
+						   { 1, "RedBrown", 99000 },
+					   }
+			   },
+			   {
+				   "female", 99008,
+					   {
+						   { 3, "Albino", 8 },
+						   { 0, "Brown", 99000 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_EurasianBrownBear ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 0, "Melanistic", 200 },
+						   { 3, "Spirit", 5000 },
+						   { 4, "Blonde", 5000 },
+						   { 5, "Legendary", 0 },
+						   { 6, "RedBrown", 24900 },
+						   { 7, "Albino", 100 },
+						   { 8, "Cinnamon", 24900 },
+						   { 9, "Gold", 5000 },
+						   { 10, "DarkBrown", 5000 },
+						   { 11, "Grey", 5000 },
+						   { 12, "LightBrown", 24900 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 0, "Melanistic", 200 },
+						   { 1, "DarkBrown", 5000 },
+						   { 2, "LightBrown", 24900 },
+						   { 3, "Spirit", 5000 },
+						   { 4, "Blonde", 5000 },
+						   { 5, "Legendary", 0 },
+						   { 6, "RedBrown", 24900 },
+						   { 7, "Albino", 100 },
+						   { 8, "Cinnamon", 24900 },
+						   { 9, "Gold", 5000 },
+						   { 11, "Grey", 5000 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Springbok ,
+		   {
+			   {
+				   "male", 74775,
+					   {
+						   { 2, "Albino", 75 },
+						   { 3, "Tan", 37350 },
+						   { 4, "Orange", 37350 },
+					   }
+			   },
+			   {
+				   "female", 124675,
+					   {
+						   { 0, "BlackBrown", 24900 },
+						   { 1, "BlackBrown", 25000 },
+						   { 2, "Albino", 75 },
+						   { 3, "Tan", 37350 },
+						   { 4, "Orange", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_FeralPig ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 6, "BrownHybrid", 12450 },
+						   { 5, "BrownHybrid", 12450 },
+						   { 3, "BlackSpots", 12500 },
+						   { 4, "DarkBrown", 12450 },
+						   { 9, "DarkBrown", 12450 },
+						   { 2, "BlackSpots", 12500 },
+						   { 1, "Pink", 200 },
+						   { 8, "Brown", 12450 },
+						   { 0, "Albino", 100 },
+						   { 7, "Blackgold", 12450 },
+					   }
+			   },
+			   {
+				   "female", 25200,
+					   {
+						   { 3, "BlackSpots", 12500 },
+						   { 2, "BlackSpots", 12500 },
+						   { 1, "Pink", 200 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_WesternCapercaillie ,
+		   {
+			   {
+				   "male", 74832,
+					   {
+						   { 2, "Leucistic", 66 },
+						   { 3, "Leucistic", 33 },
+						   { 4, "Pale", 33 },
+						   { 1, "Dark", 74700 },
+					   }
+			   },
+			   {
+				   "female", 99766,
+					   {
+						   { 2, "Leucistic", 66 },
+						   { 5, "Bright", 12500 },
+						   { 6, "Ochre", 12500 },
+						   { 0, "Brown", 74700 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_EuBison ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 5, "LightBrown", 24900 },
+						   { 6, "Brown", 24900 },
+						   { 8, "DarkBrown", 24900 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "Brown", 24900 },
+						   { 1, "DarkBrown", 24900 },
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 7, "LightBrown", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_EurasianTeal ,
+		   {
+			   {
+				   "male", 74800,
+					   {
+						   { 2, "DarkGreen", 37350 },
+						   { 3, "HybridBlue", 25 },
+						   { 5, "Leucistic", 25 },
+						   { 4, "HybridGreen", 25 },
+						   { 6, "Leucistic", 25 },
+						   { 0, "LightGreen", 37350 },
+					   }
+			   },
+			   {
+				   "female", 74800,
+					   {
+						   { 7, "Leucistic", 100 },
+						   { 1, "Brown", 74700 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_MountainHare ,
+		   {
+			   {
+				   "male", 99998,
+					   {
+						   { 2, "LightGrey", 24900 },
+						   { 3, "LightBrown", 25000 },
+						   { 5, "Molting", 66 },
+						   { 4, "Molting", 66 },
+						   { 6, "White", 66 },
+						   { 7, "Albino", 100 },
+						   { 0, "DarkGrey", 24900 },
+						   { 1, "DarkBrown", 24900 },
+					   }
+			   },
+			   {
+				   "female", 99998,
+					   {
+						   { 2, "LightGrey", 24900 },
+						   { 3, "LightBrown", 25000 },
+						   { 5, "Molting", 66 },
+						   { 4, "Molting", 66 },
+						   { 6, "White", 66 },
+						   { 7, "Albino", 100 },
+						   { 0, "DarkGrey", 24900 },
+						   { 1, "DarkBrown", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_WildBoar ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Blackgold", 150 },
+						   { 5, "LightBrown", 24900 },
+						   { 6, "Brown", 24900 },
+						   { 8, "LightBrown", 24900 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "Brown", 24900 },
+						   { 1, "LightBrown", 24900 },
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Blackgold", 150 },
+						   { 7, "DarkBrown", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_CollaredPeccary ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 2, "Leucistic", 100 },
+						   { 3, "Ochre", 100 },
+						   { 5, "DarkGrey", 12500 },
+						   { 4, "DarkBrown", 12500 },
+						   { 6, "Albino", 50 },
+						   { 7, "Melanistic", 50 },
+						   { 0, "Grey", 37350 },
+						   { 1, "Brown", 37350 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 2, "Leucistic", 100 },
+						   { 3, "Ochre", 100 },
+						   { 5, "DarkGrey", 12500 },
+						   { 4, "DarkBrown", 12500 },
+						   { 6, "Albino", 50 },
+						   { 7, "Melanistic", 50 },
+						   { 0, "Grey", 37350 },
+						   { 1, "Brown", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Mallard ,
+		   {
+			   {
+				   "male", 99900,
+					   {
+						   { 0, "Melanistic", 100 },
+						   { 1, "Piebald", 12500 },
+						   { 3, "Leucistic", 100 },
+						   { 4, "BlackBrown", 74700 },
+						   { 5, "BrownHybrid", 12500 },
+					   }
+			   },
+			   {
+				   "female", 99900,
+					   {
+						   { 0, "Melanistic", 100 },
+						   { 1, "Piebald", 12500 },
+						   { 2, "Blonde", 100 },
+						   { 4, "BlackBrown", 74700 },
+						   { 5, "BrownHybrid", 12500 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_LesserKudu ,
+		   {
+			   {
+				   "male", 74793,
+					   {
+						   { 3, "Albino", 55 },
+						   { 4, "Melanistic", 38 },
+						   { 5, "Grey", 74700 },
+					   }
+			   },
+			   {
+				   "female", 74905,
+					   {
+						   { 0, "DarkBrown", 37350 },
+						   { 1, "Dusky", 75 },
+						   { 2, "RedBrown", 75 },
+						   { 3, "Albino", 55 },
+						   { 6, "Grey", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_RondaIbex ,
+		   {
+			   {
+				   "male", 74776,
+					   {
+						   { 0, "GrayBrown", 18675 },
+						   { 1, "Albino", 38 },
+						   { 2, "BrownHybrid", 18675 },
+						   { 3, "Melanistic", 38 },
+						   { 6, "Brown", 18675 },
+						   { 7, "Grey", 18675 },
+					   }
+			   },
+			   {
+				   "female", 56101,
+					   {
+						   { 1, "Albino", 38 },
+						   { 3, "Melanistic", 38 },
+						   { 4, "Buff", 18675 },
+						   { 5, "LightBrown", 18675 },
+						   { 6, "Brown", 18675 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_EuHare ,
+		   {
+			   {
+				   "male", 74776,
+					   {
+						   { 0, "DarkBrown", 18675 },
+						   { 1, "Grey", 18675 },
+						   { 2, "Albino", 38 },
+						   { 3, "Melanistic", 38 },
+						   { 4, "Brown", 18675 },
+						   { 5, "LightBrown", 18675 },
+					   }
+			   },
+			   {
+				   "female", 74776,
+					   {
+						   { 0, "DarkBrown", 18675 },
+						   { 1, "Grey", 18675 },
+						   { 2, "Albino", 38 },
+						   { 3, "Melanistic", 38 },
+						   { 4, "Brown", 18675 },
+						   { 5, "LightBrown", 18675 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_GrayWolf ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 0, "Melanistic", 38 },
+						   { 1, "Albino", 38 },
+						   { 2, "Eggwhite", 50 },
+						   { 3, "RedBrown", 50 },
+						   { 4, "Grey", 74700 },
+						   { 5, "DarkGrey", 50 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "Melanistic", 38 },
+						   { 1, "Albino", 38 },
+						   { 2, "Eggwhite", 50 },
+						   { 3, "RedBrown", 50 },
+						   { 4, "Grey", 74700 },
+						   { 5, "DarkGrey", 50 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_MountainGoat ,
+		   {
+			   {
+				   "male", 299100,
+					   {
+						   { 0, "Beige", 74700 },
+						   { 3, "Melanistic", 150 },
+						   { 2, "White", 74700 },
+						   { 1, "LightBrown", 74700 },
+						   { 5, "LightGrey", 74700 },
+						   { 4, "Albino", 150 },
+					   }
+			   },
+			   {
+				   "female", 299100,
+					   {
+						   { 0, "Beige", 74700 },
+						   { 3, "Melanistic", 150 },
+						   { 2, "White", 74700 },
+						   { 1, "LightBrown", 74700 },
+						   { 5, "LightGrey", 74700 },
+						   { 4, "Albino", 150 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_RaccoonDog ,
+		   {
+			   {
+				   "male", 87678,
+					   {
+						   { 2, "BlackWhite", 12500 },
+						   { 3, "Orange", 200 },
+						   { 5, "Piebald", 26 },
+						   { 4, "DarkBrown", 200 },
+						   { 6, "Piebald", 26 },
+						   { 7, "Albino", 26 },
+						   { 0, "LightBrown", 37350 },
+						   { 1, "Grey", 37350 },
+					   }
+			   },
+			   {
+				   "female", 87678,
+					   {
+						   { 2, "BlackWhite", 12500 },
+						   { 3, "Orange", 200 },
+						   { 5, "Piebald", 26 },
+						   { 4, "DarkBrown", 200 },
+						   { 6, "Piebald", 26 },
+						   { 7, "Albino", 26 },
+						   { 0, "LightBrown", 37350 },
+						   { 1, "Grey", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_RooseveltElk ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 5, "Brown", 24900 },
+						   { 6, "Tan", 24900 },
+						   { 8, "Orange", 24900 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "Tan", 24900 },
+						   { 1, "Orange", 24900 },
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 7, "Brown", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_AntelopeJackrabbit ,
+		   {
+			   {
+				   "male", 99730,
+					   {
+						   { 2, "DarkBrown", 12465 },
+						   { 3, "Mottled", 12465 },
+						   { 5, "Melanistic", 50 },
+						   { 4, "Albino", 50 },
+						   { 0, "Brown", 37350 },
+						   { 1, "Grey", 37350 },
+					   }
+			   },
+			   {
+				   "female", 99730,
+					   {
+						   { 2, "DarkBrown", 12465 },
+						   { 3, "Mottled", 12465 },
+						   { 5, "Melanistic", 50 },
+						   { 4, "Albino", 50 },
+						   { 0, "Brown", 37350 },
+						   { 1, "Grey", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_RockymountainElk ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 4, "Albino", 100 },
+						   { 1, "LightGrey", 25000 },
+						   { 3, "Piebald", 100 },
+						   { 2, "Piebald", 100 },
+						   { 5, "LightBrown", 37350 },
+						   { 0, "Brown", 37350 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 4, "Albino", 100 },
+						   { 1, "LightGrey", 25000 },
+						   { 3, "Piebald", 100 },
+						   { 2, "Piebald", 100 },
+						   { 5, "LightBrown", 37350 },
+						   { 0, "Brown", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Warthog ,
+		   {
+			   {
+				   "male", 99705,
+					   {
+						   { 0, "RedBrown", 24930 },
+						   { 2, "Albino", 75 },
+						   { 3, "Grey", 37350 },
+						   { 4, "Dark", 37350 },
+					   }
+			   },
+			   {
+				   "female", 99755,
+					   {
+						   { 0, "RedBrown", 24930 },
+						   { 1, "Red", 50 },
+						   { 2, "Albino", 75 },
+						   { 3, "Grey", 37350 },
+						   { 4, "Dark", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Pheasant ,
+		   {
+			   {
+				   "male", 99742,
+					   {
+						   { 2, "WhiteBrown", 37350 },
+						   { 3, "Leucistic", 34 },
+						   { 5, "Albino", 34 },
+						   { 4, "Molting", 12470 },
+						   { 6, "Melanistic", 34 },
+						   { 0, "Brown", 37350 },
+						   { 1, "Grey", 12470 },
+					   }
+			   },
+			   {
+				   "female", 42452,
+					   {
+						   { 3, "Leucistic", 34 },
+						   { 5, "Albino", 34 },
+						   { 6, "Melanistic", 34 },
+						   { 7, "Grey", 5000 },
+						   { 0, "Brown", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_EurasianLynx ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 2, "Albino", 38 },
+						   { 3, "Melanistic", 38 },
+						   { 4, "Piebald", 150 },
+						   { 5, "Grey", 37350 },
+						   { 6, "LightBrown", 37350 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "Grey", 37350 },
+						   { 1, "LightBrown", 37350 },
+						   { 2, "Albino", 38 },
+						   { 3, "Melanistic", 38 },
+						   { 4, "Piebald", 150 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_CinnamonTeal ,
+		   {
+			   {
+				   "male", 99800,
+					   {
+						   { 0, "Melanistic", 100 },
+						   { 1, "Piebald", 12500 },
+						   { 3, "Cinnamon", 74700 },
+						   { 4, "Red", 12500 },
+					   }
+			   },
+			   {
+				   "female", 87375,
+					   {
+						   { 2, "Beige", 175 },
+						   { 3, "Cinnamon", 74700 },
+						   { 4, "Red", 12500 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_TundraBeanGoose ,
+		   {
+			   {
+				   "male", 49949,
+					   {
+						   { 2, "LightGrey", 6250 },
+						   { 3, "Leucistic", 33 },
+						   { 5, "Leucistic", 33 },
+						   { 4, "Leucistic", 33 },
+						   { 0, "Brown", 37350 },
+						   { 1, "DarkGrey", 6250 },
+					   }
+			   },
+			   {
+				   "female", 49949,
+					   {
+						   { 2, "LightGrey", 6250 },
+						   { 3, "Leucistic", 33 },
+						   { 5, "Leucistic", 33 },
+						   { 4, "Leucistic", 33 },
+						   { 0, "Brown", 37350 },
+						   { 1, "DarkGrey", 6250 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Chamois ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 1, "GrayBrown", 37350 },
+						   { 2, "Honeytones", 12500 },
+						   { 4, "Melanistic", 50 },
+						   { 3, "Leucistic", 200 },
+						   { 0, "Brown", 12500 },
+						   { 6, "DarkBrown", 37350 },
+						   { 5, "Albino", 50 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 1, "GrayBrown", 37350 },
+						   { 2, "Honeytones", 12500 },
+						   { 4, "Melanistic", 50 },
+						   { 3, "Leucistic", 200 },
+						   { 0, "Brown", 12500 },
+						   { 6, "DarkBrown", 37350 },
+						   { 5, "Albino", 50 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_CapeBuffalo ,
+		   {
+			   {
+				   "male", 99730,
+					   {
+						   { 0, "Grey", 37350 },
+						   { 1, "Leucistic", 50 },
+						   { 2, "Albino", 50 },
+						   { 3, "Black", 37350 },
+						   { 4, "Brown", 24930 },
+					   }
+			   },
+			   {
+				   "female", 99730,
+					   {
+						   { 0, "Grey", 37350 },
+						   { 1, "Leucistic", 50 },
+						   { 2, "Albino", 50 },
+						   { 3, "Black", 37350 },
+						   { 4, "Brown", 24930 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_FallowDeer ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 0, "Piebald", 150 },
+						   { 1, "Dark", 14940 },
+						   { 3, "Spotted", 14940 },
+						   { 5, "SpottedDark", 14940 },
+						   { 9, "Albino", 38 },
+						   { 10, "Dark", 14940 },
+						   { 11, "Melanistic", 38 },
+						   { 12, "Spotted", 14940 },
+					   }
+			   },
+			   {
+				   "female", 64816,
+					   {
+						   { 2, "Spotted", 24900 },
+						   { 4, "SpottedRed", 24900 },
+						   { 6, "SpottedDark", 14940 },
+						   { 7, "Melanistic", 38 },
+						   { 8, "Albino", 38 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Raccoon ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 2, "Grey", 37350 },
+						   { 3, "PiebaldBlonde", 100 },
+						   { 5, "Albino", 50 },
+						   { 4, "PiebaldGrey", 100 },
+						   { 6, "Melanistic", 50 },
+						   { 0, "Brown", 37350 },
+						   { 1, "Blonde", 25000 },
+					   }
+			   },
+			   {
+				   "female", 62650,
+					   {
+						   { 3, "PiebaldBlonde", 100 },
+						   { 5, "Albino", 50 },
+						   { 4, "PiebaldGrey", 100 },
+						   { 6, "Melanistic", 50 },
+						   { 0, "Brown", 37350 },
+						   { 1, "Blonde", 25000 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_MuleDeer ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 0, "Blonde", 37350 },
+						   { 1, "Dilute", 200 },
+						   { 2, "Melanistic", 25 },
+						   { 3, "Grey", 25000 },
+						   { 4, "Piebald", 25 },
+						   { 5, "Piebald", 25 },
+						   { 6, "Brown", 37350 },
+						   { 7, "Albino", 25 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 0, "Blonde", 37350 },
+						   { 1, "Dilute", 200 },
+						   { 2, "Melanistic", 25 },
+						   { 3, "Grey", 25000 },
+						   { 4, "Piebald", 25 },
+						   { 5, "Piebald", 25 },
+						   { 6, "Brown", 37350 },
+						   { 7, "Albino", 25 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_AmericanAlligator ,
+		   {
+			   {
+				   "male", 100900,
+					   {
+						   { 2, "Piebald", 200 },
+						   { 3, "Piebald", 200 },
+						   { 5, "Piebald", 200 },
+						   { 4, "Piebald", 200 },
+						   { 6, "Piebald", 200 },
+						   { 7, "Melanistic", 100 },
+						   { 0, "Olive", 74700 },
+						   { 8, "Albino", 100 },
+						   { 1, "DarkBrown", 25000 },
+					   }
+			   },
+			   {
+				   "female", 100900,
+					   {
+						   { 2, "Piebald", 200 },
+						   { 3, "Piebald", 200 },
+						   { 5, "Piebald", 200 },
+						   { 4, "Piebald", 200 },
+						   { 6, "Piebald", 200 },
+						   { 7, "Melanistic", 100 },
+						   { 0, "Olive", 74700 },
+						   { 8, "Albino", 100 },
+						   { 1, "DarkBrown", 25000 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_RedFox ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 5, "DarkRed", 24900 },
+						   { 6, "Red", 24900 },
+						   { 8, "Orange", 24900 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "Red", 24900 },
+						   { 1, "Orange", 24900 },
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 7, "DarkRed", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Blacktail ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 5, "GrayBrown", 24900 },
+						   { 6, "Grey", 24900 },
+						   { 8, "DarkGrey", 24900 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "Tan", 24900 },
+						   { 1, "Grey", 24900 },
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 7, "GrayBrown", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_SikaDeer ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 4, "Brown", 37350 },
+						   { 3, "Spotted", 12500 },
+						   { 1, "SpottedDark", 12500 },
+						   { 2, "SpottedRed", 200 },
+						   { 0, "Black", 37350 },
+						   { 5, "Albino", 100 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 4, "Brown", 37350 },
+						   { 3, "Spotted", 12500 },
+						   { 1, "SpottedDark", 12500 },
+						   { 2, "SpottedRed", 200 },
+						   { 0, "Black", 37350 },
+						   { 5, "Albino", 100 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Coyote ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 5, "GrayBrown", 24900 },
+						   { 6, "Orange", 24900 },
+						   { 8, "DarkGrey", 24900 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "GrayBrown", 24900 },
+						   { 1, "Orange", 24900 },
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 7, "LightGrey", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_IberianMouflon ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 0, "LightBrown", 24900 },
+						   { 1, "Grey", 150 },
+						   { 2, "Albino", 38 },
+						   { 5, "Melanistic", 38 },
+						   { 3, "Brown", 24900 },
+						   { 4, "Brown", 24900 },
+					   }
+			   },
+			   {
+				   "female", 50026,
+					   {
+						   { 1, "Grey", 150 },
+						   { 2, "Albino", 38 },
+						   { 5, "Melanistic", 38 },
+						   { 3, "Brown", 24900 },
+						   { 4, "Brown", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_SiberianMuskDeer ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 5, "GrayBrown", 37350 },
+						   { 6, "DarkBrown", 37350 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "GrayBrown", 37350 },
+						   { 1, "Orange", 37350 },
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_EurasianWigeon ,
+		   {
+			   {
+				   "male", 74999,
+					   {
+						   { 2, "Brown", 37350 },
+						   { 3, "Eclipse", 200 },
+						   { 4, "Hybrid", 33 },
+						   { 7, "Leucistic", 33 },
+						   { 8, "Leucistic", 33 },
+						   { 1, "Grey", 37350 },
+					   }
+			   },
+			   {
+				   "female", 74966,
+					   {
+						   { 5, "Dark", 200 },
+						   { 6, "Grey", 37350 },
+						   { 7, "Leucistic", 33 },
+						   { 0, "Brown", 37350 },
+						   { 8, "Leucistic", 33 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_GrizzlyBear ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 0, "Melanistic", 38 },
+						   { 1, "Albino", 38 },
+						   { 2, "GrayBrown", 74700 },
+						   { 3, "Brown", 150 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "Melanistic", 38 },
+						   { 1, "Albino", 38 },
+						   { 4, "Brown", 150 },
+						   { 2, "GrayBrown", 74700 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Lion ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 0, "DarkBrown", 100 },
+						   { 1, "Blonde", 100 },
+						   { 2, "Albino", 100 },
+						   { 3, "Tan", 74700 },
+						   { 4, "LightBrown", 25000 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 0, "DarkBrown", 100 },
+						   { 1, "Blonde", 100 },
+						   { 2, "Albino", 100 },
+						   { 3, "Tan", 74700 },
+						   { 4, "LightBrown", 25000 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_RoeDeer ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 5, "DarkGrey", 24900 },
+						   { 6, "Brown", 24900 },
+						   { 8, "DarkBrown", 24900 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "Tan", 24900 },
+						   { 1, "Orange", 24900 },
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 7, "Brown", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_WillowPtarmigan ,
+		   {
+			   {
+				   "male", 37650,
+					   {
+						   { 3, "Molting", 24900 },
+						   { 5, "White", 200 },
+						   { 6, "Red", 100 },
+						   { 0, "Bicolor", 12450 },
+					   }
+			   },
+			   {
+				   "female", 62450,
+					   {
+						   { 2, "Brown", 12450 },
+						   { 3, "Molting", 24900 },
+						   { 5, "White", 200 },
+						   { 4, "Molting", 12450 },
+						   { 1, "Bicolor", 12450 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_BeceiteIbex ,
+		   {
+			   {
+				   "male", 74776,
+					   {
+						   { 1, "Grey", 18675 },
+						   { 2, "Albino", 38 },
+						   { 3, "Orange", 18675 },
+						   { 4, "Melanistic", 38 },
+						   { 5, "BrownHybrid", 18675 },
+						   { 6, "GrayBrown", 18675 },
+					   }
+			   },
+			   {
+				   "female", 68551,
+					   {
+						   { 0, "Buff", 24900 },
+						   { 2, "Albino", 38 },
+						   { 4, "Melanistic", 38 },
+						   { 6, "GrayBrown", 18675 },
+						   { 7, "LightBrown", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_GredosIbex ,
+		   {
+			   {
+				   "male", 74776,
+					   {
+						   { 0, "GrayBrown", 18675 },
+						   { 1, "Albino", 38 },
+						   { 2, "BrownHybrid", 18675 },
+						   { 3, "Melanistic", 38 },
+						   { 6, "LightGrey", 18675 },
+						   { 7, "Grey", 18675 },
+					   }
+			   },
+			   {
+				   "female", 56101,
+					   {
+						   { 1, "Albino", 38 },
+						   { 3, "Melanistic", 38 },
+						   { 4, "LightBrown", 18675 },
+						   { 5, "Buff", 18675 },
+						   { 6, "LightGrey", 18675 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Jackrabbit ,
+		   {
+			   {
+				   "male", 74775,
+					   {
+						   { 0, "Grey", 18675 },
+						   { 1, "Beige", 18675 },
+						   { 2, "Albino", 75 },
+						   { 3, "LightBrown", 18675 },
+						   { 4, "Brown", 18675 },
+					   }
+			   },
+			   {
+				   "female", 74775,
+					   {
+						   { 0, "Grey", 18675 },
+						   { 1, "Beige", 18675 },
+						   { 2, "Albino", 75 },
+						   { 3, "LightBrown", 18675 },
+						   { 4, "Brown", 18675 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_HazelGrouse ,
+		   {
+			   {
+				   "male", 137200,
+					   {
+						   { 2, "Dark", 25000 },
+						   { 3, "Hybrid", 50 },
+						   { 4, "Pale", 100 },
+						   { 0, "Brown", 74700 },
+						   { 1, "Grey", 37350 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 5, "Ochre", 12500 },
+						   { 4, "Pale", 100 },
+						   { 6, "Dark", 200 },
+						   { 7, "LightBrown", 12500 },
+						   { 0, "Brown", 74700 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_RedDeer ,
+		   {
+			   {
+				   "male", 74964,
+					   {
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 9, "GreatOneRedDeer", 38 },
+						   { 4, "Piebald", 150 },
+						   { 5, "Brown", 24900 },
+						   { 6, "LightBrown", 24900 },
+						   { 8, "DarkBrown", 24900 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "DarkBrown", 24900 },
+						   { 1, "Brown", 24900 },
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 7, "Grey", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_ScrubHare ,
+		   {
+			   {
+				   "male", 77400,
+					   {
+						   { 0, "Grey", 2500 },
+						   { 1, "LightGrey", 200 },
+						   { 2, "Brown", 37350 },
+						   { 3, "Chestnut", 37350 },
+					   }
+			   },
+			   {
+				   "female", 77400,
+					   {
+						   { 0, "Grey", 2500 },
+						   { 1, "LightGrey", 200 },
+						   { 2, "Brown", 37350 },
+						   { 3, "Chestnut", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_CanadaGoose ,
+		   {
+			   {
+				   "male", 99999,
+					   {
+						   { 0, "BrownHybrid", 25000 },
+						   { 1, "Grey", 200 },
+						   { 2, "Lightgreyleucistic", 33 },
+						   { 3, "Melanistic", 33 },
+						   { 4, "GrayBrown", 74700 },
+						   { 5, "Baldleucistic", 33 },
+					   }
+			   },
+			   {
+				   "female", 99999,
+					   {
+						   { 0, "BrownHybrid", 25000 },
+						   { 1, "Grey", 200 },
+						   { 2, "Lightgreyleucistic", 33 },
+						   { 3, "Melanistic", 33 },
+						   { 4, "GrayBrown", 74700 },
+						   { 5, "Baldleucistic", 33 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_BighornSheep ,
+		   {
+			   {
+				   "male", 99799,
+					   {
+						   { 0, "Black", 8333 },
+						   { 1, "Bronze", 8333 },
+						   { 2, "GrayBrown", 8333 },
+						   { 4, "Brown", 74700 },
+						   { 3, "Albino", 100 },
+					   }
+			   },
+			   {
+				   "female", 99799,
+					   {
+						   { 0, "Black", 8333 },
+						   { 1, "Bronze", 8333 },
+						   { 2, "GrayBrown", 8333 },
+						   { 4, "Brown", 74700 },
+						   { 3, "Albino", 100 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_EasternCottontailRabbit ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 2, "Grey", 37350 },
+						   { 3, "Leucistic", 100 },
+						   { 5, "LightGrey", 12500 },
+						   { 4, "Leucistic", 100 },
+						   { 6, "Melanistic", 50 },
+						   { 7, "Albino", 50 },
+						   { 0, "Brown", 37350 },
+						   { 1, "LightBrown", 12500 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 2, "Grey", 37350 },
+						   { 3, "Leucistic", 100 },
+						   { 5, "LightGrey", 12500 },
+						   { 4, "Leucistic", 100 },
+						   { 6, "Melanistic", 50 },
+						   { 7, "Albino", 50 },
+						   { 0, "Brown", 37350 },
+						   { 1, "LightBrown", 12500 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_FeralGoat ,
+		   {
+			   {
+				   "male", 99999,
+					   {
+						   { 10, "WhiteBrown", 8333 },
+						   { 0, "Black", 50 },
+						   { 1, "BlackWhite", 8333 },
+						   { 2, "Albino", 50 },
+						   { 3, "BlackBrown", 8333 },
+						   { 9, "Mixed", 100 },
+						   { 4, "Blonde", 18675 },
+						   { 5, "DarkBrown", 18675 },
+						   { 6, "White", 18675 },
+						   { 8, "Mixed", 100 },
+						   { 7, "Brown", 18675 },
+					   }
+			   },
+			   {
+				   "female", 45783,
+					   {
+						   { 0, "Black", 50 },
+						   { 1, "BlackWhite", 8333 },
+						   { 2, "Albino", 50 },
+						   { 6, "White", 18675 },
+						   { 7, "Brown", 18675 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_TuftedDuck ,
+		   {
+			   {
+				   "male", 74899,
+					   {
+						   { 2, "Eclipse", 100 },
+						   { 5, "Leucistic", 33 },
+						   { 4, "Leucistic", 33 },
+						   { 6, "Albino", 33 },
+						   { 0, "Black", 74700 },
+					   }
+			   },
+			   {
+				   "female", 74866,
+					   {
+						   { 3, "Cream", 100 },
+						   { 5, "Leucistic", 33 },
+						   { 4, "Leucistic", 33 },
+						   { 1, "Brown", 74700 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_BlackGrouse ,
+		   {
+			   {
+				   "male", 74800,
+					   {
+						   { 5, "Leucistic", 20 },
+						   { 9, "Melanistic", 20 },
+						   { 6, "Leucistic", 20 },
+						   { 7, "Leucistic", 20 },
+						   { 0, "Dark", 74700 },
+						   { 8, "Melanistic", 20 },
+					   }
+			   },
+			   {
+				   "female", 99900,
+					   {
+						   { 2, "Gold", 100 },
+						   { 3, "Dark", 25000 },
+						   { 4, "Orange", 100 },
+						   { 1, "Brown", 74700 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Gemsbok ,
+		   {
+			   {
+				   "male", 74925,
+					   {
+						   { 0, "Dark", 75 },
+						   { 1, "Beige", 75 },
+						   { 2, "Gold", 75 },
+						   { 3, "LightGrey", 37350 },
+						   { 4, "Grey", 37350 },
+					   }
+			   },
+			   {
+				   "female", 74925,
+					   {
+						   { 0, "Dark", 75 },
+						   { 1, "Beige", 75 },
+						   { 2, "Gold", 75 },
+						   { 3, "LightGrey", 37350 },
+						   { 4, "Grey", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_RockPtarmigan ,
+		   {
+			   {
+				   "male", 53555,
+					   {
+						   { 3, "Molting", 21342 },
+						   { 5, "White", 200 },
+						   { 4, "Molting", 21342 },
+						   { 0, "Bicolor", 10671 },
+					   }
+			   },
+			   {
+				   "female", 64226,
+					   {
+						   { 2, "Mottled", 10671 },
+						   { 3, "Molting", 21342 },
+						   { 5, "White", 200 },
+						   { 4, "Molting", 21342 },
+						   { 1, "Mottled", 10671 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_SoutheasternIbex ,
+		   {
+			   {
+				   "male", 74776,
+					   {
+						   { 0, "GrayBrown", 18675 },
+						   { 1, "Albino", 38 },
+						   { 2, "LightGrey", 18675 },
+						   { 3, "Melanistic", 38 },
+						   { 6, "BrownHybrid", 18675 },
+						   { 7, "Orange", 18675 },
+					   }
+			   },
+			   {
+				   "female", 56101,
+					   {
+						   { 1, "Albino", 38 },
+						   { 3, "Melanistic", 38 },
+						   { 4, "LightBrown", 18675 },
+						   { 5, "Buff", 18675 },
+						   { 6, "BrownHybrid", 18675 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_BlueWildebeest ,
+		   {
+			   {
+				   "male", 99800,
+					   {
+						   { 0, "Gold", 25000 },
+						   { 2, "Albino", 100 },
+						   { 3, "Grey", 37350 },
+						   { 4, "DarkGrey", 37350 },
+					   }
+			   },
+			   {
+				   "female", 75000,
+					   {
+						   { 1, "Crowned", 200 },
+						   { 2, "Albino", 100 },
+						   { 3, "Grey", 37350 },
+						   { 4, "DarkGrey", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Blackbuck ,
+		   {
+			   {
+				   "male", 50100,
+					   {
+						   { 0, "Dark", 25000 },
+						   { 1, "Leucistic", 50 },
+						   { 2, "Melanistic", 50 },
+						   { 4, "Black", 25000 },
+					   }
+			   },
+			   {
+				   "female", 99800,
+					   {
+						   { 0, "Dark", 25000 },
+						   { 1, "Leucistic", 50 },
+						   { 2, "Melanistic", 50 },
+						   { 3, "Brown", 74700 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_WaterBuffalo ,
+		   {
+			   {
+				   "male", 77500,
+					   {
+						   { 0, "Orange", 200 },
+						   { 2, "Albino", 100 },
+						   { 3, "Grey", 74700 },
+						   { 4, "Black", 2500 },
+					   }
+			   },
+			   {
+				   "female", 114850,
+					   {
+						   { 0, "Orange", 200 },
+						   { 1, "Brown", 37350 },
+						   { 2, "Albino", 100 },
+						   { 3, "Grey", 74700 },
+						   { 4, "Black", 2500 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Puma ,
+		   {
+			   {
+				   "male", 99730,
+					   {
+						   { 0, "DarkRed", 12465 },
+						   { 1, "Albino", 50 },
+						   { 2, "Melanistic", 50 },
+						   { 3, "LightBrown", 74700 },
+						   { 4, "Grey", 12465 },
+					   }
+			   },
+			   {
+				   "female", 99730,
+					   {
+						   { 0, "DarkRed", 12465 },
+						   { 1, "Albino", 50 },
+						   { 2, "Melanistic", 50 },
+						   { 3, "LightBrown", 74700 },
+						   { 4, "Grey", 12465 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Whitetail ,
+		   {
+			   {
+				   "male", 75264,
+					   {
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 9, "GreatOneWhitetail", 38 },
+						   { 4, "Piebald", 150 },
+						   { 5, "Tan", 25000 },
+						   { 6, "Brown", 25000 },
+						   { 8, "DarkBrown", 25000 },
+					   }
+			   },
+			   {
+				   "female", 75226,
+					   {
+						   { 0, "Brown", 25000 },
+						   { 1, "DarkBrown", 25000 },
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 7, "RedBrown", 25000 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_GrayFox ,
+		   {
+			   {
+				   "male", 100001,
+					   {
+						   { 2, "Tone", 12500 },
+						   { 3, "Albino", 50 },
+						   { 5, "Leucistic", 67 },
+						   { 4, "Melanistic", 50 },
+						   { 6, "Piebald", 67 },
+						   { 7, "Piebald", 67 },
+						   { 0, "Grey", 74700 },
+						   { 1, "Red", 12500 },
+					   }
+			   },
+			   {
+				   "female", 100001,
+					   {
+						   { 2, "Tone", 12500 },
+						   { 3, "Albino", 50 },
+						   { 5, "Leucistic", 67 },
+						   { 4, "Melanistic", 50 },
+						   { 6, "Piebald", 67 },
+						   { 7, "Piebald", 67 },
+						   { 0, "Grey", 74700 },
+						   { 1, "Red", 12500 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Moose ,
+		   {
+			   {
+				   "male", 74926,
+					   {
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 9, "NzMooseMocha", 0 },
+						   { 4, "Piebald", 150 },
+						   { 5, "LightBrown", 24900 },
+						   { 6, "Tan", 24900 },
+						   { 8, "Brown", 24900 },
+					   }
+			   },
+			   {
+				   "female", 74926,
+					   {
+						   { 0, "Tan", 24900 },
+						   { 1, "Brown", 24900 },
+						   { 2, "Melanistic", 38 },
+						   { 3, "Albino", 38 },
+						   { 4, "Piebald", 150 },
+						   { 7, "DarkBrown", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_PlainsBison ,
+		   {
+			   {
+				   "male", 87225,
+					   {
+						   { 0, "LightGrey", 24900 },
+						   { 1, "Dark", 18675 },
+						   { 2, "Leucistic", 25 },
+						   { 3, "Albino", 25 },
+						   { 4, "Melanistic", 25 },
+						   { 5, "Brown", 18675 },
+						   { 6, "LightBrown", 24900 },
+					   }
+			   },
+			   {
+				   "female", 87225,
+					   {
+						   { 0, "LightGrey", 24900 },
+						   { 1, "Dark", 18675 },
+						   { 2, "Leucistic", 25 },
+						   { 3, "Albino", 25 },
+						   { 4, "Melanistic", 25 },
+						   { 5, "Brown", 18675 },
+						   { 6, "LightBrown", 24900 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_EasternWildTurkey ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 2, "LightBrown", 12500 },
+						   { 3, "Leucistic", 200 },
+						   { 5, "Bronze", 37350 },
+						   { 4, "Melanistic", 50 },
+						   { 6, "LightBronze", 12500 },
+						   { 0, "Brown", 37350 },
+						   { 1, "Albino", 50 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 2, "LightBrown", 12500 },
+						   { 3, "Leucistic", 200 },
+						   { 5, "Bronze", 37350 },
+						   { 4, "Melanistic", 50 },
+						   { 6, "LightBronze", 12500 },
+						   { 0, "Brown", 37350 },
+						   { 1, "Albino", 50 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_ProngHorn ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 0, "Tan", 37350 },
+						   { 1, "Dark", 25000 },
+						   { 3, "Piebald", 100 },
+						   { 2, "Leucistic", 50 },
+						   { 4, "Piebald", 100 },
+						   { 6, "Brown", 37350 },
+						   { 5, "Albino", 50 },
+					   }
+			   },
+			   {
+				   "female", 99900,
+					   {
+						   { 0, "Tan", 37350 },
+						   { 1, "Dark", 25000 },
+						   { 3, "Piebald", 100 },
+						   { 2, "Leucistic", 50 },
+						   { 6, "Brown", 37350 },
+						   { 5, "Albino", 50 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_SidestripedJackal ,
+		   {
+			   {
+				   "male", 99696,
+					   {
+						   { 0, "Grey", 24930 },
+						   { 1, "Albino", 33 },
+						   { 2, "Ghost", 0 },
+						   { 3, "Melanistic", 33 },
+						   { 4, "LightBrown", 37350 },
+						   { 5, "GrayBrown", 37350 },
+					   }
+			   },
+			   {
+				   "female", 99696,
+					   {
+						   { 0, "Grey", 24930 },
+						   { 1, "Albino", 33 },
+						   { 2, "Ghost", 0 },
+						   { 3, "Melanistic", 33 },
+						   { 4, "LightBrown", 37350 },
+						   { 5, "GrayBrown", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_EuRabbit ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 0, "DarkBrown", 37350 },
+						   { 1, "Leucistic", 50 },
+						   { 2, "Melanistic", 100 },
+						   { 3, "LightBrown", 12500 },
+						   { 4, "LightGrey", 100 },
+						   { 5, "Brown", 12500 },
+						   { 6, "Albino", 50 },
+						   { 7, "Tan", 37350 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 0, "DarkBrown", 37350 },
+						   { 1, "Leucistic", 50 },
+						   { 2, "Melanistic", 100 },
+						   { 3, "LightBrown", 12500 },
+						   { 4, "LightGrey", 100 },
+						   { 5, "Brown", 12500 },
+						   { 6, "Albino", 50 },
+						   { 7, "Tan", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_WildTurkey ,
+		   {
+			   {
+				   "male", 125000,
+					   {
+						   { 2, "LightBrown", 25000 },
+						   { 3, "Leucistic", 200 },
+						   { 5, "DarkBrown", 25000 },
+						   { 4, "Melanistic", 50 },
+						   { 0, "Brown", 74700 },
+						   { 1, "Albino", 50 },
+					   }
+			   },
+			   {
+				   "female", 125000,
+					   {
+						   { 2, "LightBrown", 25000 },
+						   { 3, "Leucistic", 200 },
+						   { 5, "DarkBrown", 25000 },
+						   { 4, "Melanistic", 50 },
+						   { 0, "Brown", 74700 },
+						   { 1, "Albino", 50 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Caribou ,
+		   {
+			   {
+				   "male", 74925,
+					   {
+						   { 0, "Melanistic", 25 },
+						   { 1, "Leucistic", 25 },
+						   { 2, "Piebald", 150 },
+						   { 3, "Albino", 25 },
+						   { 4, "LightBrown", 37350 },
+						   { 5, "DarkBrown", 37350 },
+					   }
+			   },
+			   {
+				   "female", 74775,
+					   {
+						   { 0, "Melanistic", 25 },
+						   { 1, "Leucistic", 25 },
+						   { 3, "Albino", 25 },
+						   { 4, "LightBrown", 37350 },
+						   { 5, "DarkBrown", 37350 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_Goldeneye ,
+		   {
+			   {
+				   "male", 75050,
+					   {
+						   { 3, "Eclipse", 200 },
+						   { 5, "Hybrid", 25 },
+						   { 4, "Hybrid", 25 },
+						   { 6, "Leucistic", 50 },
+						   { 7, "Leucistic", 50 },
+						   { 0, "Black", 74700 },
+					   }
+			   },
+			   {
+				   "female", 75000,
+					   {
+						   { 2, "Dark", 200 },
+						   { 6, "Leucistic", 50 },
+						   { 7, "Leucistic", 50 },
+						   { 1, "Grey", 74700 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_GreylagGoose ,
+		   {
+			   {
+				   "male", 200150,
+					   {
+						   { 2, "Hybrid", 25 },
+						   { 3, "Leucistic", 25 },
+						   { 5, "Leucistic", 25 },
+						   { 4, "Leucistic", 25 },
+						   { 6, "Leucistic", 25 },
+						   { 7, "Leucistic", 25 },
+						   { 0, "Brown", 150000 },
+						   { 1, "Grey", 50000 },
+					   }
+			   },
+			   {
+				   "female", 200150,
+					   {
+						   { 2, "Hybrid", 25 },
+						   { 3, "Leucistic", 25 },
+						   { 5, "Leucistic", 25 },
+						   { 4, "Leucistic", 25 },
+						   { 6, "Leucistic", 25 },
+						   { 7, "Leucistic", 25 },
+						   { 0, "Brown", 150000 },
+						   { 1, "Grey", 50000 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_IberianWolf ,
+		   {
+			   {
+				   "male", 100001,
+					   {
+						   { 0, "Pristine", 67 },
+						   { 1, "Olive", 67 },
+						   { 2, "Albino", 50 },
+						   { 3, "Winter", 67 },
+						   { 4, "Sombra", 0 },
+						   { 5, "Melanistic", 50 },
+						   { 6, "Fantasma", 0 },
+						   { 7, "GrayBrown", 74700 },
+						   { 8, "Ogro", 0 },
+						   { 9, "Grey", 25000 },
+					   }
+			   },
+			   {
+				   "female", 100001,
+					   {
+						   { 0, "Pristine", 67 },
+						   { 1, "Olive", 67 },
+						   { 2, "Albino", 50 },
+						   { 3, "Winter", 67 },
+						   { 4, "Sombra", 0 },
+						   { 5, "Melanistic", 50 },
+						   { 6, "Fantasma", 0 },
+						   { 7, "GrayBrown", 74700 },
+						   { 8, "Ogro", 0 },
+						   { 9, "Grey", 25000 },
+					   }
+			   }
+		   }
+	   },
+
+		{ AT_RioGrandeTurkey ,
+		   {
+			   {
+				   "male", 100000,
+					   {
+						   { 2, "LightBrown", 12500 },
+						   { 3, "Leucistic", 200 },
+						   { 5, "Buff", 37350 },
+						   { 4, "Melanistic", 50 },
+						   { 6, "Lightbuff", 12500 },
+						   { 0, "Brown", 37350 },
+						   { 1, "Albino", 50 },
+					   }
+			   },
+			   {
+				   "female", 100000,
+					   {
+						   { 2, "LightBrown", 12500 },
+						   { 3, "Leucistic", 200 },
+						   { 5, "Buff", 37350 },
+						   { 4, "Melanistic", 50 },
+						   { 6, "Lightbuff", 12500 },
+						   { 0, "Brown", 37350 },
+						   { 1, "Albino", 50 },
+					   }
+			   }
+		   }
+	   },
 	};
 
 #pragma region FurDB
@@ -271,7 +2437,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_BrownBear, "male", 100000,
+		AT_EurasianBrownBear, "male", 100000,
 		{
 			{ 0, "Melanistic", 200 },
 			{ 3, "Spirit", 5000 },
@@ -287,7 +2453,7 @@ namespace HunterCheckmate_FileAnalyzer
 		 }
 	},
 	{
-		AT_BrownBear, "female", 100000,
+		AT_EurasianBrownBear, "female", 100000,
 		{
 			{ 0, "Melanistic", 200 },
 			{ 1, "Dark Brown", 5000 },
@@ -633,7 +2799,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_MuskDeer, "male", 74926,
+		AT_SiberianMuskDeer, "male", 74926,
 		{
 			{ 2, "Melanistic", 38 },
 			{ 3, "Albino", 38 },
@@ -643,7 +2809,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_MuskDeer, "female", 74926,
+		AT_SiberianMuskDeer, "female", 74926,
 		{
 			{ 0, "Gray Brown", 37350 },
 			{ 1, "Orange", 37350 },
@@ -823,7 +2989,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_Pronghorn, "male", 100000,
+		AT_ProngHorn, "male", 100000,
 		{
 			{ 0, "Tan", 37350 },
 			{ 1, "Dark", 25000 },
@@ -835,7 +3001,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_Pronghorn, "female", 99900,
+		AT_ProngHorn, "female", 99900,
 		{
 			{ 0, "Tan", 37350 },
 			{ 1, "Dark", 25000 },
@@ -846,7 +3012,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_RingNeckedPheasant, "male", 99742,
+		AT_Pheasant, "male", 99742,
 		{
 			{ 2, "White Brown", 37350 },
 			{ 3, "Leucistic", 34 },
@@ -858,7 +3024,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_RingNeckedPheasant, "female", 42452,
+		AT_Pheasant, "female", 42452,
 		{
 			{ 3, "Leucistic", 34 },
 			{ 5, "Albino", 34 },
@@ -894,7 +3060,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_SideStripedJackal, "male", 99696,
+		AT_SidestripedJackal, "male", 99696,
 		{
 			{ 0, "Grey", 24930 },
 			{ 1, "Albino", 33 },
@@ -905,7 +3071,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_SideStripedJackal, "female", 99696,
+		AT_SidestripedJackal, "female", 99696,
 		{
 			{ 0, "Grey", 24930 },
 			{ 1, "Albino", 33 },
@@ -966,7 +3132,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_EuroBison, "male", 74926,
+		AT_EuBison, "male", 74926,
 		{
 			{ 2, "Melanistic", 38 },
 			{ 3, "Albino", 38 },
@@ -977,7 +3143,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_EuroBison, "female", 74926,
+		AT_EuBison, "female", 74926,
 		{
 			{ 0, "Brown", 24900 },
 			{ 1, "Dark Brown", 24900 },
@@ -1009,7 +3175,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_WhitetailDeer, "male", 75264,
+		AT_Whitetail, "male", 75264,
 		{
 			{ 2, "Melanistic", 38 },
 			{ 3, "Albino", 38 },
@@ -1021,7 +3187,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_WhitetailDeer, "female", 75226,
+		AT_Whitetail, "female", 75226,
 		{
 			{ 0, "Brown", 25000 },
 			{ 1, "Dark Brown", 25000 },
@@ -1166,7 +3332,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_SoutheasternSpanishIbex, "male", 74776,
+		AT_SoutheasternIbex, "male", 74776,
 		{
 			{ 0, "Gray_Brown", 18675 },
 			{ 1, "Albino", 38 },
@@ -1177,7 +3343,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_SoutheasternSpanishIbex, "female", 56101,
+		AT_SoutheasternIbex, "female", 56101,
 		{
 			{ 1, "Albino", 38 },
 			{ 3, "Melanistic", 38 },
@@ -1290,7 +3456,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_MerriamTurkey, "male", 125000,
+		AT_WildTurkey, "male", 125000,
 		{
 			{ 2, "Light Brown", 25000 },
 			{ 3, "Leucistic", 200 },
@@ -1301,7 +3467,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_MerriamTurkey, "female", 125000,
+		AT_WildTurkey, "female", 125000,
 		{
 			{ 2, "Light Brown", 25000 },
 			{ 3, "Leucistic", 200 },
@@ -1379,7 +3545,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_RockyMountainElk, "male", 100000,
+		AT_RockymountainElk, "male", 100000,
 		{
 			{ 4, "Albino", 100 },
 			{ 1, "Light Grey", 25000 },
@@ -1390,7 +3556,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_RockyMountainElk, "female", 100000,
+		AT_RockymountainElk, "female", 100000,
 		{
 			{ 4, "Albino", 100 },
 			{ 1, "Light Grey", 25000 },
@@ -1401,7 +3567,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_BlacktailDeer, "male", 74926,
+		AT_Blacktail, "male", 74926,
 		{
 			{ 2, "Melanistic", 38 },
 			{ 3, "Albino", 38 },
@@ -1412,7 +3578,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_BlacktailDeer, "female", 74926,
+		AT_Blacktail, "female", 74926,
 		{
 			{ 0, "Tan", 24900 },
 			{ 1, "Grey", 24900 },
@@ -1423,7 +3589,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_EuroHare, "male", 74776,
+		AT_EuHare, "male", 74776,
 		{
 			{ 0, "Dark Brown", 18675 },
 			{ 1, "Grey", 18675 },
@@ -1434,7 +3600,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_EuroHare, "female", 74776,
+		AT_EuHare, "female", 74776,
 		{
 			{ 0, "Dark Brown", 18675 },
 			{ 1, "Grey", 18675 },
@@ -1511,7 +3677,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_CommonRaccoon, "male", 100000,
+		AT_Raccoon, "male", 100000,
 		{
 			{ 2, "Grey", 37350 },
 			{ 3, "Piebald Blonde", 100 },
@@ -1523,7 +3689,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_CommonRaccoon, "female", 62650,
+		AT_Raccoon, "female", 62650,
 		{
 			{ 3, "Piebald Blonde", 100 },
 			{ 5, "Albino", 50 },
@@ -1603,7 +3769,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_BobwhiteQuail, "male", 297008,
+		AT_NorthernBobwhiteQuail, "male", 297008,
 		{
 			{ 2, "Grey", 99000 },
 			{ 3, "Albino", 8 },
@@ -1612,7 +3778,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_BobwhiteQuail, "female", 99008,
+		AT_NorthernBobwhiteQuail, "female", 99008,
 		{
 			{ 3, "Albino", 8 },
 			{ 0, "Brown", 99000 },
@@ -1688,7 +3854,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_EuroRabbit, "male", 100000,
+		AT_EuRabbit, "male", 100000,
 		{
 			{ 0, "Dark Brown", 37350 },
 			{ 1, "Leucistic", 50 },
@@ -1701,7 +3867,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_EuroRabbit, "female", 100000,
+		AT_EuRabbit, "female", 100000,
 		{
 			{ 0, "Dark Brown", 37350 },
 			{ 1, "Leucistic", 50 },
@@ -1782,7 +3948,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_IberianMuflon, "male", 74926,
+		AT_IberianMouflon, "male", 74926,
 		{
 			{ 0, "Light Brown", 24900 },
 			{ 1, "Grey", 150 },
@@ -1793,7 +3959,7 @@ namespace HunterCheckmate_FileAnalyzer
 		}
 	},
 	{
-		AT_IberianMuflon, "female", 50026,
+		AT_IberianMouflon, "female", 50026,
 		{
 			{ 1, "Grey", 150 },
 			{ 2, "Albino", 38 },

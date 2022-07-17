@@ -13,9 +13,9 @@ namespace HunterCheckmate_FileAnalyzer
 		case 0:
 		{
 			m_animals_hash.emplace(AT_WildBoar, 147581770);
-			m_animals_hash.emplace(AT_EuroRabbit, 442307937);
+			m_animals_hash.emplace(AT_EuRabbit, 442307937);
 			m_animals_hash.emplace(AT_FallowDeer, 798672823);
-			m_animals_hash.emplace(AT_EuroBison, 1056739115);
+			m_animals_hash.emplace(AT_EuBison, 1056739115);
 			m_animals_hash.emplace(AT_RoeDeer, 2052964502);
 			m_animals_hash.emplace(AT_RedFox, 2105558160);
 			m_animals_hash.emplace(AT_CanadaGoose, 3321523293);
@@ -31,26 +31,26 @@ namespace HunterCheckmate_FileAnalyzer
 			m_animals_hash.emplace(AT_BlackBear, 2434390669);
 			m_animals_hash.emplace(AT_RooseveltElk, 2492964089);
 			m_animals_hash.emplace(AT_Coyote, 3041812107);
-			m_animals_hash.emplace(AT_BlacktailDeer, 3616431897);
-			m_animals_hash.emplace(AT_WhitetailDeer, 3845994887);
+			m_animals_hash.emplace(AT_Blacktail, 3616431897);
+			m_animals_hash.emplace(AT_Whitetail, 3845994887);
 			break;
 		}
 			// Medved
 		case 2:
 		{
-			m_animals_hash.emplace(AT_MuskDeer, 74472795);
+			m_animals_hash.emplace(AT_SiberianMuskDeer, 74472795);
 			m_animals_hash.emplace(AT_Moose, 155298792);
 			m_animals_hash.emplace(AT_WildBoar, 1570854601);
 			m_animals_hash.emplace(AT_Reindeer, 1779251800);
 			m_animals_hash.emplace(AT_EurasianLynx, 1814015872);
-			m_animals_hash.emplace(AT_BrownBear, 1923623595);
+			m_animals_hash.emplace(AT_EurasianBrownBear, 1923623595);
 			break;
 		}
 			// Vurhonga
 		case 3:
 		{
 			m_animals_hash.emplace(AT_BlueWildebeest, 183848642);
-			m_animals_hash.emplace(AT_SideStripedJackal, 802991936);
+			m_animals_hash.emplace(AT_SidestripedJackal, 802991936);
 			m_animals_hash.emplace(AT_Gemsbok, 1148301097);
 			m_animals_hash.emplace(AT_LesserKudu, 1955191955);
 			m_animals_hash.emplace(AT_ScrubHare, 1961213070);
@@ -87,13 +87,13 @@ namespace HunterCheckmate_FileAnalyzer
 			// Cuatro
 		case 8:
 		{
-			m_animals_hash.emplace(AT_SoutheasternSpanishIbex, 29543097);
+			m_animals_hash.emplace(AT_SoutheasternIbex, 29543097);
 			m_animals_hash.emplace(AT_IberianWolf, 293462162);
 			m_animals_hash.emplace(AT_RedDeer, 429398428);
-			m_animals_hash.emplace(AT_IberianMuflon, 1027204131);
+			m_animals_hash.emplace(AT_IberianMouflon, 1027204131);
 			m_animals_hash.emplace(AT_WildBoar, 1570854601);
 			m_animals_hash.emplace(AT_BeceiteIbex, 1851402074);
-			m_animals_hash.emplace(AT_EuroHare, 2281707277);
+			m_animals_hash.emplace(AT_EuHare, 2281707277);
 			m_animals_hash.emplace(AT_RoeDeer, 2611909699);
 			m_animals_hash.emplace(AT_RondaIbex, 2990876619);
 			m_animals_hash.emplace(AT_GredosIbex, 4191307686);
@@ -102,14 +102,14 @@ namespace HunterCheckmate_FileAnalyzer
 			// Silve Ridge
 		case 9:
 		{
-			m_animals_hash.emplace(AT_Pronghorn, 758166478);
+			m_animals_hash.emplace(AT_ProngHorn, 758166478);
 			m_animals_hash.emplace(AT_MountainLion, 769204555);
 			m_animals_hash.emplace(AT_MountainGoat, 1115891555);
 			m_animals_hash.emplace(AT_BighornSheep, 1257210256);
-			m_animals_hash.emplace(AT_MerriamTurkey, 2179039330);
+			m_animals_hash.emplace(AT_WildTurkey, 2179039330);
 			m_animals_hash.emplace(AT_BlackBear, 2434390669);
 			m_animals_hash.emplace(AT_MuleDeer, 2953920016);
-			m_animals_hash.emplace(AT_RockyMountainElk, 3114263951);
+			m_animals_hash.emplace(AT_RockymountainElk, 3114263951);
 			m_animals_hash.emplace(AT_PlainsBison, 3653899466);
 			break;
 		}
@@ -119,10 +119,10 @@ namespace HunterCheckmate_FileAnalyzer
 			m_animals_hash.emplace(AT_RedDeer, 429398428);
 			m_animals_hash.emplace(AT_SikaDeer, 442307937);
 			m_animals_hash.emplace(AT_Chamois, 762792036);
-			m_animals_hash.emplace(AT_EuroRabbit, 798672823);
+			m_animals_hash.emplace(AT_EuRabbit, 798672823);
 			m_animals_hash.emplace(AT_FeralPig, 966940268);
 			m_animals_hash.emplace(AT_FeralGoat, 2179039330);
-			m_animals_hash.emplace(AT_MerriamTurkey, 3127869685);
+			m_animals_hash.emplace(AT_WildTurkey, 3127869685);
 			m_animals_hash.emplace(AT_FallowDeer, 3245885585);
 			break;
 		}
@@ -130,13 +130,13 @@ namespace HunterCheckmate_FileAnalyzer
 		case 11:
 		{
 			m_animals_hash.emplace(AT_RioGrandeTurkey, 371665048);
-			m_animals_hash.emplace(AT_RingNeckedPheasant, 3318792243);
+			m_animals_hash.emplace(AT_Pheasant, 3318792243);
 			m_animals_hash.emplace(AT_AntelopeJackrabbit, 1959650903);
 			m_animals_hash.emplace(AT_Coyote, 3041812107);
 			m_animals_hash.emplace(AT_MexicanBobcat, 179923754);
 			m_animals_hash.emplace(AT_CollaredPeccary, 1797311245);
 			m_animals_hash.emplace(AT_BighornSheep, 1257210256);
-			m_animals_hash.emplace(AT_WhitetailDeer, 3845994887);
+			m_animals_hash.emplace(AT_Whitetail, 3845994887);
 			m_animals_hash.emplace(AT_MuleDeer, 2953920016);
 			break;
 		}
@@ -144,12 +144,12 @@ namespace HunterCheckmate_FileAnalyzer
 		case 12:
 		{
 			// TODO
-			m_animals_hash.emplace(AT_BobwhiteQuail, 1679436322);
+			m_animals_hash.emplace(AT_NorthernBobwhiteQuail, 1679436322);
 			m_animals_hash.emplace(AT_EasternCottontailRabbit, 1207690777);
 			m_animals_hash.emplace(AT_EasternWildTurkey, 1803270983);
 			m_animals_hash.emplace(AT_GrayFox, 2116163067);
-			m_animals_hash.emplace(AT_CommonRaccoon, 1014373606);
-			m_animals_hash.emplace(AT_WhitetailDeer, 3845994887);
+			m_animals_hash.emplace(AT_Raccoon, 1014373606);
+			m_animals_hash.emplace(AT_Whitetail, 3845994887);
 			m_animals_hash.emplace(AT_WildHog, 762792036);
 			m_animals_hash.emplace(AT_AmericanAlligator, 3136476066);
 			m_animals_hash.emplace(AT_BlackBear, 2434390669);
@@ -175,8 +175,8 @@ namespace HunterCheckmate_FileAnalyzer
 			m_animals_hash.emplace(AT_MountainHare, 532701289);
 			m_animals_hash.emplace(AT_RaccoonDog, 4067348893);
 			m_animals_hash.emplace(AT_EurasianLynx, 1814015872);
-			m_animals_hash.emplace(AT_WhitetailDeer, 3845994887);
-			m_animals_hash.emplace(AT_BrownBear, 1923623595);
+			m_animals_hash.emplace(AT_Whitetail, 3845994887);
+			m_animals_hash.emplace(AT_EurasianBrownBear, 1923623595);
 			m_animals_hash.emplace(AT_Moose, 155298792);
 			break;
 		}

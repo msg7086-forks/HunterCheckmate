@@ -30,7 +30,7 @@ namespace HunterCheckmate_FileAnalyzer
 			return std::make_shared<WildBoar>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_FallowDeer:
 			return std::make_shared<FallowDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_EuroBison:
+		case AT_EuBison:
 			return std::make_shared<EuroBison>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RoeDeer:
 			return std::make_shared<RoeDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
@@ -40,7 +40,7 @@ namespace HunterCheckmate_FileAnalyzer
 			return std::make_shared<CanadaGoose>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RedDeer:
 			return std::make_shared<RedDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_EuroRabbit:
+		case AT_EuRabbit:
 			return std::make_shared<EuroRabbit>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Moose:
 			return std::make_shared<Moose>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
@@ -54,21 +54,21 @@ namespace HunterCheckmate_FileAnalyzer
 			return std::make_shared<RooseveltElk>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Coyote:
 			return std::make_shared<Coyote>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_BlacktailDeer:
+		case AT_Blacktail:
 			return std::make_shared<BlacktailDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_WhitetailDeer:
+		case AT_Whitetail:
 			return std::make_shared<WhitetailDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_MuskDeer:
+		case AT_SiberianMuskDeer:
 			return std::make_shared<MuskDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Reindeer:
 			return std::make_shared<Reindeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_EurasianLynx:
 			return std::make_shared<EurasianLynx>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_BrownBear:
+		case AT_EurasianBrownBear:
 			return std::make_shared<BrownBear>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_BlueWildebeest:
 			return std::make_shared<BlueWildebeest>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_SideStripedJackal:
+		case AT_SidestripedJackal:
 			return std::make_shared<SideStripedJackal>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_Gemsbok:
 			return std::make_shared<Gemsbok>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
@@ -106,21 +106,21 @@ namespace HunterCheckmate_FileAnalyzer
 			return std::make_shared<GrayWolf>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_PlainsBison:
 			return std::make_shared<PlainsBison>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_SoutheasternSpanishIbex:
+		case AT_SoutheasternIbex:
 			return std::make_shared<SoutheasternSpanishIbex>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_IberianWolf:
 			return std::make_shared<IberianWolf>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_IberianMuflon:
+		case AT_IberianMouflon:
 			return std::make_shared<IberianMuflon>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_BeceiteIbex:
 			return std::make_shared<BeceiteIbex>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_EuroHare:
+		case AT_EuHare:
 			return std::make_shared<EuroHare>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RondaIbex:
 			return std::make_shared<RondaIbex>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_GredosIbex:
 			return std::make_shared<GredosIbex>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_Pronghorn:
+		case AT_ProngHorn:
 			return std::make_shared<Pronghorn>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_MountainLion:
 			return std::make_shared<MountainLion>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
@@ -128,9 +128,9 @@ namespace HunterCheckmate_FileAnalyzer
 			return std::make_shared<MountainGoat>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_BighornSheep:
 			return std::make_shared<BighornSheep>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_MerriamTurkey:
+		case AT_WildTurkey:
 			return std::make_shared<MerriamTurkey>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_RockyMountainElk:
+		case AT_RockymountainElk:
 			return std::make_shared<RockyMountainElk>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_SikaDeer:
 			return std::make_shared<SikaDeer>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
@@ -146,7 +146,7 @@ namespace HunterCheckmate_FileAnalyzer
 			return std::make_shared<MexicanBobcat>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RioGrandeTurkey:
 			return std::make_shared<RioGrandeTurkey>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_RingNeckedPheasant:
+		case AT_Pheasant:
 			return std::make_shared<RingNeckedPheasant>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_AntelopeJackrabbit:
 			return std::make_shared<AntelopeJackrabbit>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
@@ -156,13 +156,13 @@ namespace HunterCheckmate_FileAnalyzer
 			return std::make_shared<WildHog>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_GrayFox:
 			return std::make_shared<GrayFox>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_CommonRaccoon:
+		case AT_Raccoon:
 			return std::make_shared<CommonRaccoon>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_EasternWildTurkey:
 			return std::make_shared<EasternWildTurkey>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_EasternCottontailRabbit:
 			return std::make_shared<EasternCottontailRabbit>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
-		case AT_BobwhiteQuail:
+		case AT_NorthernBobwhiteQuail:
 			return std::make_shared<BobwhiteQuail>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
 		case AT_RaccoonDog:
 			return std::make_shared<RaccoonDog>(animal_type, gender, weight, score, is_great_one, visual_variation_seed, idx, grp_idx);
@@ -232,26 +232,26 @@ namespace HunterCheckmate_FileAnalyzer
 		bs::to_lower(name);
 		if (name.find("boar") != std::string::npos) return AT_WildBoar;
 		if (name.find("fallow") != std::string::npos) return AT_FallowDeer;
-		if (name.find("eu") != std::string::npos && name.find("bison") != std::string::npos) return AT_EuroBison;
+		if (name.find("eu") != std::string::npos && name.find("bison") != std::string::npos) return AT_EuBison;
 		if (name.find("roe") != std::string::npos) return AT_RoeDeer;
 		if (name.find("red") != std::string::npos && name.find("fox") != std::string::npos) return AT_RedFox;
 		if (name.find("goose") != std::string::npos && !(name.find("bean") != std::string::npos) && !(name.find("tundra") != std::string::npos)) return AT_CanadaGoose;
 		if (name.find("red") != std::string::npos && name.find("deer") != std::string::npos) return AT_RedDeer;
-		if (name.find("eu") != std::string::npos && name.find("rabbit") != std::string::npos) return AT_EuroRabbit;
+		if (name.find("eu") != std::string::npos && name.find("rabbit") != std::string::npos) return AT_EuRabbit;
 		if (name.find("moose") != std::string::npos) return AT_Moose;
 		if (name.find("jackrabbit") != std::string::npos && !(name.find("antelope") != std::string::npos)) return AT_Jackrabbit;
 		if (name.find("mallard") != std::string::npos) return AT_Mallard;
 		if (name.find("black") != std::string::npos && name.find("bear") != std::string::npos) return AT_BlackBear;
 		if (name.find("roosevelt") != std::string::npos) return AT_RooseveltElk;
 		if (name.find("coyote") != std::string::npos) return AT_Coyote;
-		if (name.find("blacktail") != std::string::npos) return AT_BlacktailDeer;
-		if (name.find("whitetail") != std::string::npos) return AT_WhitetailDeer;
-		if (name.find("musk") != std::string::npos) return AT_MuskDeer;
+		if (name.find("blacktail") != std::string::npos) return AT_Blacktail;
+		if (name.find("whitetail") != std::string::npos) return AT_Whitetail;
+		if (name.find("musk") != std::string::npos) return AT_SiberianMuskDeer;
 		if (name.find("reindeer") != std::string::npos) return AT_Reindeer;
 		if (name.find("lynx") != std::string::npos) return AT_EurasianLynx;
-		if (name.find("brown") != std::string::npos && name.find("bear") != std::string::npos) return AT_BrownBear;
+		if (name.find("brown") != std::string::npos && name.find("bear") != std::string::npos) return AT_EurasianBrownBear;
 		if (name.find("wildebeest") != std::string::npos) return AT_BlueWildebeest;
-		if (name.find("jackal") != std::string::npos) return AT_SideStripedJackal;
+		if (name.find("jackal") != std::string::npos) return AT_SidestripedJackal;
 		if (name.find("gemsbok") != std::string::npos) return AT_Gemsbok;
 		if (name.find("kudu") != std::string::npos) return AT_LesserKudu;
 		if (name.find("hare") != std::string::npos && name.find("scrub") != std::string::npos) return AT_ScrubHare;
@@ -270,19 +270,19 @@ namespace HunterCheckmate_FileAnalyzer
 		if (name.find("grizzly") != std::string::npos) return AT_GrizzlyBear;
 		if (name.find("gray") != std::string::npos && name.find("wolf") != std::string::npos) return AT_GrayWolf;
 		if (name.find("plains") != std::string::npos) return AT_PlainsBison;
-		if (name.find("south") != std::string::npos && name.find("ibex") != std::string::npos) return AT_SoutheasternSpanishIbex;
+		if (name.find("south") != std::string::npos && name.find("ibex") != std::string::npos) return AT_SoutheasternIbex;
 		if (name.find("iberian") != std::string::npos && name.find("wolf") != std::string::npos) return AT_IberianWolf;
-		if (name.find("muflon") != std::string::npos) return AT_IberianMuflon;
+		if (name.find("muflon") != std::string::npos) return AT_IberianMouflon;
 		if (name.find("beceite") != std::string::npos) return AT_BeceiteIbex;
-		if (name.find("eu") != std::string::npos && name.find("hare") != std::string::npos) return AT_EuroHare;
+		if (name.find("eu") != std::string::npos && name.find("hare") != std::string::npos) return AT_EuHare;
 		if (name.find("ronda") != std::string::npos) return AT_RondaIbex;
 		if (name.find("gredos") != std::string::npos) return AT_GredosIbex;
-		if (name.find("pronghorn") != std::string::npos) return AT_Pronghorn;
+		if (name.find("pronghorn") != std::string::npos) return AT_ProngHorn;
 		if (name.find("mountain") != std::string::npos && name.find("lion") != std::string::npos) return AT_MountainLion;
 		if (name.find("mountain") != std::string::npos && name.find("goat") != std::string::npos) return AT_MountainGoat;
 		if (name.find("bighorn") != std::string::npos) return AT_BighornSheep;
-		if (name.find("merriam") != std::string::npos && name.find("turkey") != std::string::npos) return AT_MerriamTurkey;
-		if (name.find("rocky") != std::string::npos) return AT_RockyMountainElk;
+		if (name.find("merriam") != std::string::npos && name.find("turkey") != std::string::npos) return AT_WildTurkey;
+		if (name.find("rocky") != std::string::npos) return AT_RockymountainElk;
 		if (name.find("sika") != std::string::npos) return AT_SikaDeer;
 		if (name.find("chamois") != std::string::npos) return AT_Chamois;
 		if (name.find("pig") != std::string::npos) return AT_FeralPig;
@@ -290,15 +290,15 @@ namespace HunterCheckmate_FileAnalyzer
 		if (name.find("peccary") != std::string::npos || name.find("collared") != std::string::npos) return AT_CollaredPeccary;
 		if (name.find("bobcat") != std::string::npos) return AT_MexicanBobcat;
 		if (name.find("rio") != std::string::npos && name.find("turkey") != std::string::npos) return AT_RioGrandeTurkey;
-		if (name.find("pheasant") != std::string::npos) return AT_RingNeckedPheasant;
+		if (name.find("pheasant") != std::string::npos) return AT_Pheasant;
 		if (name.find("antelope") != std::string::npos && name.find("jackrabbit") != std::string::npos) return AT_AntelopeJackrabbit;
 		if (name.find("alligator") != std::string::npos) return AT_AmericanAlligator;
 		if (name.find("wild") != std::string::npos && name.find("hog") != std::string::npos) return AT_WildHog;
 		if (name.find("gray") != std::string::npos && name.find("fox") != std::string::npos) return AT_GrayFox;
-		if (name.find("raccoon") != std::string::npos && !(name.find("dog") != std::string::npos)) return AT_CommonRaccoon;
+		if (name.find("raccoon") != std::string::npos && !(name.find("dog") != std::string::npos)) return AT_Raccoon;
 		if (name.find("eastern") != std::string::npos && name.find("turkey") != std::string::npos) return AT_EasternWildTurkey;
 		if (name.find("cottontail") != std::string::npos && name.find("rabbit") != std::string::npos) return AT_EasternCottontailRabbit;
-		if (name.find("quail") != std::string::npos) return AT_BobwhiteQuail;
+		if (name.find("quail") != std::string::npos) return AT_NorthernBobwhiteQuail;
 		if (name.find("raccoon") != std::string::npos && name.find("dog") != std::string::npos) return AT_RaccoonDog;
 		if (name.find("wigeon") != std::string::npos) return AT_EurasianWigeon;
 		if ((name.find("tundra") != std::string::npos || name.find("bean") != std::string::npos) && name.find("goose") != std::string::npos) return AT_TundraBeanGoose;
@@ -409,23 +409,47 @@ namespace HunterCheckmate_FileAnalyzer
 		fl_probability = abs(fl_probability);
 		fl_probability -= 1.f;
 
-		for (uint32_t i = 0; i < (sizeof(fur_db) / sizeof(fur_db[0])); i++)
+		//for (uint32_t i = 0; i < (sizeof(fur_db) / sizeof(fur_db[0])); i++)
+		//{
+		//	if (fur_db[i].animal_type == m_animal_type && fur_db[i].gender == m_gender)
+		//	{
+		//		float sum = 0.f;
+		//		for (uint32_t j = 0; j < 20; j++)
+		//		{
+		//			sum += (static_cast<float>(fur_db[i].fur_types[j].fur_probability) / static_cast<float>(fur_db[i].max_probability));
+		//			if (sum >= fl_probability)
+		//			{
+		//				m_fur_type_id = fur_db[i].fur_types[j].fur_idx;
+		//				m_fur_type = fur_db[i].fur_types[j].fur_name;
+		//				return;
+		//			}
+		//		}
+		//	}
+		//}
+
+		std::shared_ptr<FurEntry> fur_entry;
+
+		if (m_gender == "male")
+			fur_entry = std::make_shared<FurEntry>(FurDB2.at(m_animal_type).at(0));
+		else if (m_gender == "female")
+			fur_entry = std::make_shared<FurEntry>(FurDB2.at(m_animal_type).at(1));
+
+		if (fur_entry != nullptr)
 		{
-			if (fur_db[i].animal_type == m_animal_type && fur_db[i].gender == m_gender)
+			float sum = 0.f;
+			auto it_fur_type = fur_entry->fur_types.begin();
+			for (; it_fur_type != fur_entry->fur_types.end(); ++it_fur_type)
 			{
-				float sum = 0.f;
-				for (uint32_t j = 0; j < 20; j++)
+				sum += (static_cast<float>(it_fur_type->fur_probability) / static_cast<float>(fur_entry->max_probability));
+				if (sum >= fl_probability)
 				{
-					sum += (static_cast<float>(fur_db[i].fur_types[j].fur_probability) / static_cast<float>(fur_db[i].max_probability));
-					if (sum >= fl_probability)
-					{
-						m_fur_type_id = fur_db[i].fur_types[j].fur_idx;
-						m_fur_type = fur_db[i].fur_types[j].fur_name;
-						return;
-					}
+					m_fur_type_id = it_fur_type->fur_idx;
+					m_fur_type = it_fur_type->fur_name;
+					return;
 				}
 			}
 		}
+
 		m_fur_type_id = 69;
 		m_fur_type = "FoorType";
 	}
