@@ -443,7 +443,7 @@ void ShowMainWindow()
 		ImGui::EndMainMenuBar();
 	}
 
-	ImGui::BeginChild("sort", ImVec2(ImGui::GetContentRegionAvail().x, 75.f), true);
+	ImGui::BeginChild("sort", ImVec2(ImGui::GetContentRegionAvail().x, 65.f), true);
 	if (ImGui::BeginTabBar("animal_selection", ImGuiTabBarFlags_FittingPolicyResizeDown))
 	{
 		if (animal_population->m_initialized && animal_population->m_valid)
@@ -493,6 +493,62 @@ void ShowMainWindow()
 	{
 		sort = { false, false, false, false, false, true };
 	}
+
+	ImGui::EndChild();
+
+	ImGui::BeginChild("species_info", ImVec2(ImGui::GetContentRegionAvail().x, 90.f), true);
+	if (animal_population->m_initialized && animal_population->m_valid && animal != "")
+	{
+		std::string info_text = std::string("General info about ");
+		std::string info_text_male;
+		std::string info_text_female;
+		info_text += animal;
+		info_text += ":";
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text.c_str()).x) * 0.5f);
+		ImGui::Text(info_text.c_str());
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize("MALE").x) * 0.333333f);
+		ImGui::Text("MALE");
+		ImGui::SameLine();
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize("FEMALE").x) * 0.666666f);
+		ImGui::Text("FEMALE");
+		ImGui::Text("Weight:");
+		ImGui::SameLine();
+		info_text_male = std::string("[ ");
+		info_text_male += (boost::format("%.1f") % WeightDB.at(Animal::ResolveAnimalType(animal)).min_weight_male).str();
+		info_text_male += " - ";
+		info_text_male += (boost::format("%.1f") % WeightDB.at(Animal::ResolveAnimalType(animal)).max_weight_male).str();
+		info_text_male += std::string(" ]");
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_male.c_str()).x - ImGui::CalcTextSize("Weight:").x) * 0.333333f);
+		ImGui::Text(info_text_male.c_str());
+		ImGui::SameLine();
+		info_text_female = std::string("[ ");
+		info_text_female += (boost::format("%.1f") % WeightDB.at(Animal::ResolveAnimalType(animal)).min_weight_female).str();
+		info_text_female += " - ";
+		info_text_female += (boost::format("%.1f") % WeightDB.at(Animal::ResolveAnimalType(animal)).max_weight_female).str();
+		info_text_female += std::string(" ]");
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_female.c_str()).x - ImGui::CalcTextSize("Weight:").x - ImGui::CalcTextSize(info_text_male.c_str()).x) * 0.666666f);
+		ImGui::Text(info_text_female.c_str());
+
+
+		ImGui::Text("Score:");
+		ImGui::SameLine();
+		info_text_male = std::string("[ ");
+		info_text_male += (boost::format("%.1f") % ScoreDB.at(Animal::ResolveAnimalType(animal)).min_score_male).str();
+		info_text_male += " - ";
+		info_text_male += (boost::format("%.1f") % ScoreDB.at(Animal::ResolveAnimalType(animal)).max_score_male).str();
+		info_text_male += std::string(" ]");
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_male.c_str()).x - ImGui::CalcTextSize("Score:").x) * 0.333333f);
+		ImGui::Text(info_text_male.c_str());
+		ImGui::SameLine();
+		info_text_female = std::string("[ ");
+		info_text_female += (boost::format("%.1f") % ScoreDB.at(Animal::ResolveAnimalType(animal)).min_score_female).str();
+		info_text_female += " - ";
+		info_text_female += (boost::format("%.1f") % ScoreDB.at(Animal::ResolveAnimalType(animal)).max_score_female).str();
+		info_text_female += std::string(" ]");
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_female.c_str()).x - ImGui::CalcTextSize("Score:").x - ImGui::CalcTextSize(info_text_male.c_str()).x) * 0.666666f);
+		ImGui::Text(info_text_female.c_str());
+	}
+
 
 	ImGui::EndChild();
 
