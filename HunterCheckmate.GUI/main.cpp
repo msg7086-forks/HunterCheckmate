@@ -417,7 +417,7 @@ void ShowFileSelector(bool* p_open)
 void ShowMainWindow()
 {
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoFocusOnAppearing;
 	const ImGuiViewport* viewport = ImGui::GetMainViewport();
 
 	ImVec2 window_pos = viewport->WorkPos;
@@ -443,7 +443,7 @@ void ShowMainWindow()
 		ImGui::EndMainMenuBar();
 	}
 
-	ImGui::BeginChild("sort", ImVec2(ImGui::GetContentRegionAvail().x, 90.f), true);
+	ImGui::BeginChild("sort", ImVec2(ImGui::GetContentRegionAvail().x, 75.f), true);
 	if (ImGui::BeginTabBar("animal_selection", ImGuiTabBarFlags_FittingPolicyResizeDown))
 	{
 		if (animal_population->m_initialized && animal_population->m_valid)
@@ -492,24 +492,6 @@ void ShowMainWindow()
 	if (ImGui::Button("Fur Type"))
 	{
 		sort = { false, false, false, false, false, true };
-	}
-	ImGui::SameLine();
-	ImGui::Text("Settings");
-	ImGui::SameLine();
-	if (ImGui::Button("Expand Groups"))
-	{
-		if (expand_groups == false)
-		{
-			expand_groups = true;
-		}
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Collapse Groups"))
-	{
-		if (collapse_groups == false)
-		{
-			collapse_groups = true;
-		}
 	}
 
 	ImGui::EndChild();
@@ -635,12 +617,14 @@ void ShowMainWindow()
 						edit_animal_score = it_animals->m_score;
 						edit_animal_str_igo = std::to_string(it_animals->m_is_great_one);
 						edit_animal_str_fur_type = it_animals->m_fur_type;
-						ImGui::OpenPopup("edit_animal");
+						ImGui::OpenPopup("Edit Animal");
 					}
 
 					ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 					ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-					if (ImGui::BeginPopupModal("edit_animal", NULL))
+					ImVec2 size = ImGui::GetMainViewport()->Size;
+					ImGui::SetNextWindowSize(ImVec2(size.x / 2.f, size.y / 2.f));
+					if (ImGui::BeginPopupModal("Edit Animal", (bool*)0))
 					{
 						const char* items[] = { "male", "female" };
 						static int item_current_idx = 0; // Here we store our selection data as an index.
@@ -758,12 +742,14 @@ void ShowMainWindow()
 						edit_animal_score = it_animals->m_score;
 						edit_animal_str_igo = std::to_string(it_animals->m_is_great_one);
 						edit_animal_str_fur_type = it_animals->m_fur_type;
-						ImGui::OpenPopup("edit_animal");
+						ImGui::OpenPopup("Edit Animal");
 					}
 
 					ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 					ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-					if (ImGui::BeginPopupModal("edit_animal", NULL))
+					ImVec2 size = ImGui::GetMainViewport()->Size;
+					ImGui::SetNextWindowSize(ImVec2(size.x / 2.f, size.y / 2.f));
+					if (ImGui::BeginPopupModal("Edit Animal", (bool*)0))
 					{
 						const char* items[] = { "male", "female" };
 						static int item_current_idx = 0; // Here we store our selection data as an index.

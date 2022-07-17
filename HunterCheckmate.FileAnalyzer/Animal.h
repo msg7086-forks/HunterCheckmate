@@ -13,6 +13,190 @@ namespace bs = boost::algorithm;
 
 namespace HunterCheckmate_FileAnalyzer
 {
+	struct ScoreEntry
+	{
+		float min_score_male;
+		float max_score_male;
+		float min_score_female;
+		float max_score_female;
+	};
+
+	struct WeightEntry
+	{
+		float min_weight_male;
+		float max_weight_male;
+		float min_weight_female;
+		float max_weight_female;
+	};
+
+	static std::map < AnimalType, WeightEntry > WeightDB =
+	{
+		{ AT_RedDeer, { 160.f, 240.f, 120.f, 170.f } },
+		{ AT_WildBoar, { 32.f, 240.f, 25.f, 168.f } },
+		{ AT_RedFox, { 2.420000076293945f, 15.39999961853027f, 1.980000019073486f, 12.60000038146973f } },
+		{ AT_EuroBison, { 400.f, 920.f, 300.f, 540.f } },
+		{ AT_RoeDeer, { 18.f, 35.f, 14.f, 33.f } },
+		{ AT_WhitetailDeer, { 59.f, 100.f, 40.f, 59.f } },
+		{ AT_RooseveltElk, { 300.f, 500.f, 260.f, 285.f } },
+		{ AT_BlacktailDeer, { 50.f, 95.f, 40.f, 59.f } },
+		{ AT_FallowDeer, { 60.f, 100.f, 30.f, 50.f } },
+		{ AT_Coyote, { 16.f, 27.f, 15.f, 20.f } },
+		{ AT_Moose, { 400.f, 620.f, 320.f, 440.f } },
+		{ AT_BlackBear, { 57.f, 290.f, 40.f, 145.f } },
+		{ AT_EurasianLynx, { 18.f, 45.f, 8.f, 21.f } },
+		{ AT_BrownBear, { 195.f, 482.f, 110.f, 340.f } },
+		{ AT_MuskDeer, { 7.f, 17.f, 7.f, 17.f } },
+		{ AT_Reindeer, { 159.f, 182.f, 80.f, 120.f } },
+		{ AT_Jackrabbit, { 1.899999976158142f, 6.829999923706055f, 2.f, 4.599999904632568f } },
+		{ AT_CanadaGoose, { 3.5f, 9.199999809265137f, 3.200000047683716f, 6.800000190734863f } },
+		{ AT_CapeBuffalo, { 600.f, 950.f, 360.f, 530.f } },
+		{ AT_Warthog, { 60.f, 150.f, 45.f, 80.f } },
+		{ AT_SideStripedJackal, { 7.f, 14.f, 6.f, 10.f } },
+		{ AT_Springbok, { 32.f, 42.f, 27.f, 37.f } },
+		{ AT_LesserKudu, { 60.f, 105.f, 50.f, 95.f } },
+		{ AT_ScrubHare, { 1.899999976158142f, 5.099999904632568f, 1.5f, 5.800000190734863f } },
+		{ AT_BlueWildebeest, { 200.f, 290.f, 190.f, 260.f } },
+		{ AT_Mallard, { 0.949999988079071f, 2.099999904632568f, 0.7200000286102295f, 1.600000023841858f } },
+		{ AT_Gemsbok, { 180.f, 240.f, 100.f, 210.f } },
+		{ AT_Puma, { 65.f, 105.f, 29.f, 64.f } },
+		{ AT_Blackbuck, { 34.f, 51.f, 25.f, 42.f } },
+		{ AT_MuleDeer, { 100.f, 210.f, 70.f, 110.f } },
+		{ AT_CinnamonTeal, { 0.3799999952316284f, 0.4799999892711639f, 0.300000011920929f, 0.4000000059604645f } },
+		{ AT_AxisDeer, { 30.f, 75.f, 25.f, 42.f } },
+		{ AT_WaterBuffalo, { 680.f, 1250.f, 520.f, 1025.f } },
+		{ AT_Lion, { 170.f, 270.f, 135.f, 200.f } },
+		{ AT_GrizzlyBear, { 225.f, 680.f, 165.f, 300.f } },
+		{ AT_GrayWolf, { 45.f, 80.f, 30.f, 60.f } },
+		{ AT_Caribou, { 150.f, 190.f, 75.f, 125.f } },
+		{ AT_HarlequinDuck, { 0.5799999833106995f, 0.75f, 0.4799999892711639f, 0.6800000071525574f } },
+		{ AT_PlainsBison, { 450.f, 1200.f, 350.f, 550.f } },
+		{ AT_BeceiteIbex, { 75.f, 110.f, 35.f, 70.f } },
+		{ AT_RondaIbex, { 45.f, 70.f, 35.f, 70.f } },
+		{ AT_GredosIbex, { 70.f, 102.f, 35.f, 70.f } },
+		{ AT_SoutheasternSpanishIbex, { 35.f, 87.5f, 35.f, 70.f } },
+		{ AT_IberianMuflon, { 40.f, 60.f, 30.f, 40.f } },
+		{ AT_IberianWolf, { 35.f, 50.f, 30.f, 40.f } },
+		{ AT_EuroHare, { 2.f, 4.f, 2.f, 7.f } },
+		{ AT_MerriamTurkey, { 6.800000190734863f, 11.f, 3.599999904632568f, 5.400000095367432f } },
+		{ AT_BighornSheep, { 70.f, 160.f, 50.f, 100.f } },
+		{ AT_RockyMountainElk, { 280.f, 480.f, 200.f, 250.f } },
+		{ AT_MountainGoat, { 60.f, 145.f, 45.f, 105.f } },
+		{ AT_Pronghorn, { 40.f, 65.f, 35.f, 50.f } },
+		{ AT_EuroRabbit, { 1.100000023841858f, 2.599999904632568f, 0.8999999761581421f, 1.700000047683716f } },
+		{ AT_FeralPig, { 45.f, 205.f, 32.f, 114.f } },
+		{ AT_FeralGoat, { 44.f, 50.f, 25.f, 35.f } },
+		{ AT_Chamois, { 40.f, 65.f, 35.f, 50.f } },
+		{ AT_SikaDeer, { 30.f, 75.f, 25.f, 42.f } },
+		{ AT_MexicanBobcat, { 18.f, 45.f, 8.f, 21.f } },
+		{ AT_CollaredPeccary, { 16.f, 31.f, 14.f, 27.f } },
+		{ AT_RingNeckedPheasant, { 0.75f, 3.f, 0.5f, 1.25f } },
+		{ AT_RioGrandeTurkey, { 6.800000190734863f, 11.f, 3.599999904632568f, 5.400000095367432f } },
+		{ AT_AntelopeJackrabbit, { 2.700000047683716f, 4.699999809265137f, 2.200000047683716f, 4.099999904632568f } },
+		{ AT_AmericanAlligator, { 200.f, 530.f, 75.f, 145.f } },
+		{ AT_CommonRaccoon, { 4.f, 13.f, 3.f, 6.f } },
+		{ AT_EasternWildTurkey, { 6.800000190734863f, 11.f, 3.599999904632568f, 5.400000095367432f } },
+		{ AT_BobwhiteQuail, { 0.1299999952316284f, 0.25f, 0.1299999952316284f, 0.1749999970197678f } },
+		{ AT_GrayFox, { 3.5f, 6.800000190734863f, 3.099999904632568f, 6.5f } },
+		{ AT_EasternCottontailRabbit, { 0.800000011920929f, 1.799999952316284f, 1.100000023841858f, 2.099999904632568f } },
+		{ AT_RaccoonDog, { 3.f, 10.f, 3.f, 6.5f } },
+		{ AT_BlackGrouse, { 1.f, 1.25f, 0.75f, 1.100000023841858f } },
+		{ AT_EurasianTeal, { 0.3199999928474426f, 0.3600000143051147f, 0.300000011920929f, 0.3400000035762787f } },
+		{ AT_TuftedDuck, { 0.75f, 1.f, 0.6299999952316284f, 0.8999999761581421f } },
+		{ AT_Goldeneye, { 0.6000000238418579f, 1.299999952316284f, 0.6000000238418579f, 1.100000023841858f } },
+		{ AT_EurasianWigeon, { 0.5f, 0.949999988079071f, 0.5f, 0.800000011920929f } },
+		{ AT_TundraBeanGoose, { 1.899999976158142f, 3.299999952316284f, 1.899999976158142f, 2.799999952316284f } },
+		{ AT_GreylagGoose, { 2.5f, 4.f, 2.5f, 3.5f } },
+		{ AT_HazelGrouse, { 0.300000011920929f, 0.449999988079071f, 0.300000011920929f, 0.4000000059604645f } },
+		{ AT_WesternCapercaillie, { 3.599999904632568f, 5.f, 1.5f, 2.5f } },
+		{ AT_RockPtarmigan, { 0.4399999976158142f, 0.7400000095367432f, 0.4300000071525574f, 0.699999988079071f } },
+		{ AT_WillowPtarmigan, { 0.4300000071525574f, 0.8100000023841858f, 0.4300000071525574f, 0.7900000214576721f } },
+		{ AT_MountainHare, { 2.f, 4.f, 2.f, 6.f } }
+	};
+
+	static std::map < AnimalType, ScoreEntry > ScoreDB = 
+	{
+		{ AT_RedDeer, { 44.626953125f, 274.0145263671875f, 0.f, 0.f } },
+		{ AT_WildBoar, { 7.f, 159.5f, 7.f, 81.5f } },
+		{ AT_RedFox, { 2.420000076293945f, 15.39999961853027f, 1.980000019073486f, 12.60000038146973f } },
+		{ AT_EuroBison, { 7.f, 300.f, 4.f, 150.f } },
+		{ AT_RoeDeer, { 29.38578224182129f, 87.69715118408203f, 0.f, 0.f } },
+		{ AT_WhitetailDeer, { 71.18055725097656f, 275.5350952148438f, 0.f, 0.f } },
+		{ AT_RooseveltElk, { 56.6655387878418f, 416.8609924316406f, 0.f, 0.f } },
+		{ AT_BlacktailDeer, { 48.17201232910156f, 191.9611206054688f, 0.f, 0.f } },
+		{ AT_FallowDeer, { 15.49038219451904f, 277.9747009277344f, 0.f, 0.f } },
+		{ AT_Coyote, { 35.27391815185547f, 59.52473831176758f, 33.06930160522461f, 44.09239959716797f } },
+		{ AT_Moose, { 32.29645538330078f, 301.9588317871094f, 0.f, 0.f } },
+		{ AT_BlackBear, { 12.81599998474121f, 24.f, 12.f, 17.04000091552734f } },
+		{ AT_EurasianLynx, { 19.50081062316895f, 28.97999954223633f, 15.98999977111816f, 20.55405426025391f } },
+		{ AT_BrownBear, { 18.97043037414551f, 29.f, 16.f, 24.03763389587402f } },
+		{ AT_MuskDeer, { 6.f, 276.f, 0.f, 0.f } },
+		{ AT_Reindeer, { 73.19405364990234f, 469.9026184082031f, 73.19405364990234f, 158.f } },
+		{ AT_Jackrabbit, { 1.899999976158142f, 6.829999923706055f, 2.f, 4.599999904632568f } },
+		{ AT_CanadaGoose, { 3.5f, 9.199999809265137f, 3.200000047683716f, 6.800000190734863f } },
+		{ AT_CapeBuffalo, { 91.f, 162.5f, 51.f, 114.f } },
+		{ AT_Warthog, { 25.f, 63.f, 15.f, 25.f } },
+		{ AT_SideStripedJackal, { 15.43233966827393f, 30.86467933654785f, 13.22772026062012f, 22.04619979858398f } },
+		{ AT_Springbok, { 69.f, 116.5999984741211f, 57.59999847412109f, 82.f } },
+		{ AT_LesserKudu, { 95.3170166015625f, 157.9007110595703f, 0.f, 0.f } },
+		{ AT_ScrubHare, { 1.899999976158142f, 5.099999904632568f, 1.5f, 5.800000190734863f } },
+		{ AT_BlueWildebeest, { 28.5f, 40.f, 17.f, 26.f } },
+		{ AT_Mallard, { 9.5f, 21.f, 7.199999809265137f, 16.f } },
+		{ AT_Gemsbok, { 196.f, 342.f, 154.f, 358.f } },
+		{ AT_Puma, { 34.73684310913086f, 40.f, 30.f, 34.60526275634766f } },
+		{ AT_Blackbuck, { 54.5336799621582f, 140.8974151611328f, 0.f, 0.f } },
+		{ AT_MuleDeer, { 37.28028869628906f, 342.7140808105469f, 0.f, 0.f } },
+		{ AT_CinnamonTeal, { 3.799999952316284f, 4.800000190734863f, 3.f, 4.f } },
+		{ AT_AxisDeer, { 31.5652027130127f, 237.9368438720703f, 0.f, 0.f } },
+		{ AT_WaterBuffalo, { 80.f, 179.4385223388672f, 60.48808670043945f, 102.f } },
+		{ AT_Lion, { 38.88888931274414f, 50.f, 35.f, 42.22222137451172f } },
+		{ AT_GrizzlyBear, { 51.f, 69.f, 48.5f, 54.f } },
+		{ AT_GrayWolf, { 33.f, 40.f, 30.f, 35.f } },
+		{ AT_Caribou, { 73.19405364990234f, 469.9026184082031f, 73.19405364990234f, 158.f } },
+		{ AT_HarlequinDuck, { 5.800000190734863f, 7.5f, 4.800000190734863f, 6.800000190734863f } },
+		{ AT_PlainsBison, { 12.f, 245.5f, 2.f, 120.f } },
+		{ AT_BeceiteIbex, { 45.55049514770508f, 207.8642120361328f, 45.55049514770508f, 60.f } },
+		{ AT_RondaIbex, { 58.24422836303711f, 113.5166473388672f, 58.24422836303711f, 70.f } },
+		{ AT_GredosIbex, { 41.25128936767578f, 106.7189559936523f, 41.25128936767578f, 50.f } },
+		{ AT_SoutheasternSpanishIbex, { 38.32047271728516f, 95.38712310791016f, 38.32047271728516f, 60.f } },
+		{ AT_IberianMuflon, { 73.42443084716797f, 191.3599853515625f, 0.f, 0.f } },
+		{ AT_IberianWolf, { 33.f, 40.f, 30.f, 35.f } },
+		{ AT_EuroHare, { 2.f, 4.f, 2.f, 7.f } },
+		{ AT_MerriamTurkey, { 3.799999952316284f, 4.800000190734863f, 3.f, 4.f } },
+		{ AT_BighornSheep, { 69.08650970458984f, 175.2475280761719f, 69.08650970458984f, 120.f } },
+		{ AT_RockyMountainElk, { 91.13737487792969f, 524.77685546875f, 0.f, 0.f } },
+		{ AT_MountainGoat, { 48.54271697998047f, 115.5292358398438f, 37.02085494995117f, 85.25108337402344f } },
+		{ AT_Pronghorn, { 31.26031303405762f, 105.4471893310547f, 31.26031303405762f, 42.08193969726562f } },
+		{ AT_EuroRabbit, { 1.100000023841858f, 2.599999904632568f, 0.8999999761581421f, 1.700000047683716f } },
+		{ AT_FeralPig, { 7.f, 159.5f, 7.f, 81.5f } },
+		{ AT_FeralGoat, { 81.96337127685547f, 225.7583923339844f, 55.36909484863281f, 74.4432373046875f } },
+		{ AT_Chamois, { 23.09284210205078f, 61.89008331298828f, 23.08282470703125f, 58.04738235473633f } },
+		{ AT_SikaDeer, { 11.73466205596924f, 219.5238342285156f, 0.f, 0.f } },
+		{ AT_MexicanBobcat, { 19.50081062316895f, 28.97999954223633f, 15.98999977111816f, 20.55405426025391f } },
+		{ AT_CollaredPeccary, { 7.f, 159.5f, 7.f, 81.5f } },
+		{ AT_RingNeckedPheasant, { 7.900000095367432f, 21.89999961853027f, 5.900000095367432f, 7.900000095367432f } },
+		{ AT_RioGrandeTurkey, { 3.799999952316284f, 4.800000190734863f, 3.f, 4.f } },
+		{ AT_AntelopeJackrabbit, { 1.899999976158142f, 6.829999923706055f, 2.f, 4.599999904632568f } },
+		{ AT_AmericanAlligator, { 200.f, 530.f, 150.f, 302.f } },
+		{ AT_CommonRaccoon, { 4.f, 13.f, 3.f, 6.f } },
+		{ AT_EasternWildTurkey, { 3.799999952316284f, 4.800000190734863f, 3.f, 4.f } },
+		{ AT_BobwhiteQuail, { 130.f, 250.f, 130.f, 275.f } },
+		{ AT_GrayFox, { 3.5f, 6.800000190734863f, 3.099999904632568f, 6.5f } },
+		{ AT_EasternCottontailRabbit, { 0.800000011920929f, 1.799999952316284f, 1.100000023841858f, 2.099999904632568f } },
+		{ AT_RaccoonDog, { 3.f, 10.f, 3.f, 6.5f } },
+		{ AT_BlackGrouse, { 100.f, 125.f, 75.f, 110.f } },
+		{ AT_EurasianTeal, { 320.f, 360.f, 300.f, 340.f } },
+		{ AT_TuftedDuck, { 750.f, 1000.f, 630.f, 900.f } },
+		{ AT_Goldeneye, { 300.f, 1300.f, 600.f, 1100.f } },
+		{ AT_EurasianWigeon, { 500.f, 950.f, 500.f, 800.f } },
+		{ AT_TundraBeanGoose, { 1.899999976158142f, 3.299999952316284f, 1.899999976158142f, 2.799999952316284f } },
+		{ AT_GreylagGoose, { 2.5f, 4.f, 2.5f, 3.5f } },
+		{ AT_HazelGrouse, { 300.f, 450.f, 300.f, 400.f } },
+		{ AT_WesternCapercaillie, { 3.599999904632568f, 5.f, 1.5f, 2.5f } },
+		{ AT_RockPtarmigan, { 440.f, 740.f, 430.f, 700.f } },
+		{ AT_WillowPtarmigan, { 430.f, 810.f, 430.f, 790.f } },
+		{ AT_MountainHare, { 2.f, 4.f, 2.f, 6.f } }
+	};
+
 #pragma region FurDB
 	static struct FurDB
 	{
@@ -1887,52 +2071,36 @@ namespace HunterCheckmate_FileAnalyzer
 		float GetMinWeight()
 		{
 			if (m_gender == "male")
-			{
 				return 32.f;
-			}
 			else if (m_gender == "female")
-			{
 				return 25.f;
-			}
 			return 0.f;
 		}
 
 		float GetMaxWeight()
 		{
 			if (m_gender == "male")
-			{
 				return 240.f;
-			}
 			else if (m_gender == "female")
-			{
 				return 168.f;
-			}
 			return 0.f;
 		}
 
 		float GetMinScore()
 		{
 			if (m_gender == "male")
-			{
 				return 7.f;
-			}
 			else if (m_gender == "female")
-			{
 				return 7.f;
-			}
 			return 0.f;
 		}
 
 		float GetMaxScore()
 		{
 			if (m_gender == "male")
-			{
 				return 159.5f;
-			}
 			else if (m_gender == "female")
-			{
 				return 81.5f;
-			}
 			return 0.f;
 		}
 	};
@@ -2019,52 +2187,36 @@ namespace HunterCheckmate_FileAnalyzer
 		float GetMinWeight()
 		{
 			if (m_gender == "male")
-			{
 				return 160.f;
-			}
 			else if (m_gender == "female")
-			{
 				return 120.f;
-			}
 			return 0.f;
 		}
 
 		float GetMaxWeight()
 		{
 			if (m_gender == "male")
-			{
 				return 240.f;
-			}
 			else if (m_gender == "female")
-			{
 				return 170.f;
-			}
 			return 0.f;
 		}
 
 		float GetMinScore()
 		{
 			if (m_gender == "male")
-			{
 				return 44.626953125f;
-			}
 			else if (m_gender == "female")
-			{
 				return 0.f;
-			}
 			return 0.f;
 		}
 
 		float GetMaxScore()
 		{
 			if (m_gender == "male")
-			{
 				return 274.014526367187f;
-			}
 			else if (m_gender == "female")
-			{
 				return 0.f;
-			}
 			return 0.f;
 		}
 	};
