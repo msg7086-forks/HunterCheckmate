@@ -389,16 +389,15 @@ namespace HunterCheckmate_FileAnalyzer
 		m_visual_variation_seed = visual_variation_seed;
 	}
 
-	FurDB::FurTypes* Animal::GetFurTypesFromDB(const AnimalType animal_type, const std::string& gender)
+	FurEntry* Animal::GetFurEntryFromDB(const AnimalType animal_type, const std::string& gender)
 	{
-		for (uint32_t i = 0; i < (sizeof(fur_db) / sizeof(fur_db[0])); i++)
-		{
-			if (fur_db[i].animal_type == animal_type && fur_db[i].gender == gender)
-			{
-				return fur_db[i].fur_types;
-			}
-		}
-		return nullptr;
+		FurEntry* fur_entry = nullptr;
+		if (gender == "male")
+			fur_entry = &fur_db.at(animal_type).at(0);
+		else if (gender == "female")
+			fur_entry = &fur_db.at(animal_type).at(1);
+
+		return fur_entry;
 	}
 
 	void Animal::SetFurType(const uint32_t visual_variation_seed)
@@ -409,30 +408,11 @@ namespace HunterCheckmate_FileAnalyzer
 		fl_probability = abs(fl_probability);
 		fl_probability -= 1.f;
 
-		//for (uint32_t i = 0; i < (sizeof(fur_db) / sizeof(fur_db[0])); i++)
-		//{
-		//	if (fur_db[i].animal_type == m_animal_type && fur_db[i].gender == m_gender)
-		//	{
-		//		float sum = 0.f;
-		//		for (uint32_t j = 0; j < 20; j++)
-		//		{
-		//			sum += (static_cast<float>(fur_db[i].fur_types[j].fur_probability) / static_cast<float>(fur_db[i].max_probability));
-		//			if (sum >= fl_probability)
-		//			{
-		//				m_fur_type_id = fur_db[i].fur_types[j].fur_idx;
-		//				m_fur_type = fur_db[i].fur_types[j].fur_name;
-		//				return;
-		//			}
-		//		}
-		//	}
-		//}
-
 		std::shared_ptr<FurEntry> fur_entry;
-
 		if (m_gender == "male")
-			fur_entry = std::make_shared<FurEntry>(FurDB2.at(m_animal_type).at(0));
+			fur_entry = std::make_shared<FurEntry>(fur_db.at(m_animal_type).at(0));
 		else if (m_gender == "female")
-			fur_entry = std::make_shared<FurEntry>(FurDB2.at(m_animal_type).at(1));
+			fur_entry = std::make_shared<FurEntry>(fur_db.at(m_animal_type).at(1));
 
 		if (fur_entry != nullptr)
 		{
@@ -457,13 +437,9 @@ namespace HunterCheckmate_FileAnalyzer
 	uint32_t Animal::CreateVisualVariationSeed(const AnimalType animal_type, const std::string& str_gender, const std::string& fur_type) 
 	{
 		uint32_t visual_variation_seed = 10000000;
-		FurDB::FurTypes* ft = GetFurTypesFromDB(animal_type, str_gender);
-		if (ft == nullptr)
+		FurEntry* fe = GetFurEntryFromDB(animal_type, str_gender);
+		if (fe == nullptr)
 			return 0;
-
-		float max_probability = 0.f;
-		for (uint32_t i = 0; i < 20; i++)
-			max_probability += ft[i].fur_probability;
 
 		std::random_device rd;
 		std::mt19937 gen(rd());
@@ -478,12 +454,13 @@ namespace HunterCheckmate_FileAnalyzer
 			fl_probability -= 1.f;
 			float sum = 0.f;
 
-			for (uint32_t i = 0; i < 20; i++)
+			auto it_fur_type = fe->fur_types.begin();
+			for (; it_fur_type != fe->fur_types.end(); ++it_fur_type)
 			{
-				sum += (static_cast<float>(ft[i].fur_probability) / max_probability);
+				sum += (static_cast<float>(it_fur_type->fur_probability) / static_cast<float>(fe->max_probability));
 				if (sum >= fl_probability)
 				{
-					if (ft[i].fur_name == fur_type)
+					if (it_fur_type->fur_name == fur_type)
 						return visual_variation_seed;
 					else
 						break;
@@ -491,26 +468,6 @@ namespace HunterCheckmate_FileAnalyzer
 			}
 		}
 
-		//for (visual_variation_seed; visual_variation_seed <= MAXUINT32; visual_variation_seed++)
-		//{
-		//	uint32_t converted_probability = (((0x343FD * visual_variation_seed + 0x269EC3) >> 16) | 0x3F8000) << 8;
-		//	float fl_probability;
-		//	std::memcpy(&fl_probability, &converted_probability, sizeof(float));
-		//	fl_probability = abs(fl_probability);
-		//	fl_probability -= 1.f;
-		//	float sum = 0.f;
-		//	for (uint32_t i = 0; i < 20; i++)
-		//	{
-		//		sum += (static_cast<float>(ft[i].fur_probability) / max_probability);
-		//		if (sum >= fl_probability)
-		//		{
-		//			if (ft[i].fur_name == fur_type)
-		//				return visual_variation_seed;
-		//			else
-		//				break;
-		//		}
-		//	}
-		//}
 		return visual_variation_seed;
 	}
 	
