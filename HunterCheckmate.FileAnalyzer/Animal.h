@@ -73,6 +73,7 @@ namespace HunterCheckmate_FileAnalyzer
 		{ AT_Mallard, { 0.949999988079071f, 2.099999904632568f, 0.7200000286102295f, 1.600000023841858f } },
 		{ AT_Gemsbok, { 180.f, 240.f, 100.f, 210.f } },
 		{ AT_Puma, { 65.f, 105.f, 29.f, 64.f } },
+		{ AT_MountainLion, { 65.f, 105.f, 29.f, 64.f } },
 		{ AT_Blackbuck, { 34.f, 51.f, 25.f, 42.f } },
 		{ AT_MuleDeer, { 100.f, 210.f, 70.f, 110.f } },
 		{ AT_CinnamonTeal, { 0.3799999952316284f, 0.4799999892711639f, 0.300000011920929f, 0.4000000059604645f } },
@@ -157,6 +158,7 @@ namespace HunterCheckmate_FileAnalyzer
 		{ AT_Mallard, { 9.5f, 21.f, 7.199999809265137f, 16.f } },
 		{ AT_Gemsbok, { 196.f, 342.f, 154.f, 358.f } },
 		{ AT_Puma, { 34.73684310913086f, 40.f, 30.f, 34.60526275634766f } },
+		{ AT_MountainLion, { 34.73684310913086f, 40.f, 30.f, 34.60526275634766f } },
 		{ AT_Blackbuck, { 54.5336799621582f, 140.8974151611328f, 0.f, 0.f } },
 		{ AT_MuleDeer, { 37.28028869628906f, 342.7140808105469f, 0.f, 0.f } },
 		{ AT_CinnamonTeal, { 3.799999952316284f, 4.800000190734863f, 3.f, 4.f } },
@@ -1957,6 +1959,31 @@ namespace HunterCheckmate_FileAnalyzer
 			   }
 		   }
 	   },
+
+	    { AT_MountainLion ,
+		  {
+			  {
+				  "male", 99730,
+					  {
+						  { 0, "DarkRed", 12465 },
+						  { 1, "Albino", 50 },
+						  { 2, "Melanistic", 50 },
+						  { 3, "LightBrown", 74700 },
+						  { 4, "Grey", 12465 },
+					  }
+			  },
+			  {
+				  "female", 99730,
+					  {
+						  { 0, "DarkRed", 12465 },
+						  { 1, "Albino", 50 },
+						  { 2, "Melanistic", 50 },
+						  { 3, "LightBrown", 74700 },
+						  { 4, "Grey", 12465 },
+					  }
+			  }
+		  }
+		},
 
 		{ AT_Whitetail ,
 		   {

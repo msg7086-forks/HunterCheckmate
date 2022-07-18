@@ -1,6 +1,12 @@
 #pragma once
 #include "FileHandler.h"
 #include "Animal.h"
+#include <fstream>
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
+#include <iostream>
+#include <sstream>
 
 namespace HunterCheckmate_FileAnalyzer
 {
@@ -203,7 +209,7 @@ namespace HunterCheckmate_FileAnalyzer
 		~AdfFile() = default;
 
 		bool Deserialize();
-		bool Compress();
-		bool Decompress();
+		static bool Compress();
+		static bool Decompress();
 	};
 }

@@ -412,11 +412,85 @@ namespace HunterCheckmate_FileAnalyzer
 
 	bool AdfFile::Compress()
 	{
+		boost::filesystem::path in_path("C:\\Users\\oleSQL\\Documents\\thehunter working\\pop\\animalishXD");
+
+		boost::filesystem::ifstream ifs(in_path, std::ios::in | std::ios::binary);
+		std::string temp = "\x01\x01";
+		temp += '\0';
+		temp += '\0';
+		temp += '\0';
+
+		std::istreambuf_iterator<char> it_ifs = std::istreambuf_iterator<char>(ifs);
+		for (; it_ifs != std::istreambuf_iterator<char>(); ++it_ifs)
+			temp += *it_ifs;
+
+		ifs.close();
+
+		std::stringstream ofs;
+		ofs << "\x53\x41\x56\x45\x74\x2A\x23";
+		ofs << '\0';
+		ofs << "\x7E\x24\x04";
+		ofs << '\0';
+		ofs << '\0';
+		ofs << '\0';
+		ofs << '\0';
+		ofs << '\0';
+		ofs << "\x43\x4F\x4D\x50\x01\x01";
+		ofs << '\0';
+		ofs << '\0';
+		ofs << "\x7E\x24\x04";
+		ofs << '\0';
+		ofs << '\0';
+		ofs << '\0';
+		ofs << '\0';
+		ofs << '\0';
+
+		boost::iostreams::filtering_streambuf<boost::iostreams::output> out;
+		boost::iostreams::zlib_params zp;
+		zp.level = 1;
+		out.push(boost::iostreams::zlib_compressor(zp));
+		out.push(ofs);
+
+		boost::iostreams::copy(boost::iostreams::basic_array_source<char>(&temp[0], temp.size()), out);
+
+
+		boost::filesystem::fstream of("C:\\Users\\oleSQL\\Documents\\thehunter working\\pop\\decomp_animalishXD", std::ios::out | std::ios::binary);
+		
+		boost::iostreams::copy(ofs, of);
+
+		of.close();
+
 		return true;
 	}
 
 	bool AdfFile::Decompress()
 	{
+		boost::filesystem::path in_path("C:\\Users\\oleSQL\\Documents\\thehunter working\\pop\\animal_population_0");
+		
+		boost::filesystem::ifstream ifs(in_path, std::ios::in | std::ios::binary);
+		ifs.seekg(0x20);
+		std::string temp((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+		ifs.close();
+
+
+		std::stringstream ofs;
+
+		boost::iostreams::filtering_streambuf<boost::iostreams::output> out;
+		out.push(boost::iostreams::zlib_decompressor());
+		out.push(ofs);
+
+		std::cout << std::hex << temp << "\n";
+		boost::iostreams::copy(boost::iostreams::basic_array_source<char>(&temp[0], temp.size()), out);
+
+
+
+		boost::filesystem::fstream of("C:\\Users\\oleSQL\\Documents\\thehunter working\\pop\\animalishXD", std::ios::out | std::ios::binary);
+
+		ofs.seekg(5);
+		boost::iostreams::copy(ofs, of);
+
+		of.close();
+
 		return true;
 	}
 }

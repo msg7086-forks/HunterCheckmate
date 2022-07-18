@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <vector>
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 namespace HunterCheckmate_FileAnalyzer
 {

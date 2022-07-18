@@ -497,70 +497,77 @@ void ShowMainWindow()
 
 	ImGui::EndChild();
 
-	ImGui::BeginChild("species_info", ImVec2(ImGui::GetContentRegionAvail().x, 90.f), true);
+	ImGui::BeginChild("species_info", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 90.f), true);
 	if (animal_population->m_initialized && animal_population->m_valid && animal != "")
 	{
-		std::string info_text = std::string("General info about ");
+		std::string info_text = (boost::format("General info about %s:") % animal).str();
 		std::string info_text_male;
 		std::string info_text_female;
-		info_text += animal;
-		info_text += ":";
 		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text.c_str()).x) * 0.5f);
 		ImGui::Text(info_text.c_str());
 		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize("MALE").x) * 0.333333f);
 		ImGui::Text("MALE");
 		ImGui::SameLine();
-		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize("FEMALE").x) * 0.666666f);
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize("MALE").x - ImGui::CalcTextSize("FEMALE").x) * 0.666666f);
 		ImGui::Text("FEMALE");
 		ImGui::Text("Weight:");
 		ImGui::SameLine();
-		info_text_male = std::string("[ ");
-		info_text_male += (boost::format("%.1f") % weight_db.at(Animal::ResolveAnimalType(animal)).min_weight_male).str();
-		info_text_male += " - ";
-		info_text_male += (boost::format("%.1f") % weight_db.at(Animal::ResolveAnimalType(animal)).max_weight_male).str();
-		info_text_male += std::string(" ]");
-		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_male.c_str()).x - ImGui::CalcTextSize("Weight:").x) * 0.333333f);
+
+		info_text_male = (boost::format("[%.2f - %.2f]") % weight_db.at(Animal::ResolveAnimalType(animal)).min_weight_male % weight_db.at(Animal::ResolveAnimalType(animal)).max_weight_male).str();
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_male.c_str()).x) * 0.333333f);
 		ImGui::Text(info_text_male.c_str());
 		ImGui::SameLine();
-		info_text_female = std::string("[ ");
-		info_text_female += (boost::format("%.1f") % weight_db.at(Animal::ResolveAnimalType(animal)).min_weight_female).str();
-		info_text_female += " - ";
-		info_text_female += (boost::format("%.1f") % weight_db.at(Animal::ResolveAnimalType(animal)).max_weight_female).str();
-		info_text_female += std::string(" ]");
-		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_female.c_str()).x - ImGui::CalcTextSize("Weight:").x - ImGui::CalcTextSize(info_text_male.c_str()).x) * 0.666666f);
+
+		info_text_female = (boost::format("[%.2f - %.2f]") % weight_db.at(Animal::ResolveAnimalType(animal)).min_weight_female % weight_db.at(Animal::ResolveAnimalType(animal)).max_weight_female).str();
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_female.c_str()).x) * 0.666666f);
 		ImGui::Text(info_text_female.c_str());
 
 
 		ImGui::Text("Score:");
 		ImGui::SameLine();
-		info_text_male = std::string("[ ");
-		info_text_male += (boost::format("%.1f") % score_db.at(Animal::ResolveAnimalType(animal)).min_score_male).str();
-		info_text_male += " - ";
-		info_text_male += (boost::format("%.1f") % score_db.at(Animal::ResolveAnimalType(animal)).max_score_male).str();
-		info_text_male += std::string(" ]");
-		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_male.c_str()).x - ImGui::CalcTextSize("Score:").x) * 0.333333f);
+		info_text_male = (boost::format("[%.2f - %.2f]") % score_db.at(Animal::ResolveAnimalType(animal)).min_score_male % score_db.at(Animal::ResolveAnimalType(animal)).max_score_male).str();
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_male.c_str()).x) * 0.333333f);
 		ImGui::Text(info_text_male.c_str());
 		ImGui::SameLine();
-		info_text_female = std::string("[ ");
-		info_text_female += (boost::format("%.1f") % score_db.at(Animal::ResolveAnimalType(animal)).min_score_female).str();
-		info_text_female += " - ";
-		info_text_female += (boost::format("%.1f") % score_db.at(Animal::ResolveAnimalType(animal)).max_score_female).str();
-		info_text_female += std::string(" ]");
-		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_female.c_str()).x - ImGui::CalcTextSize("Score:").x - ImGui::CalcTextSize(info_text_male.c_str()).x) * 0.666666f);
+
+		info_text_female = (boost::format("[%.2f - %.2f]") % score_db.at(Animal::ResolveAnimalType(animal)).min_score_female % score_db.at(Animal::ResolveAnimalType(animal)).max_score_female).str();
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_female.c_str()).x) * 0.666666f);
 		ImGui::Text(info_text_female.c_str());
 	}
 
-
 	ImGui::EndChild();
+	ImGui::SameLine();
+	ImGui::BeginChild("species_stats", ImVec2(ImGui::GetContentRegionAvail().x, 90.f), true);
+	if (animal_population->m_initialized && animal_population->m_valid && animal != "")
+	{
+		std::string info_text = (boost::format("Statistics about your %s population:") % animal).str();
+		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text.c_str()).x) * 0.5f);
+		ImGui::Text(info_text.c_str());
 
-	//ImGui::BeginChild("groups", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), true);
+		animal_type = Animal::ResolveAnimalType(animal);
+		groups = animal_population->m_animals.at(animal_type);
 
-	//if (animal_population->m_initialized && animal_population->m_valid)
-	//{
-	//	ShowGroupInfo();
-	//}
+		uint32_t total_amount = 0;
+		uint32_t male_amount = 0;
+		uint32_t female_amount = 0;
+		auto it_groups = groups.begin();
+		for (; it_groups != groups.end(); ++it_groups)
+		{
+			total_amount += it_groups->m_size;
+			auto it_animals = it_groups->m_animals.begin();
+			for (; it_animals != it_groups->m_animals.end(); ++it_animals)
+			{
+				if (it_animals->m_gender == "male")
+					male_amount++;
+				else if (it_animals->m_gender == "female")
+					female_amount++;
+			}
+		}
 
-	//ImGui::EndChild();
+		info_text = (boost::format("Total amount: %i [%i male | %i female]") % total_amount % male_amount % female_amount).str();
+		ImGui::Text(info_text.c_str());
+	}
+	ImGui::EndChild();
 
 	ImGui::BeginChild("group_overview", ImVec2(300.f, ImGui::GetContentRegionAvail().y), true);
 	if (animal_population->m_initialized && animal_population->m_valid && animal != "")
