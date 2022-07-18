@@ -42,11 +42,12 @@ std::shared_ptr<FileHandler> file_handler = std::make_shared<FileHandler>(Endian
 std::shared_ptr<ReserveData> reserve_data = std::make_shared<ReserveData>(ReserveData::ResolveFileNameToInt(input_file_path.filename().generic_string()));
 std::unique_ptr<AnimalPopulation> animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
 
-std::string animal = "";
+std::string animal_str = "";
 // idx, weight, score
 std::vector<bool> sort = { true, false, false, false, false, false };
 
 AnimalType edit_animal_type;
+uint32_t edit_animal_grp_idx;
 int edit_animal_idx;
 std::string edit_animal_gender;
 float edit_animal_weight;
@@ -377,7 +378,7 @@ void ShowFileSelector(bool* p_open)
 		ImGui::BeginChild("file_actions", ImGui::GetContentRegionAvail(), true);
 		if (ImGui::Button("Analyze"))
 		{
-			animal = "";
+			animal_str = "";
 			file_handler = std::make_shared<FileHandler>(Endian::Little, input_file_path);
 			reserve_data = std::make_shared<ReserveData>(ReserveData::ResolveFileNameToInt(input_file_path.filename().generic_string()));
 			animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
@@ -455,7 +456,7 @@ void ShowMainWindow()
 				std::string show_animal = it_group->second.at(0).m_name;
 				if (ImGui::BeginTabItem(show_animal.c_str()))
 				{
-					animal = show_animal;
+					animal_str = show_animal;
 					ImGui::EndTabItem();
 				}
 			}
@@ -498,9 +499,9 @@ void ShowMainWindow()
 	ImGui::EndChild();
 
 	ImGui::BeginChild("species_info", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 90.f), true);
-	if (animal_population->m_initialized && animal_population->m_valid && animal != "")
+	if (animal_population->m_initialized && animal_population->m_valid && animal_str != "")
 	{
-		std::string info_text = (boost::format("General info about %s:") % animal).str();
+		std::string info_text = (boost::format("General info about %s:") % animal_str).str();
 		std::string info_text_male;
 		std::string info_text_female;
 		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text.c_str()).x) * 0.5f);
@@ -513,24 +514,24 @@ void ShowMainWindow()
 		ImGui::Text("Weight:");
 		ImGui::SameLine();
 
-		info_text_male = (boost::format("[%.2f - %.2f]") % weight_db.at(Animal::ResolveAnimalType(animal)).min_weight_male % weight_db.at(Animal::ResolveAnimalType(animal)).max_weight_male).str();
+		info_text_male = (boost::format("[%.2f - %.2f]") % weight_db.at(Animal::ResolveAnimalType(animal_str)).min_weight_male % weight_db.at(Animal::ResolveAnimalType(animal_str)).max_weight_male).str();
 		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_male.c_str()).x) * 0.333333f);
 		ImGui::Text(info_text_male.c_str());
 		ImGui::SameLine();
 
-		info_text_female = (boost::format("[%.2f - %.2f]") % weight_db.at(Animal::ResolveAnimalType(animal)).min_weight_female % weight_db.at(Animal::ResolveAnimalType(animal)).max_weight_female).str();
+		info_text_female = (boost::format("[%.2f - %.2f]") % weight_db.at(Animal::ResolveAnimalType(animal_str)).min_weight_female % weight_db.at(Animal::ResolveAnimalType(animal_str)).max_weight_female).str();
 		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_female.c_str()).x) * 0.666666f);
 		ImGui::Text(info_text_female.c_str());
 
 
 		ImGui::Text("Score:");
 		ImGui::SameLine();
-		info_text_male = (boost::format("[%.2f - %.2f]") % score_db.at(Animal::ResolveAnimalType(animal)).min_score_male % score_db.at(Animal::ResolveAnimalType(animal)).max_score_male).str();
+		info_text_male = (boost::format("[%.2f - %.2f]") % score_db.at(Animal::ResolveAnimalType(animal_str)).min_score_male % score_db.at(Animal::ResolveAnimalType(animal_str)).max_score_male).str();
 		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_male.c_str()).x) * 0.333333f);
 		ImGui::Text(info_text_male.c_str());
 		ImGui::SameLine();
 
-		info_text_female = (boost::format("[%.2f - %.2f]") % score_db.at(Animal::ResolveAnimalType(animal)).min_score_female % score_db.at(Animal::ResolveAnimalType(animal)).max_score_female).str();
+		info_text_female = (boost::format("[%.2f - %.2f]") % score_db.at(Animal::ResolveAnimalType(animal_str)).min_score_female % score_db.at(Animal::ResolveAnimalType(animal_str)).max_score_female).str();
 		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text_female.c_str()).x) * 0.666666f);
 		ImGui::Text(info_text_female.c_str());
 	}
@@ -538,13 +539,13 @@ void ShowMainWindow()
 	ImGui::EndChild();
 	ImGui::SameLine();
 	ImGui::BeginChild("species_stats", ImVec2(ImGui::GetContentRegionAvail().x, 90.f), true);
-	if (animal_population->m_initialized && animal_population->m_valid && animal != "")
+	if (animal_population->m_initialized && animal_population->m_valid && animal_str != "")
 	{
-		std::string info_text = (boost::format("Statistics about your %s population:") % animal).str();
+		std::string info_text = (boost::format("Statistics about your %s population:") % animal_str).str();
 		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImGui::CalcTextSize(info_text.c_str()).x) * 0.5f);
 		ImGui::Text(info_text.c_str());
 
-		animal_type = Animal::ResolveAnimalType(animal);
+		animal_type = Animal::ResolveAnimalType(animal_str);
 		groups = animal_population->m_animals.at(animal_type);
 
 		uint32_t total_amount = 0;
@@ -570,9 +571,9 @@ void ShowMainWindow()
 	ImGui::EndChild();
 
 	ImGui::BeginChild("group_overview", ImVec2(300.f, ImGui::GetContentRegionAvail().y), true);
-	if (animal_population->m_initialized && animal_population->m_valid && animal != "")
+	if (animal_population->m_initialized && animal_population->m_valid && animal_str != "")
 	{
-		animal_type = Animal::ResolveAnimalType(animal);
+		animal_type = Animal::ResolveAnimalType(animal_str);
 		groups = animal_population->m_animals.at(animal_type);
 
 		if (sort.at(0))
@@ -615,7 +616,7 @@ void ShowMainWindow()
 	ImGui::SameLine();
 
 	ImGui::BeginChild("group_animal_overview", ImGui::GetContentRegionAvail(), true);
-	if (animal_population->m_initialized && animal_population->m_valid && animal != "" && (!(selected_group == nullptr) || show_all_animals))
+	if (animal_population->m_initialized && animal_population->m_valid && animal_str != "" && (!(selected_group == nullptr) || show_all_animals))
 	{
 		if (ImGui::BeginTable("animal_table", 10, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable |
 							  ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_BordersOuter))
@@ -635,7 +636,7 @@ void ShowMainWindow()
 
 			if (!show_all_animals)
 			{
-				if (selected_group->m_animal_type != Animal::ResolveAnimalType(animal))
+				if (selected_group->m_animal_type != Animal::ResolveAnimalType(animal_str))
 					show_all_animals = true;
 
 				if (sort.at(0))
@@ -845,6 +846,8 @@ void ShowMainWindow()
 					ImGui::PushID(&(it_animals->m_visual_variation_seed));
 					if (ImGui::Button("Edit"))
 					{
+						edit_animal_grp_idx = it_animals->m_grp_idx;
+						edit_animal_type = it_animals->m_animal_type;
 						edit_animal_idx = static_cast<int>(it_animals->m_idx);
 						edit_animal_gender = it_animals->m_gender;
 						edit_animal_weight = it_animals->m_weight;
@@ -931,19 +934,15 @@ void ShowMainWindow()
 							const std::shared_ptr<Animal> animal =
 								Animal::Create(animal_type, Animal::ResolveGender(edit_animal_gender),
 											   edit_animal_weight, edit_animal_score, boost::lexical_cast<bool>(edit_animal_str_igo),
-											   visual_variation_seed, edit_animal_idx, selected_group->m_index);
+											   visual_variation_seed, edit_animal_idx, edit_animal_grp_idx);
 							if (animal->IsValid())
 							{
-								animal_population->ReplaceAnimal(animal, selected_group->m_index, it_animals->m_idx);
+								animal_population->ReplaceAnimal(animal, edit_animal_grp_idx, it_animals->m_idx);
 							}
 							animal_population = std::make_unique<AnimalPopulation>(file_handler, reserve_data);
 							if (animal_population->Deserialize())
 							{
 								animal_population->MapAnimals();
-								AnimalType tmp_at = selected_group->m_animal_type;
-								uint32_t tmp_idx = selected_group->m_index;
-								selected_group = std::make_shared<AnimalGroup>(animal_population->m_animals.at(tmp_at).at(tmp_idx));
-								it_animals = selected_group->m_animals.begin() + idx;
 							}
 							ImGui::CloseCurrentPopup();
 						}
@@ -976,9 +975,9 @@ void ShowMainWindow()
 
 void ShowGroupInfo()
 {
-	if (animal != "")
+	if (animal_str != "")
 	{
-		const AnimalType animal_type = Animal::ResolveAnimalType(animal);
+		const AnimalType animal_type = Animal::ResolveAnimalType(animal_str);
 		std::vector<AnimalGroup> groups = animal_population->m_animals.at(animal_type);
 		uint32_t total_animals = 0;
 
