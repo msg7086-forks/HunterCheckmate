@@ -412,6 +412,7 @@ namespace HunterCheckmate_FileAnalyzer
 
 	bool AdfFile::Compress()
 	{
+		// TODO: Fix CLI personalized path
 		boost::filesystem::path in_path("C:\\Users\\oleSQL\\Documents\\thehunter working\\pop\\animalishXD");
 
 		boost::filesystem::ifstream ifs(in_path, std::ios::in | std::ios::binary);

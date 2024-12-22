@@ -12,38 +12,38 @@ namespace HunterCheckmate_FileAnalyzer
 			// Hirschfelden
 		case 0:
 		{
-			m_animals_hash.emplace(AT_WildBoar, 147581770);
-			m_animals_hash.emplace(AT_EuRabbit, 442307937);
-			m_animals_hash.emplace(AT_FallowDeer, 798672823);
-			m_animals_hash.emplace(AT_EuBison, 1056739115);
-			m_animals_hash.emplace(AT_RoeDeer, 2052964502);
-			m_animals_hash.emplace(AT_RedFox, 2105558160);
-			m_animals_hash.emplace(AT_CanadaGoose, 3321523293);
-			m_animals_hash.emplace(AT_RedDeer, 3635849363);
+			m_animals_hash.emplace(AT_WildBoar,		147581770);
+			m_animals_hash.emplace(AT_EuRabbit,		442307937);
+			m_animals_hash.emplace(AT_FallowDeer,	798672823);
+			m_animals_hash.emplace(AT_EuBison,		1056739115);
+			m_animals_hash.emplace(AT_RoeDeer,		2052964502);
+			m_animals_hash.emplace(AT_RedFox,		2105558160);
+			m_animals_hash.emplace(AT_CanadaGoose,	3321523293);
+			m_animals_hash.emplace(AT_RedDeer,		3635849363);
 			break;
 		}
 			// Layton
 		case 1:
 		{
-			m_animals_hash.emplace(AT_Moose, 155298792);
-			m_animals_hash.emplace(AT_Jackrabbit, 1227103483);
-			m_animals_hash.emplace(AT_Mallard, 1905502510);
-			m_animals_hash.emplace(AT_BlackBear, 2434390669);
+			m_animals_hash.emplace(AT_Moose,		155298792);
+			m_animals_hash.emplace(AT_Jackrabbit,	1227103483);
+			m_animals_hash.emplace(AT_Mallard,		1905502510);
+			m_animals_hash.emplace(AT_BlackBear,	2434390669);
 			m_animals_hash.emplace(AT_RooseveltElk, 2492964089);
-			m_animals_hash.emplace(AT_Coyote, 3041812107);
-			m_animals_hash.emplace(AT_Blacktail, 3616431897);
-			m_animals_hash.emplace(AT_Whitetail, 3845994887);
+			m_animals_hash.emplace(AT_Coyote,		3041812107);
+			m_animals_hash.emplace(AT_Blacktail,	3616431897);
+			m_animals_hash.emplace(AT_Whitetail,	3845994887);
 			break;
 		}
 			// Medved
 		case 2:
 		{
-			m_animals_hash.emplace(AT_SiberianMuskDeer, 74472795);
-			m_animals_hash.emplace(AT_Moose, 155298792);
-			m_animals_hash.emplace(AT_WildBoar, 1570854601);
-			m_animals_hash.emplace(AT_Reindeer, 1779251800);
-			m_animals_hash.emplace(AT_EurasianLynx, 1814015872);
-			m_animals_hash.emplace(AT_EurasianBrownBear, 1923623595);
+			m_animals_hash.emplace(AT_SiberianMuskDeer,		74472795);
+			m_animals_hash.emplace(AT_Moose,				155298792);
+			m_animals_hash.emplace(AT_WildBoar,				1570854601);
+			m_animals_hash.emplace(AT_Reindeer,				1779251800);
+			m_animals_hash.emplace(AT_EurasianLynx,			1814015872);
+			m_animals_hash.emplace(AT_EurasianBrownBear,	1923623595);
 			break;
 		}
 			// Vurhonga

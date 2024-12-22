@@ -157,31 +157,32 @@ namespace HunterCheckmate_FileAnalyzer
 		: m_desc("Allowed options")
 	{
 		m_desc.add_options()
-			("help,h", "print help message")
-			("input-file,i", po::value<std::string>(), "input file path (population or loadout)")
-			("output-console,c", "output whole file contents on console")
-			("output-file,f", "output whole file contents into .txt file")
-			("output-group,g", po::value<std::string>(), "output group informations for an animal on console")
-			("replace-custom,r", "replace an animal with a new one")
-			("replace-preset,p", "replace an animal with one from the presets")
-			("json,j", po::value<std::string>(), "get inventory info and load/save loadout");
+			("help,h",				"print help message")
+			("output-console,c",	"output whole file contents on console")
+			("output-file,f",		"output whole file contents into .txt file")
+			("replace-custom,r",	"replace an animal with a new one")
+			("replace-preset,p",	"replace an animal with one from the presets")
+			("input-file,i",	po::value<std::string>(),		"input file path (population or loadout)")
+			("output-group,g",	po::value<std::string>(),		"output group informations for an animal on console")
+			("json,j",			po::value<std::string>(),		"get inventory info and load/save loadout");
 		po::store(po::parse_command_line(argc, argv, m_desc), m_vm);
 		po::notify(m_vm);
-		option_dependency(m_vm, "output-console", "input-file");
-		option_dependency(m_vm, "output-file", "input-file");
-		option_dependency(m_vm, "output-group", "input-file");
-		option_dependency(m_vm, "replace-custom", "input-file");
-		option_dependency(m_vm, "replace-presets", "input-file");
-		option_dependency(m_vm, "json", "input-file");
+
+		option_dependency(m_vm, "output-console",	"input-file");
+		option_dependency(m_vm, "output-file",		"input-file");
+		option_dependency(m_vm, "output-group",		"input-file");
+		option_dependency(m_vm, "replace-custom",	"input-file");
+		option_dependency(m_vm, "replace-presets",	"input-file");
+		option_dependency(m_vm, "json",				"input-file");
 	}
 
 	int CLI::run()
 	{
+		if (m_vm.count("help"))					PrintHelp();
+
 		m_inputFilePath = fs::path(m_vm["input-file"].as<std::string>());
 		m_inputFileName = m_inputFilePath.filename();
-
-		if (m_vm.count("help"))					PrintHelp();
-		else if (m_vm.count("output-group"))	PrintGroupInformation();
+		if (m_vm.count("output-group"))	PrintGroupInformation();
 		else if (m_vm.count("replace-custom"))	InteractiveReplaceAnimal();
 		else if (m_vm.count("json"))			InteractiveJson();
 		else std::cout << "Use --help option to display information\n";

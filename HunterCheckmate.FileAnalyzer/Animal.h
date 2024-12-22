@@ -2478,11 +2478,12 @@ namespace HunterCheckmate_FileAnalyzer
 
 		float GetMinWeight()
 		{
-			if (m_gender == "male")
-				return 32.f;
-			else if (m_gender == "female")
-				return 25.f;
-			return 0.f;
+			//if (m_gender == "male")
+			//	return 32.f;
+			//else if (m_gender == "female")
+			//	return 25.f;
+			//return 0.f;
+			return m_gender == "male" ? 32.f : 25.f;
 		}
 
 		float GetMaxWeight()
